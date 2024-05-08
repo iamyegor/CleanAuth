@@ -1,0 +1,8 @@
+POST https://localhost:7071/api/signup
+Content-Type: application/json
+
+{
+    "login": "yegorultra",
+    "email": "astery227@gmail.com",
+    "password": "101206!!!EEE"
+}

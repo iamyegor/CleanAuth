@@ -6,4 +6,4 @@ using XResults;
 namespace Application.Authentication.Commands.Signup;
 
 public record SignUpCommand(string Login, string Email, string Password)
-    : IRequest<SuccessOr<Error>>;
+    : IRequest<Result<Tokens, Error>>;

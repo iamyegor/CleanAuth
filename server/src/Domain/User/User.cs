@@ -9,9 +9,10 @@ public class User : Entity<int>
     public Email Email { get; private set; }
     public Password Password { get; }
     public Role Role { get; } = Role.User;
-    public RefreshToken? RefreshToken { get; private set; }
+    public RefreshToken? RefreshToken { get; set; }
     public EmailVerificationCode? EmailVerificationCode { get; set; }
     public PhoneNumber? PhoneNumber { get; set; }
+    public PhoneNumberVerificationCode? PhoneNumberVerificationCode { get; set; }
     public bool IsEmailVerified { get; set; }
     public bool IsPhoneNumberVerified { get; set; }
 

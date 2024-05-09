@@ -36,6 +36,10 @@ namespace Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_email_verified");
 
+                    b.Property<bool>("IsPhoneNumberVerified")
+                        .HasColumnType("boolean")
+                        .HasColumnName("is_phone_number_verified");
+
                     b.ComplexProperty<Dictionary<string, object>>("Password", "Domain.User.User.Password#Password", b1 =>
                         {
                             b1.IsRequired();
@@ -126,6 +130,48 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("UserId");
                         });
 
+                    b.OwnsOne("Domain.User.ValueObjects.PhoneNumber", "PhoneNumber", b1 =>
+                        {
+                            b1.Property<int>("UserId")
+                                .HasColumnType("integer");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("phone_number");
+
+                            b1.HasKey("UserId");
+
+                            b1.HasIndex("Value")
+                                .IsUnique();
+
+                            b1.ToTable("users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.OwnsOne("Domain.User.ValueObjects.PhoneNumberVerificationCode", "PhoneNumberVerificationCode", b1 =>
+                        {
+                            b1.Property<int>("UserId")
+                                .HasColumnType("integer");
+
+                            b1.Property<DateTime>("ExpiryTime")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("phone_number_verification_code_expiry_time");
+
+                            b1.Property<int>("Value")
+                                .HasColumnType("integer")
+                                .HasColumnName("phone_number_verification_code");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
                     b.OwnsOne("Domain.User.ValueObjects.RefreshToken", "RefreshToken", b1 =>
                         {
                             b1.Property<int>("UserId")
@@ -155,6 +201,10 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Login")
                         .IsRequired();
+
+                    b.Navigation("PhoneNumber");
+
+                    b.Navigation("PhoneNumberVerificationCode");
 
                     b.Navigation("RefreshToken");
                 });

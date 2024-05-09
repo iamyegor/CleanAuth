@@ -2,6 +2,7 @@ using System.Text;
 using Infrastructure.Authentication;
 using Infrastructure.Data;
 using Infrastructure.Emails;
+using Infrastructure.Sms;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,32 +18,79 @@ public static class DependencyInjection
         bool isDevelopment
     )
     {
-        services.AddScoped(_ => new ApplicationContext(
-            config.GetConnectionString("Default")!,
-            isDevelopment
-        ));
-
-        services.AddMessageBus(config);
-        services.AddJwtAuthentication(config);
+        services
+            .AddScoped(_ => new ApplicationContext(
+                config.GetConnectionString("Default")!,
+                isDevelopment
+            ))
+            .AddMessageBus(config)
+            .AddJwtAuthentication(config)
+            .AddAuthorization()
+            .AddDapper()
+            .AddSmsMessages();
     }
 
-    private static void AddMessageBus(this IServiceCollection services, IConfiguration config)
+    private static IServiceCollection AddMessageBus(
+        this IServiceCollection services,
+        IConfiguration config
+    )
     {
         services.Configure<EmailSettings>(config.GetSection(nameof(EmailSettings)));
         services.PostConfigure<EmailSettings>(settings =>
         {
             settings.Password = Environment.GetEnvironmentVariable("OUTLOOK_PASSWORD")!;
         });
-        
+
         services.AddTransient<MessageBus>();
+
+        return services;
     }
 
-    private static void AddJwtAuthentication(
+    private static IServiceCollection AddAuthorization(this IServiceCollection services)
+    {
+        services.AddAuthorization(config =>
+        {
+            config.AddPolicy(
+                PoliciyNames.EmailVerified,
+                p => p.RequireClaim(JwtClaims.IsEmailVerified, "true")
+            );
+
+            config.AddPolicy(
+                PoliciyNames.PhoneNumberNotVerified,
+                p =>
+                {
+                    p.RequireClaim(JwtClaims.IsPhoneNumberVerified, "false");
+                }
+            );
+
+            config.AddPolicy(
+                PoliciyNames.EmailNotVerified,
+                p =>
+                {
+                    p.RequireClaim(JwtClaims.IsEmailVerified, "false");
+                }
+            );
+
+            config.AddPolicy(
+                PoliciyNames.AccountAuthenticated,
+                p =>
+                {
+                    p.RequireClaim(JwtClaims.IsEmailVerified, "true");
+                    p.RequireClaim(JwtClaims.IsPhoneNumberVerified, "true");
+                }
+            );
+        });
+
+        return services;
+    }
+
+    private static IServiceCollection AddJwtAuthentication(
         this IServiceCollection services,
         IConfiguration config
     )
     {
         services.AddTransient<JwtService>();
+        services.AddTransient<JwtClaims>();
 
         services.Configure<JwtSettings>(config.GetSection(nameof(JwtSettings)));
 
@@ -86,5 +134,22 @@ public static class DependencyInjection
                     }
                 };
             });
+
+        return services;
+    }
+
+    private static IServiceCollection AddDapper(this IServiceCollection services)
+    {
+        services.AddTransient<DapperConnectionFactory>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddSmsMessages(this IServiceCollection services)
+    {
+        services.AddTransient<SmsMessageBus>();
+        services.AddTransient<VerificationCodeSender>();
+
+        return services;
     }
 }

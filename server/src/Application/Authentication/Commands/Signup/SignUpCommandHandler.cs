@@ -1,6 +1,7 @@
 using Domain.DomainErrors;
 using Domain.User;
 using Domain.User.ValueObjects;
+using Infrastructure.Authentication;
 using Infrastructure.Data;
 using Infrastructure.Emails;
 using MediatR;
@@ -9,21 +10,24 @@ using XResults;
 
 namespace Application.Authentication.Commands.Signup;
 
-public class SignUpCommandHandler : IRequestHandler<SignUpCommand, SuccessOr<Error>>
+public class SignUpCommandHandler : IRequestHandler<SignUpCommand, Result<Tokens, Error>>
 {
     private readonly ApplicationContext _context;
     private readonly MessageBus _messageBus;
+    private readonly JwtService _jwtService;
 
     public SignUpCommandHandler(
         ApplicationContext context,
-        MessageBus messageBus
+        MessageBus messageBus,
+        JwtService jwtService
     )
     {
         _context = context;
         _messageBus = messageBus;
+        _jwtService = jwtService;
     }
 
-    public async Task<SuccessOr<Error>> Handle(
+    public async Task<Result<Tokens, Error>> Handle(
         SignUpCommand command,
         CancellationToken cancellationToken
     )
@@ -38,32 +42,52 @@ public class SignUpCommandHandler : IRequestHandler<SignUpCommand, SuccessOr<Err
             cancellationToken: cancellationToken
         );
 
+        User finalUser;
         if (existingUser == null)
         {
-            User user = new User(login, email, password, verificationCode);
-            await _context.Users.AddAsync(user, cancellationToken);
+            finalUser = new User(login, email, password, verificationCode);
+            await _context.Users.AddAsync(finalUser, cancellationToken);
         }
         else
         {
-            if (existingUser.IsEmailVerified)
+            if (existingUser is { IsEmailVerified: true, IsPhoneNumberVerified: true })
             {
-                return existingUser.Login.Value == command.Login
-                    ? Errors.Login.TheSameLoginExists(command.Login)
-                    : Errors.Login.TheSameEmailExists(command.Email);
+                return UserAlreadyExists(existingUser, command.Login, command.Email);
             }
-            else
-            {
-                // To perform context.Update() user with the same id must be detached.
-                _context.Entry(existingUser).State = EntityState.Detached;
-                User user = new User(login, email, password, verificationCode, existingUser.Id);
-                _context.Update(user);
-            }
+
+            finalUser = UpdateExistingUser(existingUser, login, email, password, verificationCode);
         }
+
+        Tokens tokens = _jwtService.GenerateTokens(finalUser);
+        finalUser.RefreshToken = new RefreshToken(tokens.RefreshToken);
 
         await _context.SaveChangesAsync(cancellationToken);
 
         _messageBus.SendEmailVerificationCode(email, verificationCode);
 
-        return Result.Ok();
+        return tokens;
+    }
+
+    private Error UserAlreadyExists(User user, string login, string email)
+    {
+        return user.Login.Value == login
+            ? Errors.Login.TheSameLoginExists(login)
+            : Errors.Login.TheSameEmailExists(email);
+    }
+
+    private User UpdateExistingUser(
+        User existingUser,
+        Login login,
+        Email email,
+        Password password,
+        EmailVerificationCode verificationCode
+    )
+    {
+        // To perform context.Update() user with the same id must be detached.
+        _context.Entry(existingUser).State = EntityState.Detached;
+        User user = new User(login, email, password, verificationCode, existingUser.Id);
+        _context.Update(user);
+
+        return user;
     }
 }

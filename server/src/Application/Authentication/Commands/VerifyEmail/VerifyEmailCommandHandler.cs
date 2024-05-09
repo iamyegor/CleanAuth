@@ -27,7 +27,7 @@ public class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, Res
     {
         User? user = await _context.Users.SingleOrDefaultAsync(
             u =>
-                u.Email.Value == command.Email
+                u.Id == command.UserId
                 && u.EmailVerificationCode != null
                 && u.EmailVerificationCode.Value == command.Code,
             cancellationToken: cancellationToken
@@ -43,11 +43,11 @@ public class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, Res
             return Errors.EmailVerificationCode.IsExpired();
         }
 
-        Tokens tokens = _jwtService.GenerateTokens(user);
-        user.SetRefreshToken(new RefreshToken(tokens.RefreshToken));
-
         user.IsEmailVerified = true;
         user.EmailVerificationCode = null;
+
+        Tokens tokens = _jwtService.GenerateTokens(user);
+        user.RefreshToken = new RefreshToken(tokens.RefreshToken);
 
         await _context.SaveChangesAsync(cancellationToken);
 

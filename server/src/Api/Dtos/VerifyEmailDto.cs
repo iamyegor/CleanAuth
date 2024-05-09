@@ -1,3 +1,3 @@
 namespace Api.Dtos;
 
-public record VerifyEmailDto(string Email, int Code);
+public record VerifyEmailDto(int Code);

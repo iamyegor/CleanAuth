@@ -1,12 +1,20 @@
 import { createBrowserRouter } from "react-router-dom";
-import WelcomePage, { loader as welcomePageLoader } from "@/pages/WelcomePage/WelcomePage.tsx";
-import LoginPage, { loader as loginLoader } from "@/pages/LoginPage/LoginPage.tsx";
-import { action as loginAction } from "@/pages/LoginPage/components/LoginForm.tsx";
-import { action as signupAction } from "@/pages/SignupPage/components/SignupForm.tsx";
-import { loader as emailVerificationLoader } from "@/pages/EmailVerificationPage/EmailVerificationPage.tsx";
-import { action as emailVerificationAction } from "@/pages/EmailVerificationPage/components/EmailVerificationForm.tsx";
-import SignupPage from "@/pages/SignupPage/SignupPage.tsx";
-import EmailVerificationPage from "@/pages/EmailVerificationPage/EmailVerificationPage.tsx";
+import WelcomePage, { loader as welcomePageLoader } from "@/pages/Welcome/WelcomePage.tsx";
+import LoginPage, { loader as loginLoader } from "@/pages/Login/LoginPage.tsx";
+import { action as loginAction } from "@/pages/Login/components/LoginForm.tsx";
+import { action as signupAction } from "@/pages/Signup/components/SignupForm.tsx";
+import VerifyEmailPage, {
+    action as verifyEmailAction,
+    loader as verifyEmailLoader,
+} from "@/pages/VerifyEmail/VerifyEmailPage.tsx";
+import SignupPage from "@/pages/Signup/SignupPage.tsx";
+import AddPhoneNumberPage, {
+    loader as addPhoneNumberLoader,
+} from "@/pages/AddPhoneNumber/AddPhoneNumberPage.tsx";
+import { action as addPhoneNumberAction } from "@/pages/AddPhoneNumber/components/AddPhoneNumberForm.tsx";
+import VerifyPhoneNumberPage, {
+    action as verifyPhoneNumberAction,
+} from "@/pages/VerifyPhoneNumber/VerifyPhoneNumberPage.tsx";
 
 const router = createBrowserRouter([
     { path: "/", element: <WelcomePage />, loader: welcomePageLoader },
@@ -19,9 +27,20 @@ const router = createBrowserRouter([
     { path: "/signup", element: <SignupPage />, action: signupAction },
     {
         path: "/verify-email",
-        element: <EmailVerificationPage />,
-        loader: emailVerificationLoader,
-        action: emailVerificationAction,
+        element: <VerifyEmailPage />,
+        loader: verifyEmailLoader,
+        action: verifyEmailAction,
+    },
+    {
+        path: "/add-phone-number",
+        element: <AddPhoneNumberPage />,
+        action: addPhoneNumberAction,
+        loader: addPhoneNumberLoader,
+    },
+    {
+        path: "/verify-phone-number",
+        element: <VerifyPhoneNumberPage />,
+        action: verifyPhoneNumberAction,
     },
 ]);
 

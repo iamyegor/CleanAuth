@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "src\Infra
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "src\Application\Application.csproj", "{61BFA79C-91C2-4343-8072-4306BC1081B2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GuardClauses", "src\GuardClauses\GuardClauses.csproj", "{EA4A1D48-0D54-4821-A02A-DDE7553B525B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -30,5 +32,9 @@ Global
 		{61BFA79C-91C2-4343-8072-4306BC1081B2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{61BFA79C-91C2-4343-8072-4306BC1081B2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{61BFA79C-91C2-4343-8072-4306BC1081B2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA4A1D48-0D54-4821-A02A-DDE7553B525B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA4A1D48-0D54-4821-A02A-DDE7553B525B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA4A1D48-0D54-4821-A02A-DDE7553B525B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA4A1D48-0D54-4821-A02A-DDE7553B525B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

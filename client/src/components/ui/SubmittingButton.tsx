@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { SpinnerCircularFixed } from "spinners-react";
-import BaseProps from "@/pages/SignupPage/types/BaseProps.ts";
+import BaseProps from "@/pages/Signup/types/BaseProps.ts";
 
 interface SubmittingButton extends BaseProps {
     loading: boolean;

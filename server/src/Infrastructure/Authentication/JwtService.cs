@@ -2,6 +2,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
+using Ardalis.GuardClauses;
 using Domain.DomainErrors;
 using Domain.User;
 using Microsoft.Extensions.Options;
@@ -23,12 +24,13 @@ public class JwtService
     {
         Claim[] claims =
         [
-            new Claim(ClaimTypes.Name, user.Id.ToString()),
-            new Claim(ClaimTypes.Role, user.Role.Value),
-            new Claim("email", user.Email.Value),
-            new Claim("emailVerified", user.IsEmailVerified.ToString()),
-            new Claim("phoneNumber", user.PhoneNumber?.Value ?? string.Empty),
-            new Claim("phoneNumberVerified", user.IsPhoneNumberVerified.ToString())
+            new Claim(JwtClaims.UserId, user.Id.ToString()),
+            new Claim(JwtClaims.Role, user.Role.Value),
+            new Claim(JwtClaims.IsEmailVerified, user.IsEmailVerified.ToString().ToLower()),
+            new Claim(
+                JwtClaims.IsPhoneNumberVerified,
+                user.IsPhoneNumberVerified.ToString().ToLower()
+            )
         ];
 
         string accessToken = GenerateAccessToken(claims);
@@ -91,7 +93,8 @@ public class JwtService
                 out _
             );
 
-            return int.Parse(principal.Identity!.Name!);
+            string userIdString = Guard.Against.Null(principal.FindFirst(JwtClaims.UserId)).Value;
+            return int.Parse(userIdString);
         }
         catch (SecurityTokenValidationException)
         {

@@ -1,3 +1,4 @@
+using Api.Mappings;
 using Serilog;
 
 namespace Api;
@@ -10,6 +11,7 @@ public static class DependencyInjection
         services.AddEndpointsApiExplorer();
         services.AddSwaggerGen();
         services.AddCors(corsPolicy);
+        services.RegisterMappings();
     }
 
     private static void AddCors(this IServiceCollection services, string corsPolicy)

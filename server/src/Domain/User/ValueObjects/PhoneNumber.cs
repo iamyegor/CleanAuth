@@ -9,6 +9,8 @@ public class PhoneNumber
     public string Value { get; }
     public int UserId { get; private set; }
 
+    private PhoneNumber() { }
+
     private PhoneNumber(string value)
     {
         Value = value;

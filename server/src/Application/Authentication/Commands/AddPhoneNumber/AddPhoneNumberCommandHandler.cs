@@ -2,6 +2,7 @@ using Domain.DomainErrors;
 using Domain.User;
 using Domain.User.ValueObjects;
 using Infrastructure.Data;
+using Infrastructure.Sms;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using XResults;
@@ -11,10 +12,15 @@ namespace Application.Authentication.Commands.AddPhoneNumber;
 public class AddPhoneNumberCommandHandler : IRequestHandler<AddPhoneNumberCommand, SuccessOr<Error>>
 {
     private readonly ApplicationContext _context;
+    private readonly VerificationCodeSender _verificationCodeSender;
 
-    public AddPhoneNumberCommandHandler(ApplicationContext context)
+    public AddPhoneNumberCommandHandler(
+        ApplicationContext context,
+        VerificationCodeSender verificationCodeSender
+    )
     {
         _context = context;
+        _verificationCodeSender = verificationCodeSender;
     }
 
     public async Task<SuccessOr<Error>> Handle(
@@ -27,7 +33,7 @@ public class AddPhoneNumberCommandHandler : IRequestHandler<AddPhoneNumberComman
             cancellationToken: cancellationToken
         );
 
-        if (userWithSamePhoneNumber != null)
+        if (userWithSamePhoneNumber != null && userWithSamePhoneNumber.IsPhoneNumberVerified)
         {
             return Errors.PhoneNumber.AlreadyTaken(command.PhoneNumber);
         }
@@ -38,6 +44,14 @@ public class AddPhoneNumberCommandHandler : IRequestHandler<AddPhoneNumberComman
         );
 
         user.PhoneNumber = PhoneNumber.Create(command.PhoneNumber);
+        user.PhoneNumberVerificationCode = new PhoneNumberVerificationCode();
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        _verificationCodeSender.Send(
+            user.PhoneNumber.Value,
+            user.PhoneNumberVerificationCode.Value
+        );
 
         return Result.Ok();
     }

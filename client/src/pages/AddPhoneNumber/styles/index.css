@@ -1,0 +1,19 @@
+/* Styles for the custom dropdown scrollbar */
+.dropdown-scrollbar::-webkit-scrollbar {
+  width: 10px; /* width of the scrollbar */
+}
+
+.dropdown-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1; /* color of the track */
+}
+
+.dropdown-scrollbar::-webkit-scrollbar-thumb {
+  background: #888; /* color of the thumb */
+  border-radius: 10px; /* roundness of the thumb */
+  border: 2px solid #f1f1f1; /* creates a slight border around the thumb */
+  height: 25px;
+}
+
+.dropdown-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #555; /* color of the thumb when hovered */
+}

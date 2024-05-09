@@ -11,6 +11,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.ToTable("users").HasKey(x => x.Id);
         builder.Property(x => x.Id).HasColumnName("id");
         builder.Property(x => x.IsEmailVerified).HasColumnName("is_email_verified");
+        builder.Property(x => x.IsPhoneNumberVerified).HasColumnName("is_phone_number_verified");
 
         builder.OwnsOne(
             x => x.Login,
@@ -65,6 +66,26 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
                 tokenBuilder
                     .Property(e => e.ExpiryTime)
                     .HasColumnName("email_verification_code_expiry_time");
+            }
+        );
+
+        builder.OwnsOne(
+            x => x.PhoneNumber,
+            phoneBuilder =>
+            {
+                phoneBuilder.Property(p => p.Value).HasColumnName("phone_number");
+                phoneBuilder.HasIndex(p => p.Value).IsUnique();
+            }
+        );
+
+        builder.OwnsOne(
+            x => x.PhoneNumberVerificationCode,
+            codeBuilder =>
+            {
+                codeBuilder.Property(c => c.Value).HasColumnName("phone_number_verification_code");
+                codeBuilder
+                    .Property(c => c.ExpiryTime)
+                    .HasColumnName("phone_number_verification_code_expiry_time");
             }
         );
     }

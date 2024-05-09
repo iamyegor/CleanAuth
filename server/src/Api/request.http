@@ -1,4 +1,4 @@
-POST https://localhost:7071/api/signup
+POST https://localhost:7071/api/add-phone-number
 Content-Type: application/json
 
 {

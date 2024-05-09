@@ -48,7 +48,7 @@ public class RefreshAccessTokenCommandHandler
         }
 
         Tokens tokens = _jwtService.GenerateTokens(user);
-        user.SetRefreshToken(new RefreshToken(tokens.RefreshToken));
+        user.RefreshToken = new RefreshToken(tokens.RefreshToken);
 
         await _context.SaveChangesAsync(cancellationToken);
 

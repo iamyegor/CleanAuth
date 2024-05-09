@@ -5,4 +5,4 @@ using XResults;
 
 namespace Application.Authentication.Commands.VerifyEmail;
 
-public record VerifyEmailCommand(string Email, int Code) : IRequest<Result<Tokens, Error>>;
+public record VerifyEmailCommand(int UserId, int Code) : IRequest<Result<Tokens, Error>>;

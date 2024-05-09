@@ -1,10 +1,8 @@
 using Api.Controllers.Common;
 using Api.Dtos;
-using Application.Authentication.Commands.AddPhoneNumber;
 using Application.Authentication.Commands.LogIn;
 using Application.Authentication.Commands.RefreshAccessToken;
 using Application.Authentication.Commands.Signup;
-using Application.Authentication.Commands.VerifyEmail;
 using Domain.DomainErrors;
 using Infrastructure.Authentication;
 using Infrastructure.Authentication.Extensions;
@@ -30,15 +28,6 @@ public class AuthenticationController : ApplicationController
     public async Task<IActionResult> SignUp(SignupDto dto)
     {
         SignUpCommand command = dto.Adapt<SignUpCommand>();
-        SuccessOr<Error> result = await _mediator.Send(command);
-
-        return FromResult(result);
-    }
-
-    [HttpPost("verify-email")]
-    public async Task<IActionResult> VerifyEmail(VerifyEmailDto dto)
-    {
-        VerifyEmailCommand command = dto.Adapt<VerifyEmailCommand>();
         Result<Tokens, Error> tokensOrError = await _mediator.Send(command);
         if (tokensOrError.IsFailure)
         {
@@ -50,18 +39,7 @@ public class AuthenticationController : ApplicationController
         return Ok();
     }
 
-    [HttpPost, Email]
-    public async Task<IActionResult> AddPhoneNumber(AddPhoneNumberDto dto)
-    {
-        Request.Cookies.TryGetValue(CookieTokens.Claims.UserId, out var userId);
-
-        AddPhoneNumberCommand command = (userId, dto).Adapt<AddPhoneNumberCommand>();
-        SuccessOr<Error> result = await _mediator.Send(command);
-
-        return FromResult(result);
-    }
-
-    [HttpGet("is-authenticated"), Authorize]
+    [HttpGet("is-authenticated"), Authorize(PoliciyNames.AccountAuthenticated)]
     public IActionResult IsAuthenticated()
     {
         return Ok();
@@ -95,6 +73,7 @@ public class AuthenticationController : ApplicationController
     public async Task<IActionResult> RefreshAccessToken()
     {
         Request.Cookies.TryGetValue(CookieTokens.Refresh.Name, out var refreshToken);
+
         RefreshAccessTokenCommand command = new RefreshAccessTokenCommand(refreshToken);
         Result<Tokens, Error> tokensOrError = await _mediator.Send(command);
 

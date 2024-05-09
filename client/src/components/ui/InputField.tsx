@@ -1,4 +1,4 @@
-import BaseProps from "@/pages/SignupPage/types/BaseProps.ts";
+import BaseProps from "@/pages/Signup/types/BaseProps.ts";
 import ErrorMessage from "@/components/ui/ErrorMessage.tsx";
 import classNames from "classnames";
 

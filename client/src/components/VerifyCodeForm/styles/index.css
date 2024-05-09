@@ -1,0 +1,12 @@
+.default-verification-code-input {
+    @apply w-14 h-14 text-center text-xl font-semibold border rounded-md shadow-sm shadow-gray-200 
+    outline-none ring-offset-1 transition-all;
+}
+
+.verification-code-input-ok {
+    @apply ring-blue-400 focus:ring-2;
+}
+
+.verification-code-input-error {
+    @apply ring-red-400 ring-2;
+}

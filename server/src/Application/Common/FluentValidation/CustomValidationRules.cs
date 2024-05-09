@@ -7,20 +7,15 @@ namespace Application.Common.FluentValidation;
 
 public static class CustomValidationRules
 {
-    public static IRuleBuilderOptionsConditions<T, TProperty> MustHaveLength<T, TProperty>(
-        this IRuleBuilder<T, TProperty> ruleBuilder,
+    public static IRuleBuilderOptionsConditions<T, int> MustHaveLength<T>(
+        this IRuleBuilder<T, int> ruleBuilder,
         int expectedLength
     )
     {
         return ruleBuilder.Custom(
             (value, context) =>
             {
-                if (value?.ToString() == null)
-                {
-                    return;
-                }
-
-                int length = value.ToString()!.Length;
+                int length = value.ToString().Length;
                 if (length != expectedLength)
                 {
                     context.AddError(

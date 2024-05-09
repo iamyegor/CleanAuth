@@ -1,4 +1,6 @@
+using Ardalis.GuardClauses;
 using Domain.Common;
+using GuardClauses;
 
 namespace Domain.User.ValueObjects;
 
@@ -10,7 +12,7 @@ public class RefreshToken : ValueObject
 
     public RefreshToken(string value)
     {
-        Value = value;
+        Value = Guard.Against.InvalidRefreshToken(value);
         ExpiryTime = DateTime.UtcNow.AddDays(7);
     }
 

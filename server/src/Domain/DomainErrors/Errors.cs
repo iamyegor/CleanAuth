@@ -1,11 +1,6 @@
-using System.Runtime.InteropServices.JavaScript;
-using System.Text.RegularExpressions;
-using Domain.User.ValueObjects;
-using XResults;
-
 namespace Domain.DomainErrors;
 
-public class Errors
+public static class Errors
 {
     public static class Generic
     {
@@ -200,6 +195,25 @@ public class Errors
                 "phone.number.already.taken",
                 "Phone number is already taken",
                 details
+            );
+        }
+    }
+
+    public class PhoneNumberVerificationCode
+    {
+        public static Error IsIncorrect()
+        {
+            return new Error(
+                "phone.number.verification.code.incorrect",
+                "Phone number verification code is incorrect"
+            );
+        }
+
+        public static Error IsExpired()
+        {
+            return new Error(
+                "phone.number.verification.code.expired",
+                "Phone number verification code is expired"
             );
         }
     }

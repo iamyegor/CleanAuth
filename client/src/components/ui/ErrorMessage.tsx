@@ -1,5 +1,5 @@
 import exclamationMark from "@/assets/exclamation.png";
-import BaseProps from "@/pages/SignupPage/types/BaseProps.ts";
+import BaseProps from "@/pages/Signup/types/BaseProps.ts";
 import classNames from "classnames";
 interface ErrorMessageProps extends BaseProps {
     errorMessage: string;

@@ -21,7 +21,7 @@ public class Email
             return Errors.Generic.IsRequired(nameof(Email), input);
         }
 
-        string email = input.Trim();
+        string email = input.Trim().ToLower();
         if (email.Length > 150)
         {
             return Errors.Generic.TooLong(nameof(Email), email.Length);

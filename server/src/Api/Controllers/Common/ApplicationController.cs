@@ -16,4 +16,16 @@ public class ApplicationController : ControllerBase
     {
         return result.IsSuccess ? Ok() : Problem(result.Error);
     }
+
+    protected IActionResult FromResult<TValue>(
+        Result<TValue, Error> result
+    )
+    {
+        if (result.IsFailure)
+        {
+            return Problem(result.Error);
+        }
+
+        return Ok(result.Value);
+    }
 }

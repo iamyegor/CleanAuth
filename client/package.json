@@ -10,6 +10,7 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@types/validator": "^13.11.9",
         "axios": "^1.6.7",
         "bootstrap": "^5.3.3",
         "classnames": "^2.5.1",
@@ -19,7 +20,8 @@
         "react-cookie": "^7.0.2",
         "react-dom": "^18.2.0",
         "react-router-dom": "^6.22.1",
-        "spinners-react": "^1.0.7"
+        "spinners-react": "^1.0.7",
+        "validator": "^13.11.0"
     },
     "devDependencies": {
         "@types/react": "^18.2.55",

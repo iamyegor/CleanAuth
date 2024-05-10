@@ -62,7 +62,7 @@ export default function AddPhoneNumberForm() {
                     disabled={!validator.isMobilePhone(keepOnlyDigits(phoneNumber))}
                     loading={state === "loading"}
                     text="Verify Phone"
-                    additionalClasses="bg-red-500 hover:bg-red-600"
+                    additionalEnabledClasses="bg-red-500 hover:bg-red-600"
                 />
             </Form>
         </div>

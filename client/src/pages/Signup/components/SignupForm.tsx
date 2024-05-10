@@ -105,7 +105,7 @@ export default function SignupForm() {
                 <SubmittingButton
                     loading={state == "submitting"}
                     text="Sign up"
-                    additionalClasses="bg-red-500 hover:bg-red-600"
+                    additionalEnabledClasses="bg-red-500 hover:bg-red-600"
                 />
             </Form>
         </div>

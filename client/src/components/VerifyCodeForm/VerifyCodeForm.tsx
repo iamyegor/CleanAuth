@@ -76,7 +76,7 @@ export default function VerifyCodeForm({
                     disabled={!allInputsPopulated()}
                     loading={state == "loading"}
                     text="Verify Code"
-                    additionalClasses="bg-blue-500 hover:bg-blue-600"
+                    additionalEnabledClasses="bg-blue-500 hover:bg-blue-600"
                 />
             </Form>
         </div>

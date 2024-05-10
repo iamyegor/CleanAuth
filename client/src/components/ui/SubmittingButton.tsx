@@ -6,18 +6,22 @@ interface SubmittingButton extends BaseProps {
     loading: boolean;
     text: string;
     disabled?: boolean;
+    additionalEnabledClasses?: string;
 }
 
 export default function SubmittingButton({
     loading,
     text,
     additionalClasses,
+    additionalEnabledClasses,
     disabled = false,
 }: SubmittingButton) {
-    const defaultClasses =
-        "w-full p-4 h-14 text-white rounded-md transition mb-8 flex justify-center items-center";
+    const defaultClasses = classNames(
+        "w-full p-4 h-14 text-white rounded-md transition flex justify-center items-center",
+        additionalClasses,
+    );
 
-    const enabledClasses = classNames("active:scale-105", additionalClasses);
+    const enabledClasses = classNames("active:scale-105", additionalEnabledClasses);
 
     const disabledClasses = "bg-neutral-500";
 

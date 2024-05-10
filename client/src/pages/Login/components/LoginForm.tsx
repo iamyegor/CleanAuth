@@ -73,7 +73,8 @@ export default function LoginForm() {
                 <SubmittingButton
                     loading={state == "submitting"}
                     text="Sign in"
-                    additionalClasses="bg-red-500 hover:bg-red-500"
+                    additionalClasses="mb-8"
+                    additionalEnabledClasses="bg-red-500 hover:bg-red-500"
                 />
                 <SeparatorLine text="Or continue with" additionalClasses="mb-8" />
                 <SocialLoginButtons />

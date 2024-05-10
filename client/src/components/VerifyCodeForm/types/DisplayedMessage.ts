@@ -1,4 +1,5 @@
-export default interface DisplayedMessage {
-    message: string;
-    isSuccess: boolean;
-}
+// export default interface DisplayedMessage {
+//     message: string;
+//     isSuccess: boolean;
+//     generatedAt: Date;
+// }

@@ -10,8 +10,8 @@ import CountdownDisplay from "@/components/VerifyCodeForm/components/CountdownDi
 import getCodeFromForm from "@/components/VerifyCodeForm/utils/getCodeFromForm.ts";
 import BackToPrevPageButton from "@/components/VerifyCodeForm/components/BackToSignupButton.tsx";
 import ResendCodeButton from "@/components/VerifyCodeForm/components/ResendCodeButton.tsx";
-import DisplayedMessage from "@/components/VerifyCodeForm/types/DisplayedMessage.ts";
 import useSecondsLeft from "@/components/VerifyCodeForm/hooks/useSecondsLeft.tsx";
+import DisplayedMessage from "@/components/VerifyCodeForm/utils/DisplayedMessage.ts";
 
 interface VerifyCodeFormProps {
     contactDetail: string;
@@ -28,19 +28,19 @@ export async function baseAction(
     maxCodeLength: number,
     verificationEndpoint: string,
     redirectRoute: string,
-): Promise<string | Response> {
+): Promise<DisplayedMessage | Response> {
     const code: string = await getCodeFromForm(request, maxCodeLength);
 
     const validationResult: Result = validateCode(code, maxCodeLength);
     if (validationResult.isFailure) {
-        return validationResult.errorMessage!;
+        return DisplayedMessage.createError(validationResult.errorMessage!);
     }
 
     try {
         await api.post(verificationEndpoint, { code });
         return redirect(redirectRoute);
     } catch (err) {
-        return getServerErrorMessageOrThrow(err);
+        return DisplayedMessage.createError(getServerErrorMessageOrThrow(err));
     }
 }
 
@@ -54,28 +54,21 @@ export default function VerifyCodeForm({
     resendCodeEndpoint,
 }: VerifyCodeFormProps) {
     const maxSeconds = useRef<number>(0);
-    const actionError = useActionData() as string | null;
+    const actionError = useActionData() as DisplayedMessage;
     const { state } = useNavigation();
     const [inputs, setInputs] = useState<string[]>(Array(codeLength).fill(""));
     const { secondsLeft, setSecondsLeft } = useSecondsLeft(maxSeconds.current);
     const [message, setMessage] = useState<DisplayedMessage | null>(null);
-    const [submissionsNumber, setSubmissionsNumber] = useState<number>(0);
-    const prevSubmissionsNumber = useRef<number>(0);
 
     useEffect(() => {
-        if (actionError && submissionsNumber > prevSubmissionsNumber.current) {
-            setMessage({ isSuccess: false, message: actionError! });
-            prevSubmissionsNumber.current = submissionsNumber;
+        if (!actionError) {
+            return;
         }
-    });
 
-    function incrementSubmissionsNumber() {
-        setSubmissionsNumber((prev) => prev + 1);
-    }
-
-    function allInputsPopulated(): boolean {
-        return inputs.every((i) => i.trim() != "");
-    }
+        if (message === null || actionError.generatedAt > message.generatedAt) {
+            setMessage(actionError);
+        }
+    }, [actionError?.generatedAt]);
 
     return (
         <div className="w-full max-w-md text-center rounded-lg p-6 z-20">
@@ -86,15 +79,13 @@ export default function VerifyCodeForm({
             <Form method="post" action={onSubmitActionRoute}>
                 <VerificationCodeInput inputs={inputs} setInputs={setInputs} message={message} />
                 <SubmittingButton
-                    onClick={incrementSubmissionsNumber}
-                    disabled={!allInputsPopulated()}
                     loading={state == "loading"}
                     text="Verify Code"
                     additionalClasses="mb-6"
                     additionalEnabledClasses="bg-blue-500 hover:bg-blue-600"
                 />
                 <div className="flex justify-center space-x-2 mb-8">
-                    <BackToPrevPageButton route={goBackRoute} text={goBackButtonText}/>
+                    <BackToPrevPageButton route={goBackRoute} text={goBackButtonText} />
                     <ResendCodeButton
                         resendCodeEndpoint={resendCodeEndpoint}
                         setMessage={setMessage}

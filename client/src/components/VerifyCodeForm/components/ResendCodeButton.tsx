@@ -3,8 +3,8 @@ import api from "@/lib/api.ts";
 import getServerErrorMessageOrThrow from "@/utils/getServerErrorMessageOrThrow.ts";
 import React, { useState } from "react";
 import sendImage from "@/components/VerifyCodeForm/images/send.png";
-import DisplayedMessage from "@/components/VerifyCodeForm/types/DisplayedMessage.ts";
 import Spinner from "@/components/ui/Spinner.tsx";
+import DisplayedMessage from "@/components/VerifyCodeForm/utils/DisplayedMessage.ts";
 
 interface ResendCodeButtonProps {
     setSecondsLeft: (seconds: number) => void;
@@ -28,11 +28,11 @@ export default function ResendCodeButton({
 
         try {
             await api.post(resendCodeEndpoint);
-            setMessage({ isSuccess: true, message: "Verification code sent successfully!" });
+            setMessage(DisplayedMessage.createSuccess("Verification code sent successfully!"));
             setSecondsLeft(maxSeconds);
         } catch (err) {
             const error = getServerErrorMessageOrThrow(err);
-            setMessage({ isSuccess: false, message: error });
+            setMessage(DisplayedMessage.createError(error));
         }
 
         setIsLoading(false);

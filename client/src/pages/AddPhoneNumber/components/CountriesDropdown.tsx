@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from "react";
 import downArrowImage from "@/pages/AddPhoneNumber/images/down-arrow.png";
-import CountryCode from "@/pages/AddPhoneNumber/types/CountryCode.ts";
-import countryCodes from "@/pages/AddPhoneNumber/utils/countryCodes.ts";
+import Country from "@/pages/AddPhoneNumber/types/Country.ts";
+import countries from "@/pages/AddPhoneNumber/utils/countries.ts";
 import CountryDropdownOption from "@/pages/AddPhoneNumber/components/CountryDropdownOption.tsx";
 import CountriesSearchBar from "@/pages/AddPhoneNumber/components/CountriesSearchBar.tsx";
-import CountryCodes from "@/pages/AddPhoneNumber/utils/countryCodes.ts";
+import CountryCodes from "@/pages/AddPhoneNumber/utils/countries.ts";
 
 interface CountriesDropdown {
-    country: CountryCode;
-    setCountry: (country: CountryCode) => void;
+    country: Country;
+    setCountry: (country: Country) => void;
 }
 
 function CountriesDropdown({ country, setCountry }: CountriesDropdown) {
@@ -19,7 +19,7 @@ function CountriesDropdown({ country, setCountry }: CountriesDropdown) {
 
     useEffect(() => {
         setDisplayedCountries(
-            countryCodes.filter((c) => c.name.toLowerCase().includes(search.toLowerCase())),
+            countries.filter((c) => c.name.toLowerCase().includes(search.toLowerCase())),
         );
     }, [search]);
 
@@ -36,7 +36,7 @@ function CountriesDropdown({ country, setCountry }: CountriesDropdown) {
         };
     }, [wrapperRef]);
 
-    const handleSelect = (country: CountryCode) => {
+    const handleSelect = (country: Country) => {
         setCountry(country);
         setIsOpen(false);
     };

@@ -48,10 +48,10 @@ public class AddPhoneNumberCommandHandler : IRequestHandler<AddPhoneNumberComman
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        _verificationCodeSender.Send(
-            user.PhoneNumber.Value,
-            user.PhoneNumberVerificationCode.Value
-        );
+        // await _verificationCodeSender.SendAsync(
+        //     user.PhoneNumber.Value,
+        //     user.PhoneNumberVerificationCode.Value
+        // );
 
         return Result.Ok();
     }

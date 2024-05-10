@@ -8,7 +8,7 @@ import validateCode from "@/components/VerifyCodeForm/utils/validateCode.ts";
 import { Result } from "@/utils/result.ts";
 import CountdownDisplay from "@/components/VerifyCodeForm/components/CountdownDisplay.tsx";
 import getCodeFromForm from "@/components/VerifyCodeForm/utils/getCodeFromForm.ts";
-import BackToSignupButton from "@/components/VerifyCodeForm/components/BackToSignupButton.tsx";
+import BackToPrevPageButton from "@/components/VerifyCodeForm/components/BackToSignupButton.tsx";
 import ResendCodeButton from "@/components/VerifyCodeForm/components/ResendCodeButton.tsx";
 import DisplayedMessage from "@/components/VerifyCodeForm/types/DisplayedMessage.ts";
 import useSecondsLeft from "@/components/VerifyCodeForm/hooks/useSecondsLeft.tsx";
@@ -18,6 +18,9 @@ interface VerifyCodeFormProps {
     contactValue: string;
     codeLength: number;
     onSubmitActionRoute: string;
+    goBackRoute: string;
+    goBackButtonText: string;
+    resendCodeEndpoint: string;
 }
 
 export async function baseAction(
@@ -46,8 +49,11 @@ export default function VerifyCodeForm({
     contactValue,
     codeLength,
     onSubmitActionRoute,
+    goBackRoute,
+    goBackButtonText,
+    resendCodeEndpoint,
 }: VerifyCodeFormProps) {
-    const maxSeconds = useRef<number>(60);
+    const maxSeconds = useRef<number>(0);
     const actionError = useActionData() as string | null;
     const { state } = useNavigation();
     const [inputs, setInputs] = useState<string[]>(Array(codeLength).fill(""));
@@ -88,8 +94,9 @@ export default function VerifyCodeForm({
                     additionalEnabledClasses="bg-blue-500 hover:bg-blue-600"
                 />
                 <div className="flex justify-center space-x-2 mb-8">
-                    <BackToSignupButton />
+                    <BackToPrevPageButton route={goBackRoute} text={goBackButtonText}/>
                     <ResendCodeButton
+                        resendCodeEndpoint={resendCodeEndpoint}
                         setMessage={setMessage}
                         setSecondsLeft={setSecondsLeft}
                         secondsLeft={secondsLeft}

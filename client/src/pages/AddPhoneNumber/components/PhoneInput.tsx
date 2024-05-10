@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { formatPhoneNumber } from "@/pages/AddPhoneNumber/utils/formatPhoneNumber.ts";
 import { getPlaceholderBasedOnMaxDigits } from "@/pages/AddPhoneNumber/utils/getPlaceholderBasedOnMaxDigits.ts";
 import CountriesDropdown from "@/pages/AddPhoneNumber/components/CountriesDropdown.tsx";
-import CountryCode from "@/pages/AddPhoneNumber/types/CountryCode.ts";
+import Country from "@/pages/AddPhoneNumber/types/Country.ts";
 
 interface PhoneInputProps {
-    country: CountryCode;
-    setCountry: (value: CountryCode) => void;
+    country: Country;
+    setCountry: (value: Country) => void;
     phoneNumber: string;
     setPhoneNumber: (value: string) => void;
 }
@@ -25,6 +25,10 @@ function PhoneInput({ country, setCountry, phoneNumber, setPhoneNumber }: PhoneI
     function handleBlur() {
         setIsFocused(false);
     }
+
+    useEffect(() => {
+        setPhoneNumber(formatPhoneNumber(country, phoneNumber)); 
+    }, [phoneNumber, country]);
 
     return (
         <div

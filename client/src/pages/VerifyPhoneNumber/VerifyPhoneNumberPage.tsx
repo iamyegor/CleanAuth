@@ -24,6 +24,9 @@ export default function VerifyPhoneNumberPage() {
     return (
         <BaseLoginPage image={primaryImage}>
             <VerifyCodeForm
+                goBackRoute="/add-phone-number"
+                goBackButtonText="Change number"
+                resendCodeEndpoint="api/resend-phone-number-code"
                 contactDetail="Phone Number"
                 contactValue={phoneNumber}
                 codeLength={4}

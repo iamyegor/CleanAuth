@@ -1,12 +1,12 @@
-import countryCodes from "@/pages/AddPhoneNumber/utils/countryCodes.ts";
+import countries from "@/pages/AddPhoneNumber/utils/countries.ts";
 import React from "react";
-import CountryCode from "@/pages/AddPhoneNumber/types/CountryCode.ts";
-import CountryCodes from "@/pages/AddPhoneNumber/utils/countryCodes.ts";
+import Country from "@/pages/AddPhoneNumber/types/Country.ts";
+import CountryCodes from "@/pages/AddPhoneNumber/utils/countries.ts";
 
 interface CountryDropdownOptionsProps {
     index: number;
     handleClick: () => void;
-    country: CountryCode;
+    country: Country;
 }
 
 export default function CountryDropdownOption({
@@ -22,7 +22,7 @@ export default function CountryDropdownOption({
                     <span>{`${country.name} (${country.dialCode})`}</span>
                 </div>
             </div>
-            {countryCodes[CountryCodes.length - 1] != country && <hr />}
+            {countries[CountryCodes.length - 1] != country && <hr />}
         </>
     );
 }

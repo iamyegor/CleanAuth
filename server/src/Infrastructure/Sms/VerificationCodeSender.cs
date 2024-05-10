@@ -9,9 +9,9 @@ public class VerificationCodeSender
         _smsSender = smsSender;
     }
 
-    public void Send(string toPhoneNumber, int verificationCode)
+    public async Task SendAsync(string toPhoneNumber, int verificationCode)
     {
         string message = $"Your verification code - {verificationCode}";
-        _smsSender.Send(toPhoneNumber, message);
+        await _smsSender.SendAsync(toPhoneNumber, message);
     }
 }

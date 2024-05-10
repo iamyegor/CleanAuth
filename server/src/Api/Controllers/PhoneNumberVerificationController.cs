@@ -2,13 +2,13 @@ using Api.Controllers.Common;
 using Api.Dtos;
 using Application.Authentication.Commands.AddPhoneNumber;
 using Application.Authentication.Commands.NeedToAddPhoneNumber;
+using Application.Authentication.Commands.ResendPhoneNumber;
 using Application.Authentication.Commands.VerifyPhoneNumber;
 using Application.Authentication.Queries.GetPhoneNumberForVerification;
 using Domain.DomainErrors;
 using Domain.User.ValueObjects;
 using Infrastructure.Authentication;
 using Infrastructure.Authentication.Extensions;
-using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -77,5 +77,16 @@ public class PhoneNumberVerificationController : ApplicationController
         Response.Cookies.Append(tokensOrError.Value);
 
         return Ok();
+    }
+
+    [HttpPost("resend-phone-number-code"), Authorize(PoliciyNames.PhoneNumberNotVerified)]
+    public async Task<IActionResult> ResendPhoneNumber()
+    {
+        UserId userId = _jwtClaims.GetUserIdFromCookieJwt(Request.Cookies);
+
+        ResendPhoneNumberCommand command = new ResendPhoneNumberCommand(userId);
+        SuccessOr<Error> result = await _mediator.Send(command);
+
+        return FromResult(result);
     }
 }

@@ -1,6 +1,6 @@
-import CountryCode from "@/pages/AddPhoneNumber/types/CountryCode.ts";
+import Country from "@/pages/AddPhoneNumber/types/Country.ts";
 
-const countryCodes: CountryCode[] = [
+const countries: Country[] = [
     { flag: "🇷🇺", name: "Russia", code: "RU", dialCode: "+7", maxDigits: 10 },
     { flag: "🇨🇳", name: "China", code: "CN", dialCode: "+86", maxDigits: 11 },
     { flag: "🇨🇭", name: "Switzerland", code: "CH", dialCode: "+41", maxDigits: 9 },
@@ -257,4 +257,4 @@ const countryCodes: CountryCode[] = [
     { flag: "🇦🇽", name: "Åland Islands", code: "AX", dialCode: "+358" },
 ];
 
-export default countryCodes;
+export default countries;

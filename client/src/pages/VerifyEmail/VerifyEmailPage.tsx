@@ -35,6 +35,9 @@ export default function VerifyEmailPage() {
     return (
         <BaseLoginPage image={signupPrimaryImage}>
             <VerifyCodeForm
+                goBackRoute="/signup"
+                goBackButtonText="Go back to signup"
+                resendCodeEndpoint="api/resend-email-code"
                 contactDetail="Email"
                 contactValue={email}
                 codeLength={5}

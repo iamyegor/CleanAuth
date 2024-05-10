@@ -14,7 +14,7 @@ public class SmsMessageBus
         _fromPhoneNumber = Guard.Against.NullOrWhiteSpace(configuration["SenderPhoneNumber"]);
     }
 
-    public void Send(string toPhoneNumber, string text)
+    public async Task SendAsync(string toPhoneNumber, string text)
     {
         string accountSid = Guard.Against.NullOrEmpty(
             Environment.GetEnvironmentVariable("TWILIO_ACCOUNT_SID")
@@ -26,7 +26,7 @@ public class SmsMessageBus
 
         TwilioClient.Init(accountSid, authToken);
 
-        MessageResource.Create(
+        await MessageResource.CreateAsync(
             body: text,
             from: new Twilio.Types.PhoneNumber(_fromPhoneNumber),
             to: new Twilio.Types.PhoneNumber(toPhoneNumber)

@@ -1,24 +1,35 @@
-import React, { useState } from "react";
+import React from "react";
 import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
 import ErrorMessage from "@/components/ui/ErrorMessage.tsx";
 import SubmittingButton from "@/components/ui/SubmittingButton.tsx";
 import PhoneInput from "@/pages/AddPhoneNumber/components/PhoneInput.tsx";
-import Country from "@/pages/AddPhoneNumber/types/CountryCode.ts";
-import countryCodes from "@/pages/AddPhoneNumber/utils/countryCodes.ts";
+import Country from "@/pages/AddPhoneNumber/types/Country.ts";
+import countries from "@/pages/AddPhoneNumber/utils/countries.ts";
 import validator from "validator";
 import { keepOnlyDigits } from "@/pages/AddPhoneNumber/utils/keepOnlyDigits.ts";
 import api from "@/lib/api.ts";
 import { AxiosError } from "axios";
 import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
+import usePhoneNumber from "@/pages/AddPhoneNumber/hooks/usePhoneNumber.ts";
+import storePhoneNumber from "@/utils/phoneNumberData/storePhoneNumber.ts";
+import storeCountryCodeIndex from "@/utils/phoneNumberData/storeCountryCode.ts";
+import useCountryCode from "@/pages/AddPhoneNumber/hooks/useCountryCode.ts";
 
 export async function action({ request }: any): Promise<string | Response> {
     const data = await request.formData();
 
-    const countryCode: string = data.get("countryCode");
-    const phoneNumberWithCode: string = keepOnlyDigits(data.get("phoneNumber"));
+    const countryCodeIndex: number = parseInt(data.get("countryCodeIndex"));
+    const countryCode: string = countries[countryCodeIndex].dialCode;
+    const phoneNumberWithoutCode: string = keepOnlyDigits(data.get("phoneNumber"));
 
     try {
-        await api.post("api/add-phone-number", { phoneNumber: countryCode + phoneNumberWithCode });
+        await api.post("api/add-phone-number", {
+            phoneNumber: countryCode + phoneNumberWithoutCode,
+        });
+
+        storePhoneNumber(phoneNumberWithoutCode);
+        storeCountryCodeIndex(countryCodeIndex);
+
         return redirect("/verify-phone-number");
     } catch (err) {
         const error = err as AxiosError<ServerErrorResponse>;
@@ -31,10 +42,14 @@ export async function action({ request }: any): Promise<string | Response> {
 }
 
 export default function AddPhoneNumberForm() {
-    const [selectedCountry, setSelectedCountry] = useState<Country>(countryCodes[0]);
-    const [phoneNumber, setPhoneNumber] = useState("");
+    const { country, setCountry } = useCountryCode();
+    const { phoneNumber, setPhoneNumber } = usePhoneNumber();
     const errorMessage = useActionData() as string;
     const { state } = useNavigation();
+
+    function getCountryIndex(country: Country): number {
+        return countries.findIndex((c) => c.name === country.name);
+    }
 
     return (
         <div className="w-full max-w-md text-center rounded-lg p-6 z-20">
@@ -43,9 +58,9 @@ export default function AddPhoneNumberForm() {
             <Form method="post" action={"/add-phone-number"}>
                 <div className="mb-8">
                     <PhoneInput
-                        country={selectedCountry}
+                        country={country}
                         phoneNumber={phoneNumber}
-                        setCountry={setSelectedCountry}
+                        setCountry={setCountry}
                         setPhoneNumber={setPhoneNumber}
                     />
                     {errorMessage && (
@@ -53,8 +68,8 @@ export default function AddPhoneNumberForm() {
                     )}
                 </div>
                 <input
-                    name="countryCode"
-                    value={selectedCountry.dialCode}
+                    name="countryCodeIndex"
+                    value={getCountryIndex(country)}
                     className="hidden"
                     readOnly
                 />

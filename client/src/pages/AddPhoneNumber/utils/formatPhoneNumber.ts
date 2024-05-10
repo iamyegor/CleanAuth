@@ -1,8 +1,8 @@
-import CountryCode from "@/pages/AddPhoneNumber/types/CountryCode.ts";
+import Country from "@/pages/AddPhoneNumber/types/Country.ts";
 import { NOT_DIGITS } from "@/data/regularExpressions.ts";
 
-export function formatPhoneNumber(country: CountryCode, input: string): string {
-    const digits: string = input.replace(NOT_DIGITS, "");
+export function formatPhoneNumber(country: Country, phoneNumber: string): string {
+    const digits: string = phoneNumber.replace(NOT_DIGITS, "");
 
     if (digits.length === 0) {
         return "";

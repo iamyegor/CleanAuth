@@ -8,7 +8,8 @@ import { AxiosError } from "axios";
 import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
 import parseResponseToSignupError from "@/pages/Signup/utils/parseResponseToSignupError.ts";
 import { getSignupData } from "@/pages/Signup/utils/getSignupData.ts";
-import useInitialData from "@/pages/Signup/hooks/useInitialData.ts";
+import useInitialSignupData from "@/pages/Signup/hooks/useInitialSignupData.ts";
+import storeSignupData from "@/utils/initialSignupData/storeSignupData.ts";
 
 export async function action({ request }: any): Promise<SignupError | Response> {
     const form = await request.formData();
@@ -26,7 +27,7 @@ export async function action({ request }: any): Promise<SignupError | Response> 
             password: data.password,
         });
 
-        sessionStorage.setItem("signupData", JSON.stringify(data));
+        storeSignupData(data);
 
         return redirect("/verify-email");
     } catch (err) {
@@ -40,7 +41,7 @@ export async function action({ request }: any): Promise<SignupError | Response> 
 }
 
 export default function SignupForm() {
-    const initialSignupData: SignupData | null = useInitialData();
+    const initialSignupData: SignupData | null = useInitialSignupData();
     const signupError = useActionData() as SignupError;
     const { state } = useNavigation();
 

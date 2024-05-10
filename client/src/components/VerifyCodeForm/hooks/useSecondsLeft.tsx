@@ -1,24 +1,24 @@
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import storeSecondsToResendCode from "@/utils/secondsToResendCode/storeSecondsToResendCode.ts";
-import getSecondsToResendCode from "@/utils/secondsToResendCode/getSecondsToResendCode.ts";
-import clearSecondsToResendCode from "@/utils/secondsToResendCode/clearSecondsToResendCode.ts";
+import storeResendTimer from "@/utils/secondsToResendCode/storeResendTimer.ts";
+import getStoredResendTimer from "@/utils/secondsToResendCode/getStoredResendTimer.ts";
+import clearStoredResendTimer from "@/utils/secondsToResendCode/clearStoredResendTimer.ts";
 
 export default function useSecondsLeft(initialTime: number) {
     const [secondsLeft, setSecondsLeft] = useState<number>(() => {
-        const savedTime = getSecondsToResendCode();
+        const savedTime = getStoredResendTimer();
         return savedTime ? savedTime : initialTime;
     });
 
     const location = useLocation();
 
     useEffect(() => {
-        storeSecondsToResendCode(secondsLeft);
+        storeResendTimer(secondsLeft);
     }, [secondsLeft]);
 
     useEffect(() => {
         return () => {
-            clearSecondsToResendCode();
+            clearStoredResendTimer();
         };
     }, [location]);
 

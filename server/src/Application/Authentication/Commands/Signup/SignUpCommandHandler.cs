@@ -83,7 +83,7 @@ public class SignUpCommandHandler : IRequestHandler<SignUpCommand, Result<Tokens
         EmailVerificationCode verificationCode
     )
     {
-        // To perform context.Update() user with the same id must be detached.
+        // To perform context.Update(), user with the same id must be detached.
         _context.Entry(existingUser).State = EntityState.Detached;
         User user = new User(login, email, password, verificationCode, existingUser.Id);
         _context.Update(user);

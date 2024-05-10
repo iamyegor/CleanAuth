@@ -1,3 +1,6 @@
+using Domain.User.ValueObjects;
+using XResults;
+
 namespace Domain.DomainErrors;
 
 public static class Errors
@@ -98,9 +101,9 @@ public static class Errors
             return new Error("incorrect.login.or.password", "Incorrect login or password", details);
         }
 
-        public static Error NotFound(int userId)
+        public static Error NotFound(UserId userId)
         {
-            var details = new Dictionary<string, object?>() { ["userId"] = userId };
+            var details = new Dictionary<string, object?>() { ["userId"] = userId.Value };
             return new Error("user.not.found", "User was not found", details);
         }
 
@@ -112,6 +115,11 @@ public static class Errors
                 "User was not found with provided refresh token",
                 details
             );
+        }
+
+        public static Error NoPhoneNumber()
+        {
+            return new Error("no.phone.number", "User has no phone number");
         }
     }
 

@@ -1,4 +1,5 @@
 using Domain.User;
+using Domain.User.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -9,9 +10,20 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
     public void Configure(EntityTypeBuilder<User> builder)
     {
         builder.ToTable("users").HasKey(x => x.Id);
-        builder.Property(x => x.Id).HasColumnName("id");
         builder.Property(x => x.IsEmailVerified).HasColumnName("is_email_verified");
         builder.Property(x => x.IsPhoneNumberVerified).HasColumnName("is_phone_number_verified");
+
+        builder
+            .Property(u => u.Id)
+            .HasColumnName("id")
+            .HasConversion(id => id.Value, guid => new UserId(guid))
+            .ValueGeneratedNever();
+
+        // builder
+        //     .Property(x => x.Id)
+        //     .HasColumnName("id")
+        //     .HasConversion(id => id.Value, value => new UserId(value))
+        //     .ValueGeneratedNever();
 
         builder.OwnsOne(
             x => x.Login,

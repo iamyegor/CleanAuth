@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using Domain.User.ValueObjects;
 using Infrastructure.Authentication.Extensions;
 using Microsoft.AspNetCore.Http;
 
@@ -11,12 +12,12 @@ public class JwtClaims
     public const string IsPhoneNumberVerified = "phoneNumberVerified";
     public const string Role = "role";
 
-    public int GetUserIdFromCookieJwt(IRequestCookieCollection cookies)
+    public UserId GetUserIdFromCookieJwt(IRequestCookieCollection cookies)
     {
         string jwtString = cookies.Extract(CookieTokens.Access.Name);
         JwtSecurityToken jwt = new JwtSecurityTokenHandler().ReadJwtToken(jwtString);
-        string claim = jwt.Claims.Single(c => c.Type == JwtClaims.UserId).Value;
+        string claim = jwt.Claims.Single(c => c.Type == UserId).Value;
 
-        return int.Parse(claim);
+        return new UserId(Guid.Parse(claim));
     }
 }

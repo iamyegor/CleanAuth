@@ -7,7 +7,6 @@ namespace Domain.User.ValueObjects;
 public class Email
 {
     public string Value { get; }
-    public int UserId { get; private set; }
 
     private Email(string value)
     {

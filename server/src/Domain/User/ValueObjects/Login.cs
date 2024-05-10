@@ -8,7 +8,6 @@ namespace Domain.User.ValueObjects;
 public class Login : ValueObject
 {
     public string Value { get; private set; }
-    public int UserId { get; private set; }
 
     private Login(string value)
     {

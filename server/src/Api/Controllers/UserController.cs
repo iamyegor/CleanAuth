@@ -29,7 +29,7 @@ public class UserController : ApplicationController
     {
         if (HttpContext.Request.Cookies.TryGetValue("accessToken", out string? token))
         {
-            Result<int, Error> userIdOrError = _jwtService.ExtractUserIdFromToken(token);
+            Result<UserId, Error> userIdOrError = _jwtService.ExtractUserIdFromToken(token);
             if (userIdOrError.IsFailure)
             {
                 return Problem(userIdOrError.Error);

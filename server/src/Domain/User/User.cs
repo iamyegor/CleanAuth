@@ -3,7 +3,7 @@ using Domain.User.ValueObjects;
 
 namespace Domain.User;
 
-public class User : Entity<int>
+public class User : Entity<UserId>
 {
     public Login Login { get; private set; }
     public Email Email { get; private set; }
@@ -17,16 +17,16 @@ public class User : Entity<int>
     public bool IsPhoneNumberVerified { get; set; }
 
     private User()
-        : base(0) { }
+        : base(new UserId()) { }
 
     public User(
         Login login,
         Email email,
         Password password,
         EmailVerificationCode emailVerificationCode,
-        int id = 0
+        UserId? id = null
     )
-        : base(id)
+        : base(id ?? new UserId())
     {
         Login = login;
         Password = password;

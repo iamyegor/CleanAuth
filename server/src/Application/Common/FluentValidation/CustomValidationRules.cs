@@ -18,9 +18,7 @@ public static class CustomValidationRules
                 int length = value.ToString().Length;
                 if (length != expectedLength)
                 {
-                    context.AddError(
-                        Errors.Generic.IncorrectLength(nameof(EmailVerificationCode), length)
-                    );
+                    context.AddError(Errors.Generic.IncorrectLength(context.PropertyPath, length));
                 }
             }
         );

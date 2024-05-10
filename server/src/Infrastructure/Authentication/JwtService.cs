@@ -5,6 +5,7 @@ using System.Text;
 using Ardalis.GuardClauses;
 using Domain.DomainErrors;
 using Domain.User;
+using Domain.User.ValueObjects;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using XResults;
@@ -24,7 +25,7 @@ public class JwtService
     {
         Claim[] claims =
         [
-            new Claim(JwtClaims.UserId, user.Id.ToString()),
+            new Claim(JwtClaims.UserId, user.Id.Value.ToString()),
             new Claim(JwtClaims.Role, user.Role.Value),
             new Claim(JwtClaims.IsEmailVerified, user.IsEmailVerified.ToString().ToLower()),
             new Claim(
@@ -68,7 +69,7 @@ public class JwtService
         return Convert.ToBase64String(randomNumbers);
     }
 
-    public Result<int, Error> ExtractUserIdFromToken(string? token)
+    public Result<UserId, Error> ExtractUserIdFromToken(string? token)
     {
         string secret = Environment.GetEnvironmentVariable("SECRET")!;
 
@@ -94,7 +95,7 @@ public class JwtService
             );
 
             string userIdString = Guard.Against.Null(principal.FindFirst(JwtClaims.UserId)).Value;
-            return int.Parse(userIdString);
+            return new UserId(Guid.Parse(userIdString));
         }
         catch (SecurityTokenValidationException)
         {

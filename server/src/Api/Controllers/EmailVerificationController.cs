@@ -1,8 +1,9 @@
 using Api.Controllers.Common;
 using Api.Dtos;
 using Application.Authentication.Commands.VerifyEmail;
-using Application.Authentication.Queries.EmailForVerification;
+using Application.Authentication.Queries.GetEmailForVerification;
 using Domain.DomainErrors;
+using Domain.User.ValueObjects;
 using Infrastructure.Authentication;
 using Infrastructure.Authentication.Extensions;
 using MediatR;
@@ -28,7 +29,7 @@ public class EmailVerificationController : ApplicationController
     [HttpGet("email-for-verification"), Authorize(PoliciyNames.EmailNotVerified)]
     public async Task<IActionResult> GetEmailForVerification()
     {
-        int userId = _jwtClaims.GetUserIdFromCookieJwt(Request.Cookies);
+        UserId userId = _jwtClaims.GetUserIdFromCookieJwt(Request.Cookies);
 
         GetEmailForVerificationQuery query = new GetEmailForVerificationQuery(userId);
         Result<string, Error> emailOrError = await _mediator.Send(query);
@@ -39,7 +40,7 @@ public class EmailVerificationController : ApplicationController
     [HttpPost("verify-email"), Authorize(PoliciyNames.EmailNotVerified)]
     public async Task<IActionResult> VerifyEmail(VerifyEmailDto dto)
     {
-        int userId = _jwtClaims.GetUserIdFromCookieJwt(Request.Cookies);
+        UserId userId = _jwtClaims.GetUserIdFromCookieJwt(Request.Cookies);
 
         VerifyEmailCommand command = new VerifyEmailCommand(userId, dto.Code);
         Result<Tokens, Error> tokensOrError = await _mediator.Send(command);

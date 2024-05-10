@@ -1,3 +1,3 @@
 namespace Api.Dtos;
 
-public record VerifyPhoneNumberDto(int UserId, int Code);
+public record VerifyPhoneNumberDto(int Code);

@@ -7,13 +7,14 @@ import VerifyEmailPage, {
     action as verifyEmailAction,
     loader as verifyEmailLoader,
 } from "@/pages/VerifyEmail/VerifyEmailPage.tsx";
-import SignupPage from "@/pages/Signup/SignupPage.tsx";
+import SignupPage, { loader as signupPageLoader } from "@/pages/Signup/SignupPage.tsx";
 import AddPhoneNumberPage, {
     loader as addPhoneNumberLoader,
 } from "@/pages/AddPhoneNumber/AddPhoneNumberPage.tsx";
 import { action as addPhoneNumberAction } from "@/pages/AddPhoneNumber/components/AddPhoneNumberForm.tsx";
 import VerifyPhoneNumberPage, {
     action as verifyPhoneNumberAction,
+    loader as verifyPhoneNumberLoader,
 } from "@/pages/VerifyPhoneNumber/VerifyPhoneNumberPage.tsx";
 
 const router = createBrowserRouter([
@@ -24,7 +25,7 @@ const router = createBrowserRouter([
         action: loginAction,
         loader: loginLoader,
     },
-    { path: "/signup", element: <SignupPage />, action: signupAction },
+    { path: "/signup", element: <SignupPage />, action: signupAction, loader: signupPageLoader },
     {
         path: "/verify-email",
         element: <VerifyEmailPage />,
@@ -41,6 +42,7 @@ const router = createBrowserRouter([
         path: "/verify-phone-number",
         element: <VerifyPhoneNumberPage />,
         action: verifyPhoneNumberAction,
+        loader: verifyPhoneNumberLoader,
     },
 ]);
 

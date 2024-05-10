@@ -25,12 +25,9 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.User.User", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer")
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid")
                         .HasColumnName("id");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<bool>("IsEmailVerified")
                         .HasColumnType("boolean")
@@ -69,8 +66,8 @@ namespace Infrastructure.Migrations
                 {
                     b.OwnsOne("Domain.User.ValueObjects.Email", "Email", b1 =>
                         {
-                            b1.Property<int>("UserId")
-                                .HasColumnType("integer");
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uuid");
 
                             b1.Property<string>("Value")
                                 .IsRequired()
@@ -90,8 +87,8 @@ namespace Infrastructure.Migrations
 
                     b.OwnsOne("Domain.User.ValueObjects.EmailVerificationCode", "EmailVerificationCode", b1 =>
                         {
-                            b1.Property<int>("UserId")
-                                .HasColumnType("integer");
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uuid");
 
                             b1.Property<DateTime>("ExpiryTime")
                                 .HasColumnType("timestamp with time zone")
@@ -111,8 +108,8 @@ namespace Infrastructure.Migrations
 
                     b.OwnsOne("Domain.User.ValueObjects.Login", "Login", b1 =>
                         {
-                            b1.Property<int>("UserId")
-                                .HasColumnType("integer");
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uuid");
 
                             b1.Property<string>("Value")
                                 .IsRequired()
@@ -132,8 +129,8 @@ namespace Infrastructure.Migrations
 
                     b.OwnsOne("Domain.User.ValueObjects.PhoneNumber", "PhoneNumber", b1 =>
                         {
-                            b1.Property<int>("UserId")
-                                .HasColumnType("integer");
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uuid");
 
                             b1.Property<string>("Value")
                                 .IsRequired()
@@ -153,8 +150,8 @@ namespace Infrastructure.Migrations
 
                     b.OwnsOne("Domain.User.ValueObjects.PhoneNumberVerificationCode", "PhoneNumberVerificationCode", b1 =>
                         {
-                            b1.Property<int>("UserId")
-                                .HasColumnType("integer");
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uuid");
 
                             b1.Property<DateTime>("ExpiryTime")
                                 .HasColumnType("timestamp with time zone")
@@ -174,8 +171,8 @@ namespace Infrastructure.Migrations
 
                     b.OwnsOne("Domain.User.ValueObjects.RefreshToken", "RefreshToken", b1 =>
                         {
-                            b1.Property<int>("UserId")
-                                .HasColumnType("integer");
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uuid");
 
                             b1.Property<DateTime>("ExpiryTime")
                                 .HasColumnType("timestamp with time zone")

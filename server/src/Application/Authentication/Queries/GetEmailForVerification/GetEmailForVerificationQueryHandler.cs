@@ -5,7 +5,7 @@ using MediatR;
 using Npgsql;
 using XResults;
 
-namespace Application.Authentication.Queries.EmailForVerification;
+namespace Application.Authentication.Queries.GetEmailForVerification;
 
 public class GetEmailForVerificationQueryHandler
     : IRequestHandler<GetEmailForVerificationQuery, Result<string, Error>>
@@ -22,9 +22,9 @@ public class GetEmailForVerificationQueryHandler
         CancellationToken cancellationToken
     )
     {
-        string sql = "select email from users where id = @UserId";
+        string sql = "select email from users where id = @Id";
 
         NpgsqlConnection connection = _connectionFactory.Create();
-        return await connection.QuerySingleAsync<string>(sql, new { query.UserId });
+        return await connection.QuerySingleAsync<string>(sql, new { Id = query.UserId.Value });
     }
 }

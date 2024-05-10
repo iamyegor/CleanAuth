@@ -66,18 +66,18 @@ export default function VerifyCodeForm({
                     setInputs={setInputs}
                     errorMessage={errorMessage}
                 />
-                <div className="mb-8 flex justify-start space-x-1">
-                    <div>Entered incorrect email?</div>
-                    <NavLink to={"/signup"} className="text-blue-500 hover:underline">
-                        Go back
-                    </NavLink>
-                </div>
                 <SubmittingButton
                     disabled={!allInputsPopulated()}
                     loading={state == "loading"}
                     text="Verify Code"
+                    additionalClasses="mb-6"
                     additionalEnabledClasses="bg-blue-500 hover:bg-blue-600"
                 />
+                <div className="flex justify-center font-semibold">
+                    <NavLink to={"/signup"} className="text-blue-500 hover:underline">
+                        Go back to signup 
+                    </NavLink>
+                </div>
             </Form>
         </div>
     );

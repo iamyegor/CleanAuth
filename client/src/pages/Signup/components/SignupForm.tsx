@@ -1,14 +1,6 @@
 import InputField from "@/components/ui/InputField.tsx";
 import SubmittingButton from "@/components/ui/SubmittingButton.tsx";
-import {
-    Form,
-    json,
-    NavLink,
-    redirect,
-    useActionData,
-    useLoaderData,
-    useNavigation,
-} from "react-router-dom";
+import { Form, NavLink, redirect, useActionData, useNavigation } from "react-router-dom";
 import { validateSignupData } from "@/pages/Signup/utils/validateSignupData.ts";
 import { Result } from "@/utils/resultOfT.ts";
 import api from "@/lib/api.ts";
@@ -16,6 +8,7 @@ import { AxiosError } from "axios";
 import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
 import parseResponseToSignupError from "@/pages/Signup/utils/parseResponseToSignupError.ts";
 import { getSignupData } from "@/pages/Signup/utils/getSignupData.ts";
+import useInitialData from "@/pages/Signup/hooks/useInitialData.ts";
 
 export async function action({ request }: any): Promise<SignupError | Response> {
     const form = await request.formData();
@@ -47,7 +40,7 @@ export async function action({ request }: any): Promise<SignupError | Response> 
 }
 
 export default function SignupForm() {
-    const initialSignupData = useLoaderData() as SignupData | null;
+    const initialSignupData: SignupData | null = useInitialData();
     const signupError = useActionData() as SignupError;
     const { state } = useNavigation();
 

@@ -6,17 +6,19 @@ import focusInputBasedOnKey from "@/components/VerifyCodeForm/utils/focusInputBa
 import addNewValueToInputs from "@/components/VerifyCodeForm/utils/addNewValueToInputs.ts";
 import "@/components/VerifyCodeForm/styles/index.css";
 import ErrorMessage from "@/components/ui/ErrorMessage.tsx";
+import checkImage from "@/components/VerifyCodeForm/images/check.png";
+import DisplayedMessage from "@/components/VerifyCodeForm/types/DisplayedMessage.ts";
 
 interface VerificationCodeProps {
     inputs: string[];
     setInputs: (inputs: string[]) => void;
-    errorMessage: string;
+    message: DisplayedMessage | null;
 }
 
 export default function VerificationCodeInput({
     inputs,
     setInputs,
-    errorMessage,
+    message,
 }: VerificationCodeProps) {
     const inputRefs = useRef<HTMLInputElement[]>([]);
 
@@ -53,11 +55,13 @@ export default function VerificationCodeInput({
 
     const classes = classNames(
         "default-verification-code-input",
-        errorMessage ? "verification-code-input-error" : "verification-code-input-ok",
+        !message || message.isSuccess
+            ? "verification-code-input-ok"
+            : "verification-code-input-error",
     );
 
     return (
-        <div className="mb-8">
+        <div className="mb-6">
             <div className="flex justify-center space-x-3">
                 {inputs.map((value, index) => (
                     <input
@@ -78,7 +82,18 @@ export default function VerificationCodeInput({
                     />
                 ))}
             </div>
-            {errorMessage && <ErrorMessage errorMessage={errorMessage} additionalClasses="mt-8" />}
+            {message && (
+                <div className="flex justify-center mt-6">
+                    {message.isSuccess ? (
+                        <div className="flex space-x-1.5 items-center">
+                            <img src={checkImage} alt="check" className="w-5 h-5" />
+                            <p className="text-green-500">{message.message}</p>
+                        </div>
+                    ) : (
+                        <ErrorMessage errorMessage={message.message} />
+                    )}
+                </div>
+            )}
         </div>
     );
 }

@@ -1,11 +1,17 @@
-import { Form, NavLink, redirect, useActionData, useNavigation } from "react-router-dom";
+import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
 import SubmittingButton from "@/components/ui/SubmittingButton.tsx";
 import VerificationCodeInput from "@/components/VerifyCodeForm/components/VerificationCodeInput.tsx";
-import { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import api from "@/lib/api.ts";
 import getServerErrorMessageOrThrow from "@/utils/getServerErrorMessageOrThrow.ts";
 import validateCode from "@/components/VerifyCodeForm/utils/validateCode.ts";
 import { Result } from "@/utils/result.ts";
+import CountdownDisplay from "@/components/VerifyCodeForm/components/CountdownDisplay.tsx";
+import getCodeFromForm from "@/components/VerifyCodeForm/utils/getCodeFromForm.ts";
+import BackToSignupButton from "@/components/VerifyCodeForm/components/BackToSignupButton.tsx";
+import ResendCodeButton from "@/components/VerifyCodeForm/components/ResendCodeButton.tsx";
+import DisplayedMessage from "@/components/VerifyCodeForm/types/DisplayedMessage.ts";
+import useSecondsLeft from "@/components/VerifyCodeForm/hooks/useSecondsLeft.tsx";
 
 interface VerifyCodeFormProps {
     contactDetail: string;
@@ -20,12 +26,7 @@ export async function baseAction(
     verificationEndpoint: string,
     redirectRoute: string,
 ): Promise<string | Response> {
-    const form = await request.formData();
-
-    let code: string = "";
-    for (let i = 0; i < maxCodeLength; i++) {
-        code += form.get(`code-${i}`);
-    }
+    const code: string = await getCodeFromForm(request, maxCodeLength);
 
     const validationResult: Result = validateCode(code, maxCodeLength);
     if (validationResult.isFailure) {
@@ -46,9 +47,25 @@ export default function VerifyCodeForm({
     codeLength,
     onSubmitActionRoute,
 }: VerifyCodeFormProps) {
-    const errorMessage = useActionData() as string;
+    const maxSeconds = useRef<number>(60);
+    const actionError = useActionData() as string | null;
     const { state } = useNavigation();
     const [inputs, setInputs] = useState<string[]>(Array(codeLength).fill(""));
+    const { secondsLeft, setSecondsLeft } = useSecondsLeft(maxSeconds.current);
+    const [message, setMessage] = useState<DisplayedMessage | null>(null);
+    const [submissionsNumber, setSubmissionsNumber] = useState<number>(0);
+    const prevSubmissionsNumber = useRef<number>(0);
+
+    useEffect(() => {
+        if (actionError && submissionsNumber > prevSubmissionsNumber.current) {
+            setMessage({ isSuccess: false, message: actionError! });
+            prevSubmissionsNumber.current = submissionsNumber;
+        }
+    });
+
+    function incrementSubmissionsNumber() {
+        setSubmissionsNumber((prev) => prev + 1);
+    }
 
     function allInputsPopulated(): boolean {
         return inputs.every((i) => i.trim() != "");
@@ -61,23 +78,25 @@ export default function VerifyCodeForm({
                 Please enter the verification code sent to <u>{contactValue}</u>
             </p>
             <Form method="post" action={onSubmitActionRoute}>
-                <VerificationCodeInput
-                    inputs={inputs}
-                    setInputs={setInputs}
-                    errorMessage={errorMessage}
-                />
+                <VerificationCodeInput inputs={inputs} setInputs={setInputs} message={message} />
                 <SubmittingButton
+                    onClick={incrementSubmissionsNumber}
                     disabled={!allInputsPopulated()}
                     loading={state == "loading"}
                     text="Verify Code"
                     additionalClasses="mb-6"
                     additionalEnabledClasses="bg-blue-500 hover:bg-blue-600"
                 />
-                <div className="flex justify-center font-semibold">
-                    <NavLink to={"/signup"} className="text-blue-500 hover:underline">
-                        Go back to signup 
-                    </NavLink>
+                <div className="flex justify-center space-x-2 mb-8">
+                    <BackToSignupButton />
+                    <ResendCodeButton
+                        setMessage={setMessage}
+                        setSecondsLeft={setSecondsLeft}
+                        secondsLeft={secondsLeft}
+                        maxSeconds={maxSeconds.current}
+                    />
                 </div>
+                <CountdownDisplay secondsLeft={secondsLeft} />
             </Form>
         </div>
     );

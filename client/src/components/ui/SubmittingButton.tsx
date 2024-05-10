@@ -7,6 +7,7 @@ interface SubmittingButton extends BaseProps {
     text: string;
     disabled?: boolean;
     additionalEnabledClasses?: string;
+    onClick?: () => void;
 }
 
 export default function SubmittingButton({
@@ -15,6 +16,7 @@ export default function SubmittingButton({
     additionalClasses,
     additionalEnabledClasses,
     disabled = false,
+    onClick,
 }: SubmittingButton) {
     const defaultClasses = classNames(
         "w-full p-4 h-14 text-white rounded-md transition flex justify-center items-center",
@@ -23,7 +25,7 @@ export default function SubmittingButton({
 
     const enabledClasses = classNames("active:scale-105", additionalEnabledClasses);
 
-    const disabledClasses = "bg-neutral-500";
+    const disabledClasses = "bg-neutral-500 text-neutral-200";
 
     const classes: string = classNames(
         defaultClasses,
@@ -31,7 +33,7 @@ export default function SubmittingButton({
     );
 
     return (
-        <button disabled={loading || disabled} type="submit" className={classes}>
+        <button disabled={loading || disabled} type="submit" className={classes} onClick={onClick}>
             {loading ? (
                 <SpinnerCircularFixed
                     size={30}

@@ -1,5 +1,6 @@
 using Api.Controllers.Common;
 using Api.Dtos;
+using Application.Authentication.Commands.ResendEmailCommand;
 using Application.Authentication.Commands.VerifyEmail;
 using Application.Authentication.Queries.GetEmailForVerification;
 using Domain.DomainErrors;
@@ -52,5 +53,16 @@ public class EmailVerificationController : ApplicationController
         Response.Cookies.Append(tokensOrError.Value);
 
         return Ok();
+    }
+
+    [HttpPost("resend-email-code"), Authorize(PoliciyNames.EmailNotVerified)]
+    public async Task<IActionResult> ResendEmail()
+    {
+        UserId userId = _jwtClaims.GetUserIdFromCookieJwt(Request.Cookies);
+
+        ResendEmailCommand command = new ResendEmailCommand(userId);
+        SuccessOr<Error> result = await _mediator.Send(command);
+
+        return FromResult(result);
     }
 }

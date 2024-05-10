@@ -7,6 +7,7 @@ import VerifyCodeForm, { baseAction } from "@/components/VerifyCodeForm/VerifyCo
 export async function loader(): Promise<string | Response> {
     try {
         const response = await api.get<string>("api/email-for-verification");
+
         return response.data;
     } catch {
         return redirect("/signup");

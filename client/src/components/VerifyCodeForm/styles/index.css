@@ -10,3 +10,14 @@
 .verification-code-input-error {
     @apply ring-red-400 ring-2;
 }
+
+.verification-code-auxiliary-button {
+    @apply text-white hover:bg-blue-600 flex-1 bg-blue-500 rounded-md transition h-14 flex 
+    justify-center items-center disabled:bg-neutral-500 disabled:text-neutral-200
+    shadow-lg shadow-blue-200 disabled:shadow-gray-200;
+}
+
+.verification-code-auxiliary-button--loading {
+    @apply text-white flex-1 bg-neutral-500 rounded-md transition h-14 flex justify-center 
+    items-center;
+}

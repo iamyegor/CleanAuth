@@ -6,16 +6,16 @@ using Microsoft.Extensions.Options;
 
 namespace Infrastructure.Emails;
 
-public class MessageBus
+public class EmailMessageSender
 {
     private readonly EmailSettings _emailSettings;
 
-    public MessageBus(IOptions<EmailSettings> emailSettings)
+    public EmailMessageSender(IOptions<EmailSettings> emailSettings)
     {
         _emailSettings = emailSettings.Value;
     }
 
-    public void SendEmailVerificationCode(Email email, EmailVerificationCode code)
+    public async Task SendEmailVerificationCode(string email, int code)
     {
         using (var client = new SmtpClient(_emailSettings.MailServer, _emailSettings.MailPort))
         {
@@ -27,9 +27,9 @@ public class MessageBus
 
             string basePath = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location)!;
             string htmlPath = Path.Combine(basePath, "Emails", "ui", "email.html");
-            var htmlContent = File.ReadAllText(htmlPath);
+            string htmlContent = await File.ReadAllTextAsync(htmlPath);
 
-            string emailBody = string.Format(htmlContent, code.Value);
+            string emailBody = string.Format(htmlContent, code);
 
             var mailMessage = new MailMessage
             {
@@ -38,9 +38,9 @@ public class MessageBus
                 Body = emailBody,
                 IsBodyHtml = true
             };
-            mailMessage.To.Add(email.Value);
+            mailMessage.To.Add(email);
 
-            client.Send(mailMessage);
+            await client.SendMailAsync(mailMessage);
         }
     }
 }

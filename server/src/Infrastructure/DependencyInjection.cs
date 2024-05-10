@@ -41,7 +41,7 @@ public static class DependencyInjection
             settings.Password = Environment.GetEnvironmentVariable("OUTLOOK_PASSWORD")!;
         });
 
-        services.AddTransient<MessageBus>();
+        services.AddTransient<EmailMessageSender>();
 
         return services;
     }

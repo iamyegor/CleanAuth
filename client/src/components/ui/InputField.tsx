@@ -7,6 +7,7 @@ interface InputFieldProps extends BaseProps {
     name: string;
     placeholder: string;
     errorMessage?: string;
+    defaultValue?: string;
 }
 
 export default function InputField({
@@ -15,6 +16,7 @@ export default function InputField({
     placeholder,
     additionalClasses,
     errorMessage,
+    defaultValue,
 }: InputFieldProps) {
     const defaultClasses =
         "w-full p-4 border rounded-md shadow-sm shadow-gray-200 outline-none " +
@@ -24,10 +26,16 @@ export default function InputField({
     const errorClasses = "ring-red-400 ring-2 border-white";
 
     const classes = classNames(defaultClasses, errorMessage ? errorClasses : noErrorClasses);
-    
+
     return (
         <div className={additionalClasses}>
-            <input type={type} name={name} placeholder={placeholder} className={classes} />
+            <input
+                type={type}
+                name={name}
+                placeholder={placeholder}
+                className={classes}
+                defaultValue={defaultValue ?? ""}
+            />
             {errorMessage && <ErrorMessage errorMessage={errorMessage} />}
         </div>
     );

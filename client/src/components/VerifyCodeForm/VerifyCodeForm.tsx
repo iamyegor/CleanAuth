@@ -1,4 +1,4 @@
-import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
+import { Form, NavLink, redirect, useActionData, useNavigation } from "react-router-dom";
 import SubmittingButton from "@/components/ui/SubmittingButton.tsx";
 import VerificationCodeInput from "@/components/VerifyCodeForm/components/VerificationCodeInput.tsx";
 import { useState } from "react";
@@ -66,6 +66,12 @@ export default function VerifyCodeForm({
                     setInputs={setInputs}
                     errorMessage={errorMessage}
                 />
+                <div className="mb-8 flex justify-start space-x-1">
+                    <div>Entered incorrect email?</div>
+                    <NavLink to={"/signup"} className="text-blue-500 hover:underline">
+                        Go back
+                    </NavLink>
+                </div>
                 <SubmittingButton
                     disabled={!allInputsPopulated()}
                     loading={state == "loading"}

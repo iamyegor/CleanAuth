@@ -1,6 +1,14 @@
 import InputField from "@/components/ui/InputField.tsx";
 import SubmittingButton from "@/components/ui/SubmittingButton.tsx";
-import { Form, NavLink, redirect, useActionData, useNavigation } from "react-router-dom";
+import {
+    Form,
+    json,
+    NavLink,
+    redirect,
+    useActionData,
+    useLoaderData,
+    useNavigation,
+} from "react-router-dom";
 import { validateSignupData } from "@/pages/Signup/utils/validateSignupData.ts";
 import { Result } from "@/utils/resultOfT.ts";
 import api from "@/lib/api.ts";
@@ -25,6 +33,8 @@ export async function action({ request }: any): Promise<SignupError | Response> 
             password: data.password,
         });
 
+        sessionStorage.setItem("signupData", JSON.stringify(data));
+
         return redirect("/verify-email");
     } catch (err) {
         const error = err as AxiosError<ServerErrorResponse>;
@@ -37,6 +47,7 @@ export async function action({ request }: any): Promise<SignupError | Response> 
 }
 
 export default function SignupForm() {
+    const initialSignupData = useLoaderData() as SignupData | null;
     const signupError = useActionData() as SignupError;
     const { state } = useNavigation();
 
@@ -59,6 +70,7 @@ export default function SignupForm() {
                     placeholder="Username"
                     additionalClasses="mb-4"
                     errorMessage={getErrorMessage("username")}
+                    defaultValue={initialSignupData?.username}
                 />
                 <InputField
                     type="email"
@@ -66,6 +78,7 @@ export default function SignupForm() {
                     placeholder="Email"
                     additionalClasses="mb-4"
                     errorMessage={getErrorMessage("email")}
+                    defaultValue={initialSignupData?.email}
                 />
                 <InputField
                     type="password"
@@ -73,6 +86,7 @@ export default function SignupForm() {
                     placeholder="Password"
                     additionalClasses="mb-4"
                     errorMessage={getErrorMessage("password")}
+                    defaultValue={initialSignupData?.password}
                 />
                 <InputField
                     type="password"
@@ -80,6 +94,7 @@ export default function SignupForm() {
                     placeholder="Repeat Password"
                     additionalClasses="mb-8"
                     errorMessage={getErrorMessage("repeatedPassword")}
+                    defaultValue={initialSignupData?.repeatedPassword}
                 />
                 <div className="mb-8 text-lef text-sm flex space-x-1 items-center">
                     <span>Already a member?</span>

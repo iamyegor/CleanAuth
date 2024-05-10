@@ -14,7 +14,18 @@ export async function loader(): Promise<string | Response> {
 }
 
 export async function action({ request }: any): Promise<string | Response> {
-    return baseAction(request, 5, "api/verify-email", "/add-phone-number");
+    const result: string | Response = await baseAction(
+        request,
+        5,
+        "api/verify-email",
+        "/add-phone-number",
+    );
+
+    if (result instanceof Response) {
+        sessionStorage.removeItem("signupData");
+    }
+
+    return result;
 }
 
 export default function VerifyEmailPage() {

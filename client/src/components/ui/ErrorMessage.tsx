@@ -3,7 +3,6 @@ import Image from "@/components/ui/Image.tsx";
 
 interface ErrorMessageProps {
     errorMessage: string;
-    extraTopMargin?: boolean;
 }
 
 export default function ErrorMessage({ errorMessage }: ErrorMessageProps) {

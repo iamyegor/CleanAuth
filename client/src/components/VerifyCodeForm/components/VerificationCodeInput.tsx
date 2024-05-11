@@ -60,7 +60,7 @@ export default function VerificationCodeInput({
     );
 
     return (
-        <div className="mb-8">
+        <div className="space-y-4">
             <div className="flex justify-center space-x-3">
                 {inputs.map((value, index) => (
                     <input

@@ -54,27 +54,33 @@ export default function AddPhoneNumberForm() {
     return (
         <div className="w-full max-w-md text-center rounded-lg p-6 z-20">
             <h2 className="mb-3 text-4xl font-bold text-gray-900">Verify Your Phone Number</h2>
-            <p className="mb-8 text-lg text-gray-600">Please enter your phone number below</p>
-            <Form method="post" action={"/add-phone-number"}>
-                <div className="mb-8">
+            <p className="mb-8 text-lg text-gray-600">
+                Please enter your phone number below, you'll receive a code
+            </p>
+            <Form
+                method="post"
+                action={"/add-phone-number"}
+                className={errorMessage ? "space-y-4" : "space-y-8"}
+            >
+                <div className="space-y-4">
                     <PhoneInput
                         country={country}
                         phoneNumber={phoneNumber}
                         setCountry={setCountry}
                         setPhoneNumber={setPhoneNumber}
                     />
-                    {errorMessage && <ErrorMessage errorMessage={errorMessage} extraTopMargin />}
+                    {errorMessage && <ErrorMessage errorMessage={errorMessage} />}
                 </div>
+                <SubmittingButton
+                    disabled={!validator.isMobilePhone(keepOnlyDigits(phoneNumber))}
+                    loading={state === "loading"}
+                    text="Request code"
+                />
                 <input
                     name="countryCodeIndex"
                     value={getCountryIndex(country)}
                     className="hidden"
                     readOnly
-                />
-                <SubmittingButton
-                    disabled={!validator.isMobilePhone(keepOnlyDigits(phoneNumber))}
-                    loading={state === "loading"}
-                    text="Verify Phone"
                 />
             </Form>
         </div>

@@ -3,6 +3,7 @@ import api from "@/lib/api.ts";
 import getServerErrorMessageOrThrow from "@/utils/getServerErrorMessageOrThrow.ts";
 import React, { useState } from "react";
 import sendImage from "@/components/VerifyCodeForm/images/send.png";
+import disabledSendImage from "@/components/VerifyCodeForm/images/send_disabled.png";
 import Spinner from "@/components/ui/Spinner.tsx";
 import DisplayedMessage from "@/DisplayedMessage.ts";
 import Image from "@/components/ui/Image.tsx";
@@ -45,18 +46,26 @@ export default function ResendCodeButton({
             : "verification-code-auxiliary-button",
     );
 
+    function isDisabled() {
+        return secondsLeft > 0;
+    }
+
     return (
         <button
             type="button"
             className={resendCodeButtonClasses}
-            disabled={secondsLeft > 0}
+            disabled={isDisabled()}
             onClick={() => resendCode()}
         >
             {isLoading ? (
                 <Spinner size={20} />
             ) : (
                 <>
-                    <Image src={sendImage} alt="return" className="w-5 mt-2 mr-1" />
+                    <Image
+                        src={isDisabled() ? disabledSendImage : sendImage}
+                        alt="return"
+                        className="w-5 mt-2 mr-1"
+                    />
                     <span>Resend code</span>
                 </>
             )}

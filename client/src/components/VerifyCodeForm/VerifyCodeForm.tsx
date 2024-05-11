@@ -53,7 +53,7 @@ export default function VerifyCodeForm({
     goBackButtonText,
     resendCodeEndpoint,
 }: VerifyCodeFormProps) {
-    const maxSeconds = useRef<number>(0);
+    const maxSeconds = useRef<number>(60);
     const actionError = useActionData() as DisplayedMessage;
     const { state } = useNavigation();
     const [inputs, setInputs] = useState<string[]>(Array(codeLength).fill(""));
@@ -76,10 +76,16 @@ export default function VerifyCodeForm({
             <p className="mb-8 text-lg text-gray-600">
                 Please enter the verification code sent to <u>{contactValue}</u>
             </p>
-            <Form method="post" action={onSubmitActionRoute}>
-                <VerificationCodeInput inputs={inputs} setInputs={setInputs} message={message} />
-                <SubmittingButton loading={state == "loading"} text="Verify Code" />
-                <div className="flex justify-center space-x-2 mb-8">
+            <Form method="post" action={onSubmitActionRoute} className="space-y-8">
+                <div className={message ? "space-y-4" : "space-y-8"}>
+                    <VerificationCodeInput
+                        inputs={inputs}
+                        setInputs={setInputs}
+                        message={message}
+                    />
+                    <SubmittingButton loading={state == "loading"} text="Verify Code" />
+                </div>
+                <div className="flex justify-center space-x-2">
                     <BackToPrevPageButton route={goBackRoute} text={goBackButtonText} />
                     <ResendCodeButton
                         resendCodeEndpoint={resendCodeEndpoint}

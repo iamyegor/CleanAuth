@@ -10,7 +10,6 @@ interface PasswordInputProps {
     placeholder: string;
     errorMessage?: string;
     defaultValue?: string;
-    extraBottomMargin?: boolean;
 }
 
 export default function PasswordInput({
@@ -18,7 +17,6 @@ export default function PasswordInput({
     placeholder,
     errorMessage,
     defaultValue,
-    extraBottomMargin = false,
 }: PasswordInputProps) {
     const [isPasswordShown, setIsPasswordShown] = useState(false);
 
@@ -32,7 +30,7 @@ export default function PasswordInput({
     );
 
     return (
-        <div className={extraBottomMargin && !errorMessage ? "mb-8" : "mb-4"}>
+        <div className="space-y-4">
             <div className="relative">
                 <input
                     type={isPasswordShown ? "text" : "password"}

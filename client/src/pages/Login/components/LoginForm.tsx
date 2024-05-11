@@ -56,18 +56,21 @@ export default function LoginForm() {
             <h2 className="mb-3 text-4xl font-bold text-gray-900">Hello Again!</h2>
             <p className="mb-10 text-lg text-gray-600">Welcome back you've been missed!</p>
             <Form method="post" action={"/login"} replace>
-                <InputField
-                    type="text"
-                    name="loginOrEmail"
-                    placeholder="Login or Email"
-                    errorMessage={getErrorMessage("loginOrEmail")}
-                />
-                <PasswordInput
-                    name="password"
-                    placeholder="Password"
-                    extraBottomMargin
-                    errorMessage={getErrorMessage("password")}
-                />
+                <div className={getErrorMessage("password") ? "mb-4" : "mb-8"}>
+                    <div className="space-y-4">
+                        <InputField
+                            type="text"
+                            name="loginOrEmail"
+                            placeholder="Login or Email"
+                            errorMessage={getErrorMessage("loginOrEmail")}
+                        />
+                        <PasswordInput
+                            name="password"
+                            placeholder="Password"
+                            errorMessage={getErrorMessage("password")}
+                        />
+                    </div>
+                </div>
                 <RecoveryAndSignupLinks />
                 <SubmittingButton loading={state == "submitting"} text="Sign in" />
                 <SeparatorLine text="Or continue with" />

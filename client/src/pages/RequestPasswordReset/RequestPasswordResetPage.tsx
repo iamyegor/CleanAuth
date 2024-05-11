@@ -1,5 +1,5 @@
 import React from "react";
-import { Form, useActionData, useNavigation } from "react-router-dom";
+import { Form, NavLink, useActionData, useNavigation } from "react-router-dom";
 import getServerErrorMessageOrThrow from "@/utils/getServerErrorMessageOrThrow.ts";
 import api from "@/lib/api.ts";
 import DisplayedMessage from "@/DisplayedMessage.ts";
@@ -48,7 +48,6 @@ export default function RequestPasswordResetPage() {
                             type="text"
                             name="emailOrUsername"
                             placeholder="Enter email or username"
-                            disableBottomMargin
                         />
                         <SuccessOrErrorMessage message={displayedMessage} />
                         <SubmittingButton
@@ -57,10 +56,14 @@ export default function RequestPasswordResetPage() {
                         />
                     </Form>
                     <div className="flex justify-center mt-8">
-                        <button className="flex items-center space-x-1 hover:underline">
+                        <NavLink
+                            to={"/login"}
+                            className="flex items-center space-x-1 
+                        hover:underline"
+                        >
                             <Image src={returnImage} alt="Return" className="w-5 h-5 mx-auto" />
                             <span>Go back to login</span>
-                        </button>
+                        </NavLink>
                     </div>
                 </div>
             </div>

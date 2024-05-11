@@ -8,8 +8,6 @@ interface InputFieldProps {
     placeholder: string;
     errorMessage?: string;
     defaultValue?: string;
-    extraBottomMargin?: boolean;
-    disableBottomMargin?: boolean;
 }
 
 export default function InputField({
@@ -18,24 +16,14 @@ export default function InputField({
     placeholder,
     errorMessage,
     defaultValue,
-    extraBottomMargin,
-    disableBottomMargin,
 }: InputFieldProps) {
     const classes = classNames(
         "login-input__default",
         errorMessage ? "login-input__error" : "login-input__no-error",
     );
 
-    function getMarginClass(): string {
-        if (disableBottomMargin) {
-            return "";
-        }
-        
-        return extraBottomMargin && !errorMessage ? "mb-8" : "mb-4";
-    }
-
     return (
-        <div className={getMarginClass()}>
+        <div className="space-y-4">
             <input
                 type={type}
                 name={name}

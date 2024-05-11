@@ -21,6 +21,7 @@ import ResetPasswordPage, {
 } from "@/pages/ResetPassword/ResetPasswordPage.tsx";
 import RequestPasswordResetPage, {
     action as requestPasswordResetAction,
+    loader as requestPasswordResetLoader,
 } from "@/pages/RequestPasswordReset/RequestPasswordResetPage.tsx";
 
 const router = createBrowserRouter([
@@ -54,6 +55,7 @@ const router = createBrowserRouter([
         path: "request-password-reset",
         element: <RequestPasswordResetPage />,
         action: requestPasswordResetAction,
+        loader: requestPasswordResetLoader,
     },
     {
         path: "reset-password",

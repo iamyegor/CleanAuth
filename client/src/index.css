@@ -7,3 +7,7 @@
 body * {
     font-family: "Inter", serif !important;
 }
+
+img {
+    pointer-events: none;
+}

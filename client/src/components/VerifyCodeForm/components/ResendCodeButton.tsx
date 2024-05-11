@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import sendImage from "@/components/VerifyCodeForm/images/send.png";
 import Spinner from "@/components/ui/Spinner.tsx";
 import DisplayedMessage from "@/components/VerifyCodeForm/utils/DisplayedMessage.ts";
+import Image from "@/components/ui/Image.tsx";
 
 interface ResendCodeButtonProps {
     setSecondsLeft: (seconds: number) => void;
@@ -55,7 +56,7 @@ export default function ResendCodeButton({
                 <Spinner size={20} />
             ) : (
                 <>
-                    <img src={sendImage} alt="return" className="w-5 mt-2 mr-1" />
+                    <Image src={sendImage} alt="return" className="w-5 mt-2 mr-1" />
                     <span>Resend code</span>
                 </>
             )}

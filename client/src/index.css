@@ -7,8 +7,3 @@
 body * {
     font-family: "Inter", serif !important;
 }
-
-img {
-    user-select: none;
-    -webkit-user-drag: none;
-}

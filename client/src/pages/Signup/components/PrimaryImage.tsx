@@ -1,3 +1,5 @@
+import Image from "@/components/ui/Image.tsx";
+
 interface PrimaryImageProps {
     src: string;
     alt: string;
@@ -6,7 +8,7 @@ interface PrimaryImageProps {
 export default function PrimaryImage(props: PrimaryImageProps) {
     return (
         <div className="w-2/5 flex justify-center items-center">
-            <img
+            <Image
                 src={props.src}
                 alt={props.alt}
                 className="w-full h-full max-h-screen p-3 rounded-3xl object-cover"

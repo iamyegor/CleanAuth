@@ -5,6 +5,7 @@ import countries from "@/pages/AddPhoneNumber/utils/countries.ts";
 import CountryDropdownOption from "@/pages/AddPhoneNumber/components/CountryDropdownOption.tsx";
 import CountriesSearchBar from "@/pages/AddPhoneNumber/components/CountriesSearchBar.tsx";
 import CountryCodes from "@/pages/AddPhoneNumber/utils/countries.ts";
+import Image from "@/components/ui/Image.tsx";
 
 interface CountriesDropdown {
     country: Country;
@@ -52,7 +53,7 @@ function CountriesDropdown({ country, setCountry }: CountriesDropdown) {
                     <span>{country.flag}</span>
                     <span>{country.dialCode}</span>
                 </span>
-                <img src={downArrowImage} alt="Expand" className="w-4 h-4" />
+                <Image src={downArrowImage} alt="Expand" className="w-4 h-4" />
             </div>
             {isOpen && (
                 <div className="absolute top-full mt-3 w-96 z-50 space-y-0.5">

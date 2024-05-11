@@ -3,6 +3,7 @@ import openedEyeImage from "@/components/Inputs/images/opened_eye.png";
 import closedEyeImage from "@/components/Inputs/images/closed_eye.png";
 import classNames from "classnames";
 import ErrorMessage from "@/components/ui/ErrorMessage.tsx";
+import Image from "@/components/ui/Image.tsx";
 
 interface PasswordInputProps {
     name: string;
@@ -46,9 +47,9 @@ export default function PasswordInput({
                     className="absolute inset-y-0 right-4 text-sm leading-5"
                 >
                     {isPasswordShown ? (
-                        <img src={openedEyeImage} alt="eye" className="w-5" />
+                        <Image src={openedEyeImage} alt="eye" className="w-5" />
                     ) : (
-                        <img src={closedEyeImage} alt="eye" className="w-5" />
+                        <Image src={closedEyeImage} alt="eye" className="w-5" />
                     )}
                 </button>
             </div>

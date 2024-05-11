@@ -1,6 +1,7 @@
 import PrimaryImage from "@/pages/Signup/components/PrimaryImage.tsx";
 import abstractFormImage from "@/assets/abstract_3d_form.png";
 import { ReactElement } from "react";
+import Image from "@/components/ui/Image.tsx";
 
 interface BaseLoginPage {
     children: ReactElement;
@@ -15,7 +16,7 @@ export default function BaseLoginPage({ children, image }: BaseLoginPage) {
                 className="flex-1 flex justify-center items-center relative m-3 ml-0 rounded-2xl 
             bg-neutral-100"
             >
-                <img
+                <Image
                     src={abstractFormImage}
                     alt="Decorative background"
                     className="absolute h-1/2 w-1/2 bottom-40 opacity-10 z-10 blur-xl select-none"

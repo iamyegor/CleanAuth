@@ -9,8 +9,8 @@ export default function RecoveryAndSignupLinks() {
                     Sign up!
                 </NavLink>
             </div>
-            <NavLink to="/recovery-password" className="text-sm text-gray-500 hover:underline">
-                Recovery password
+            <NavLink to="/request-password-reset" className="text-sm text-gray-500 hover:underline">
+                Reset password
             </NavLink>
         </div>
     );

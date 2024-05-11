@@ -5,10 +5,8 @@ import classNames from "classnames";
 import focusInputBasedOnKey from "@/components/VerifyCodeForm/utils/focusInputBasedOnKey.ts";
 import addNewValueToInputs from "@/components/VerifyCodeForm/utils/addNewValueToInputs.ts";
 import "@/components/VerifyCodeForm/verification-code-form.css";
-import ErrorMessage from "@/components/ui/ErrorMessage.tsx";
-import checkImage from "@/components/VerifyCodeForm/images/check.png";
-import DisplayedMessage from "@/components/VerifyCodeForm/utils/DisplayedMessage.ts";
-import Image from "@/components/ui/Image.tsx";
+import DisplayedMessage from "@/DisplayedMessage.ts";
+import SuccessOrErrorMessage from "@/components/ui/SuccessOrErrorMessage.tsx";
 
 interface VerificationCodeProps {
     inputs: string[];
@@ -83,18 +81,7 @@ export default function VerificationCodeInput({
                     />
                 ))}
             </div>
-            {message && (
-                <div className="flex justify-center">
-                    {message.isSuccess ? (
-                        <div className="flex space-x-1.5 items-center">
-                            <Image src={checkImage} alt="check" className="w-5 h-5" />
-                            <p className="text-green-500">{message.message}</p>
-                        </div>
-                    ) : (
-                        <ErrorMessage errorMessage={message.message} extraTopMargin />
-                    )}
-                </div>
-            )}
+            <SuccessOrErrorMessage message={message} />
         </div>
     );
 }

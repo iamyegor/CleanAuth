@@ -16,6 +16,12 @@ import VerifyPhoneNumberPage, {
     action as verifyPhoneNumberAction,
     loader as verifyPhoneNumberLoader,
 } from "@/pages/VerifyPhoneNumber/VerifyPhoneNumberPage.tsx";
+import ResetPasswordPage, {
+    loader as resetPasswordLoader,
+} from "@/pages/ResetPassword/ResetPasswordPage.tsx";
+import RequestPasswordResetPage, {
+    action as requestPasswordResetAction,
+} from "@/pages/RequestPasswordReset/RequestPasswordResetPage.tsx";
 
 const router = createBrowserRouter([
     { path: "/", element: <WelcomePage />, loader: welcomePageLoader },
@@ -43,6 +49,16 @@ const router = createBrowserRouter([
         element: <VerifyPhoneNumberPage />,
         action: verifyPhoneNumberAction,
         loader: verifyPhoneNumberLoader,
+    },
+    {
+        path: "request-password-reset",
+        element: <RequestPasswordResetPage />,
+        action: requestPasswordResetAction,
+    },
+    {
+        path: "reset-password",
+        element: <ResetPasswordPage />,
+        loader: resetPasswordLoader,
     },
 ]);
 

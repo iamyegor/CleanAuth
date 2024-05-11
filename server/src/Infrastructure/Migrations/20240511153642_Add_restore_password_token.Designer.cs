@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20240511153642_Add_restore_password_token")]
+    partial class Add_restore_password_token
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -36,6 +39,9 @@ namespace Infrastructure.Migrations
                     b.Property<bool>("IsPhoneNumberVerified")
                         .HasColumnType("boolean")
                         .HasColumnName("is_phone_number_verified");
+
+                    b.Property<Guid?>("RestorePasswordToken")
+                        .HasColumnType("uuid");
 
                     b.ComplexProperty<Dictionary<string, object>>("Password", "Domain.User.User.Password#Password", b1 =>
                         {
@@ -127,27 +133,6 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("UserId");
                         });
 
-                    b.OwnsOne("Domain.User.ValueObjects.PasswordResetToken", "PasswordResetToken", b1 =>
-                        {
-                            b1.Property<Guid>("UserId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<DateTime>("ExpiryTime")
-                                .HasColumnType("timestamp with time zone")
-                                .HasColumnName("password_reset_token_expiry_time");
-
-                            b1.Property<Guid>("Value")
-                                .HasColumnType("uuid")
-                                .HasColumnName("password_reset_token");
-
-                            b1.HasKey("UserId");
-
-                            b1.ToTable("users");
-
-                            b1.WithOwner()
-                                .HasForeignKey("UserId");
-                        });
-
                     b.OwnsOne("Domain.User.ValueObjects.PhoneNumber", "PhoneNumber", b1 =>
                         {
                             b1.Property<Guid>("UserId")
@@ -219,8 +204,6 @@ namespace Infrastructure.Migrations
 
                     b.Navigation("Login")
                         .IsRequired();
-
-                    b.Navigation("PasswordResetToken");
 
                     b.Navigation("PhoneNumber");
 

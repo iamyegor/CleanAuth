@@ -19,12 +19,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasConversion(id => id.Value, guid => new UserId(guid))
             .ValueGeneratedNever();
 
-        // builder
-        //     .Property(x => x.Id)
-        //     .HasColumnName("id")
-        //     .HasConversion(id => id.Value, value => new UserId(value))
-        //     .ValueGeneratedNever();
-
         builder.OwnsOne(
             x => x.Login,
             loginBuilder =>
@@ -98,6 +92,17 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
                 codeBuilder
                     .Property(c => c.ExpiryTime)
                     .HasColumnName("phone_number_verification_code_expiry_time");
+            }
+        );
+
+        builder.OwnsOne(
+            x => x.PasswordResetToken,
+            tokenBuilder =>
+            {
+                tokenBuilder.Property(t => t.Value).HasColumnName("password_reset_token");
+                tokenBuilder
+                    .Property(t => t.ExpiryTime)
+                    .HasColumnName("password_reset_token_expiry_time");
             }
         );
     }

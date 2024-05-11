@@ -43,4 +43,9 @@ public class EmailMessageSender
             await client.SendMailAsync(mailMessage);
         }
     }
+
+    public void SendPasswordResetToken(PasswordResetToken token)
+    {
+        throw new NotImplementedException();
+    }
 }

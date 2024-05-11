@@ -3,7 +3,7 @@ import signupPrimaryImage from "@/pages/Signup/images/signup_image.jpg";
 import { redirect, useLoaderData } from "react-router-dom";
 import api from "@/lib/api.ts";
 import VerifyCodeForm, { baseAction } from "@/components/VerifyCodeForm/VerifyCodeForm.tsx";
-import DisplayedMessage from "@/components/VerifyCodeForm/utils/DisplayedMessage.ts";
+import DisplayedMessage from "@/DisplayedMessage.ts";
 
 export async function loader(): Promise<string | Response> {
     try {

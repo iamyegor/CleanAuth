@@ -4,7 +4,7 @@ import getServerErrorMessageOrThrow from "@/utils/getServerErrorMessageOrThrow.t
 import React, { useState } from "react";
 import sendImage from "@/components/VerifyCodeForm/images/send.png";
 import Spinner from "@/components/ui/Spinner.tsx";
-import DisplayedMessage from "@/components/VerifyCodeForm/utils/DisplayedMessage.ts";
+import DisplayedMessage from "@/DisplayedMessage.ts";
 import Image from "@/components/ui/Image.tsx";
 
 interface ResendCodeButtonProps {

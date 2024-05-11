@@ -1,5 +1,7 @@
+using Ardalis.GuardClauses;
 using Domain.Common;
 using Domain.User.ValueObjects;
+using GuardClauses;
 
 namespace Domain.User;
 
@@ -15,6 +17,7 @@ public class User : Entity<UserId>
     public PhoneNumberVerificationCode? PhoneNumberVerificationCode { get; set; }
     public bool IsEmailVerified { get; set; }
     public bool IsPhoneNumberVerified { get; set; }
+    public PasswordResetToken? PasswordResetToken { get; private set; }
 
     private User()
         : base(new UserId()) { }
@@ -37,5 +40,13 @@ public class User : Entity<UserId>
     public void SetRefreshToken(RefreshToken refreshToken)
     {
         RefreshToken = refreshToken;
+    }
+
+    public void SetPasswordResetToken(PasswordResetToken token)
+    {
+        Guard.Against.False(IsPhoneNumberVerified);
+        Guard.Against.False(IsEmailVerified);
+        
+        PasswordResetToken = token;
     }
 }

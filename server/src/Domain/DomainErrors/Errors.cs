@@ -107,6 +107,12 @@ public static class Errors
             return new Error("user.not.found", "User was not found", details);
         }
 
+        public static Error NotFound(string emailOrLogin)
+        {
+            var details = new Dictionary<string, object?>() { ["emailOrLogin"] = emailOrLogin };
+            return new Error("user.not.found", "User was not found", details);
+        }
+
         public static Error NotFoundWithRefreshToken(string refreshToken)
         {
             var details = new Dictionary<string, object?>() { ["refreshToken"] = refreshToken };
@@ -223,6 +229,32 @@ public static class Errors
                 "phone.number.verification.code.expired",
                 "Phone number verification code is expired"
             );
+        }
+    }
+
+    public class RestorePasswordToken
+    {
+        public static Error Incorrect(object value)
+        {
+            var details = new Dictionary<string, object?>() { ["token"] = value };
+            return new Error(
+                "restore.password.token.incorrect",
+                "Restore password token is incorrect",
+                details
+            );
+        }
+
+        public static SuccessOr<Error> WasntRequested()
+        {
+            return new Error(
+                "restore.password.token.wasnt.requested",
+                "Restore password token wasn't requested"
+            );
+        }
+
+        public static SuccessOr<Error> IsExpired()
+        {
+            return new Error("restore.password.token.expired", "Restore password token is expired");
         }
     }
 }

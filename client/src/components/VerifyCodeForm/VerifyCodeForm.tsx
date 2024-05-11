@@ -11,7 +11,7 @@ import getCodeFromForm from "@/components/VerifyCodeForm/utils/getCodeFromForm.t
 import BackToPrevPageButton from "@/components/VerifyCodeForm/components/BackToSignupButton.tsx";
 import ResendCodeButton from "@/components/VerifyCodeForm/components/ResendCodeButton.tsx";
 import useSecondsLeft from "@/components/VerifyCodeForm/hooks/useSecondsLeft.tsx";
-import DisplayedMessage from "@/components/VerifyCodeForm/utils/DisplayedMessage.ts";
+import DisplayedMessage from "@/DisplayedMessage.ts";
 
 interface VerifyCodeFormProps {
     contactDetail: string;

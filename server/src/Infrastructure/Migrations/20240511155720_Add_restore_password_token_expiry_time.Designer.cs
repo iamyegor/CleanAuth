@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationContext))]
-    partial class ApplicationContextModelSnapshot : ModelSnapshot
+    [Migration("20240511155720_Add_restore_password_token_expiry_time")]
+    partial class Add_restore_password_token_expiry_time
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -127,27 +130,6 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("UserId");
                         });
 
-                    b.OwnsOne("Domain.User.ValueObjects.PasswordResetToken", "PasswordResetToken", b1 =>
-                        {
-                            b1.Property<Guid>("UserId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<DateTime>("ExpiryTime")
-                                .HasColumnType("timestamp with time zone")
-                                .HasColumnName("password_reset_token_expiry_time");
-
-                            b1.Property<Guid>("Value")
-                                .HasColumnType("uuid")
-                                .HasColumnName("password_reset_token");
-
-                            b1.HasKey("UserId");
-
-                            b1.ToTable("users");
-
-                            b1.WithOwner()
-                                .HasForeignKey("UserId");
-                        });
-
                     b.OwnsOne("Domain.User.ValueObjects.PhoneNumber", "PhoneNumber", b1 =>
                         {
                             b1.Property<Guid>("UserId")
@@ -212,6 +194,27 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("UserId");
                         });
 
+                    b.OwnsOne("Domain.User.ValueObjects.RestorePasswordToken", "RestorePasswordToken", b1 =>
+                        {
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<DateTime>("ExpiryTime")
+                                .HasColumnType("timestamp with time zone")
+                                .HasColumnName("restore_password_token_expiry_time");
+
+                            b1.Property<Guid>("Value")
+                                .HasColumnType("uuid")
+                                .HasColumnName("restore_password_token");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
                     b.Navigation("Email")
                         .IsRequired();
 
@@ -220,13 +223,13 @@ namespace Infrastructure.Migrations
                     b.Navigation("Login")
                         .IsRequired();
 
-                    b.Navigation("PasswordResetToken");
-
                     b.Navigation("PhoneNumber");
 
                     b.Navigation("PhoneNumberVerificationCode");
 
                     b.Navigation("RefreshToken");
+
+                    b.Navigation("RestorePasswordToken");
                 });
 #pragma warning restore 612, 618
         }

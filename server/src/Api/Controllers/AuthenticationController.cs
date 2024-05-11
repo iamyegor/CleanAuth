@@ -86,4 +86,5 @@ public class AuthenticationController : ApplicationController
 
         return Ok();
     }
+
 }

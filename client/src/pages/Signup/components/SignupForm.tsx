@@ -1,5 +1,5 @@
-import InputField from "@/components/ui/InputField.tsx";
-import SubmittingButton from "@/components/ui/SubmittingButton.tsx";
+import InputField from "@/components/Inputs/InputField.tsx";
+import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx";
 import { Form, NavLink, redirect, useActionData, useNavigation } from "react-router-dom";
 import { validateSignupData } from "@/pages/Signup/utils/validateSignupData.ts";
 import { Result } from "@/utils/resultOfT.ts";
@@ -10,7 +10,7 @@ import parseResponseToSignupError from "@/pages/Signup/utils/parseResponseToSign
 import { getSignupData } from "@/pages/Signup/utils/getSignupData.ts";
 import useInitialSignupData from "@/pages/Signup/hooks/useInitialSignupData.ts";
 import storeSignupData from "@/utils/initialSignupData/storeSignupData.ts";
-import PasswordInput from "@/components/PasswordInput/PasswordInput.tsx";
+import PasswordInput from "@/components/Inputs/PasswordInput.tsx";
 
 export async function action({ request }: any): Promise<SignupError | Response> {
     const form = await request.formData();
@@ -63,7 +63,6 @@ export default function SignupForm() {
                     type="text"
                     name="username"
                     placeholder="Username"
-                    additionalClasses="mb-4"
                     errorMessage={getErrorMessage("username")}
                     defaultValue={initialSignupData?.username}
                 />
@@ -71,7 +70,6 @@ export default function SignupForm() {
                     type="email"
                     name="email"
                     placeholder="Email"
-                    additionalClasses="mb-4"
                     errorMessage={getErrorMessage("email")}
                     defaultValue={initialSignupData?.email}
                 />
@@ -84,7 +82,7 @@ export default function SignupForm() {
                 <PasswordInput
                     name="repeatedPassword"
                     placeholder="Repeat Password"
-                    addExtraMarginBottom
+                    extraBottomMargin
                     errorMessage={getErrorMessage("repeatedPassword")}
                     defaultValue={initialSignupData?.repeatedPassword}
                 />
@@ -94,11 +92,7 @@ export default function SignupForm() {
                         <span className="text-blue-500">Sign in!</span>
                     </NavLink>
                 </div>
-                <SubmittingButton
-                    loading={state == "submitting"}
-                    text="Sign up"
-                    additionalEnabledClasses="bg-red-500 hover:bg-red-600"
-                />
+                <SubmittingButton loading={state == "submitting"} text="Sign up" />
             </Form>
         </div>
     );

@@ -1,9 +1,8 @@
-import BaseProps from "@/pages/Signup/types/BaseProps.ts";
 import ErrorMessage from "@/components/ui/ErrorMessage.tsx";
 import classNames from "classnames";
-import "@/components/ui/styles/login-input.css";
+import "@/components/Inputs/login-input.css";
 
-interface InputFieldProps extends BaseProps {
+interface InputFieldProps {
     type: string;
     name: string;
     placeholder: string;
@@ -15,7 +14,6 @@ export default function InputField({
     type,
     name,
     placeholder,
-    additionalClasses,
     errorMessage,
     defaultValue,
 }: InputFieldProps) {
@@ -25,7 +23,7 @@ export default function InputField({
     );
 
     return (
-        <div className={additionalClasses}>
+        <div className="mb-4">
             <input
                 type={type}
                 name={name}
@@ -33,7 +31,7 @@ export default function InputField({
                 className={classes}
                 defaultValue={defaultValue ?? ""}
             />
-            {errorMessage && <ErrorMessage errorMessage={errorMessage} additionalClasses="mt-4"/>}
+            {errorMessage && <ErrorMessage errorMessage={errorMessage} />}
         </div>
     );
 }

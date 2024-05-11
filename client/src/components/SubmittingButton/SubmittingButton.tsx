@@ -1,39 +1,32 @@
 import classNames from "classnames";
 import { SpinnerCircularFixed } from "spinners-react";
-import BaseProps from "@/pages/Signup/types/BaseProps.ts";
+import "@/components/SubmittingButton/submitting-button.css";
 
-interface SubmittingButton extends BaseProps {
+interface SubmittingButton {
     loading: boolean;
     text: string;
     disabled?: boolean;
-    additionalEnabledClasses?: string;
     onClick?: () => void;
 }
 
 export default function SubmittingButton({
     loading,
     text,
-    additionalClasses,
-    additionalEnabledClasses,
     disabled = false,
     onClick,
 }: SubmittingButton) {
-    const defaultClasses = classNames(
-        "w-full p-4 h-14 text-white rounded-md transition flex justify-center items-center",
-        additionalClasses,
-    );
-
-    const enabledClasses = classNames("active:scale-105", additionalEnabledClasses);
-
-    const disabledClasses = "bg-neutral-500 text-neutral-200";
-
     const classes: string = classNames(
-        defaultClasses,
-        loading || disabled ? disabledClasses : enabledClasses,
+        "submitting-button__default",
+        loading || disabled ? "submitting-button__disabled" : "submitting-button__enabled",
     );
 
     return (
-        <button disabled={loading || disabled} type="submit" className={classes} onClick={onClick}>
+        <button
+            disabled={loading || disabled}
+            type="submit"
+            className={`${classes} mb-8`}
+            onClick={onClick}
+        >
             {loading ? (
                 <SpinnerCircularFixed
                     size={30}

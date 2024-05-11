@@ -1,13 +1,14 @@
 import exclamationMark from "@/assets/exclamation.png";
-import BaseProps from "@/pages/Signup/types/BaseProps.ts";
 import classNames from "classnames";
-interface ErrorMessageProps extends BaseProps {
+
+interface ErrorMessageProps {
     errorMessage: string;
+    extraTopMargin?: boolean;
 }
 
-export default function ErrorMessage({ errorMessage, additionalClasses }: ErrorMessageProps) {
+export default function ErrorMessage({ errorMessage, extraTopMargin }: ErrorMessageProps) {
     return (
-        <div className={classNames("flex items-start space-x-2", additionalClasses)}>
+        <div className={classNames("flex items-start space-x-2", extraTopMargin ? "mt-8" : "mt-4")}>
             <img src={exclamationMark} alt="exclamationMark" className="w-5 h-5 mt-0.5" />
             <div className="text-red-500 text-left">{errorMessage}</div>
         </div>

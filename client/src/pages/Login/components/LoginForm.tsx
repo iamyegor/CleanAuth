@@ -1,17 +1,17 @@
 import SeparatorLine from "@/pages/Login/components/SeparatorLine.tsx";
-import InputField from "@/components/ui/InputField.tsx";
+import InputField from "@/components/Inputs/InputField.tsx";
 import RecoveryAndSignupLinks from "@/pages/Login/components/RecoveryAndSignupLinks.tsx";
 import SocialLoginButtons from "@/pages/Login/components/SocialLoginButtons.tsx";
 import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
 import api from "@/lib/api.ts";
 import { AxiosError } from "axios";
-import SubmittingButton from "@/components/ui/SubmittingButton.tsx";
+import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx";
 import { validateCredentials } from "@/pages/Login/utils/validateCredentials.ts";
 import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
 import LoginError from "@/pages/Login/types/LoginError.ts";
 import { Result } from "@/utils/resultOfT.ts";
 import { parseResponseToLoginError } from "@/pages/Login/utils/parseResponseToLoginError.ts";
-import PasswordInput from "@/components/PasswordInput/PasswordInput.tsx";
+import PasswordInput from "@/components/Inputs/PasswordInput.tsx";
 
 export async function action({ request }: any): Promise<LoginError | Response> {
     const data = await request.formData();
@@ -60,23 +60,17 @@ export default function LoginForm() {
                     type="text"
                     name="loginOrEmail"
                     placeholder="Login or Email"
-                    additionalClasses="mb-4"
                     errorMessage={getErrorMessage("loginOrEmail")}
                 />
                 <PasswordInput
                     name="password"
                     placeholder="Password"
-                    addExtraMarginBottom
+                    extraBottomMargin
                     errorMessage={getErrorMessage("password")}
                 />
-                <RecoveryAndSignupLinks additionalClasses="mb-8" />
-                <SubmittingButton
-                    loading={state == "submitting"}
-                    text="Sign in"
-                    additionalClasses="mb-8"
-                    additionalEnabledClasses="bg-red-500 hover:bg-red-500"
-                />
-                <SeparatorLine text="Or continue with" additionalClasses="mb-8" />
+                <RecoveryAndSignupLinks />
+                <SubmittingButton loading={state == "submitting"} text="Sign in" />
+                <SeparatorLine text="Or continue with" />
                 <SocialLoginButtons />
             </Form>
         </div>

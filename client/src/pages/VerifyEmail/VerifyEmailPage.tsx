@@ -3,6 +3,7 @@ import signupPrimaryImage from "@/pages/Signup/images/signup_image.jpg";
 import { redirect, useLoaderData } from "react-router-dom";
 import api from "@/lib/api.ts";
 import VerifyCodeForm, { baseAction } from "@/components/VerifyCodeForm/VerifyCodeForm.tsx";
+import DisplayedMessage from "@/components/VerifyCodeForm/utils/DisplayedMessage.ts";
 
 export async function loader(): Promise<string | Response> {
     try {
@@ -14,19 +15,8 @@ export async function loader(): Promise<string | Response> {
     }
 }
 
-export async function action({ request }: any): Promise<string | Response> {
-    const result: string | Response = await baseAction(
-        request,
-        5,
-        "api/verify-email",
-        "/add-phone-number",
-    );
-
-    if (result instanceof Response) {
-        sessionStorage.removeItem("signupData");
-    }
-
-    return result;
+export async function action({ request }: any): Promise<DisplayedMessage | Response> {
+    return await baseAction(request, 5, "api/verify-email", "/add-phone-number");
 }
 
 export default function VerifyEmailPage() {

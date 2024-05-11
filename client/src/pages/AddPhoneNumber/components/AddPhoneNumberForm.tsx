@@ -1,7 +1,7 @@
 import React from "react";
 import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
 import ErrorMessage from "@/components/ui/ErrorMessage.tsx";
-import SubmittingButton from "@/components/ui/SubmittingButton.tsx";
+import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx";
 import PhoneInput from "@/pages/AddPhoneNumber/components/PhoneInput.tsx";
 import Country from "@/pages/AddPhoneNumber/types/Country.ts";
 import countries from "@/pages/AddPhoneNumber/utils/countries.ts";
@@ -63,9 +63,7 @@ export default function AddPhoneNumberForm() {
                         setCountry={setCountry}
                         setPhoneNumber={setPhoneNumber}
                     />
-                    {errorMessage && (
-                        <ErrorMessage errorMessage={errorMessage} additionalClasses="mt-8" />
-                    )}
+                    {errorMessage && <ErrorMessage errorMessage={errorMessage} extraTopMargin />}
                 </div>
                 <input
                     name="countryCodeIndex"
@@ -77,7 +75,6 @@ export default function AddPhoneNumberForm() {
                     disabled={!validator.isMobilePhone(keepOnlyDigits(phoneNumber))}
                     loading={state === "loading"}
                     text="Verify Phone"
-                    additionalEnabledClasses="bg-red-500 hover:bg-red-600"
                 />
             </Form>
         </div>

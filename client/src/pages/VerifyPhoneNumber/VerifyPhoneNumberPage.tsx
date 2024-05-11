@@ -4,8 +4,9 @@ import primaryImage from "@/pages/Signup/images/signup_image.jpg";
 import VerifyCodeForm, { baseAction } from "@/components/VerifyCodeForm/VerifyCodeForm.tsx";
 import { redirect, useLoaderData } from "react-router-dom";
 import api from "@/lib/api.ts";
+import DisplayedMessage from "@/components/VerifyCodeForm/utils/DisplayedMessage.ts";
 
-export async function action({ request }: any): Promise<string | Response> {
+export async function action({ request }: any): Promise<DisplayedMessage | Response> {
     return await baseAction(request, 4, "api/verify-phone-number", "/");
 }
 

@@ -7,7 +7,7 @@ import addNewValueToInputs from "@/components/VerifyCodeForm/utils/addNewValueTo
 import "@/components/VerifyCodeForm/styles/index.css";
 import ErrorMessage from "@/components/ui/ErrorMessage.tsx";
 import checkImage from "@/components/VerifyCodeForm/images/check.png";
-import DisplayedMessage from "@/components/VerifyCodeForm/types/DisplayedMessage.ts";
+import DisplayedMessage from "@/components/VerifyCodeForm/utils/DisplayedMessage.ts";
 
 interface VerificationCodeProps {
     inputs: string[];
@@ -83,14 +83,14 @@ export default function VerificationCodeInput({
                 ))}
             </div>
             {message && (
-                <div className="flex justify-center mt-6">
+                <div className="flex justify-center">
                     {message.isSuccess ? (
                         <div className="flex space-x-1.5 items-center">
                             <img src={checkImage} alt="check" className="w-5 h-5" />
                             <p className="text-green-500">{message.message}</p>
                         </div>
                     ) : (
-                        <ErrorMessage errorMessage={message.message} />
+                        <ErrorMessage errorMessage={message.message} extraTopMargin />
                     )}
                 </div>
             )}

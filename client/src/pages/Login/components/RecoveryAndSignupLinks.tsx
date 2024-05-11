@@ -1,10 +1,8 @@
-import classNames from "classnames";
 import { NavLink } from "react-router-dom";
-import BaseProps from "@/pages/Signup/types/BaseProps.ts";
 
-export default function RecoveryAndSignupLinks({ additionalClasses }: BaseProps) {
+export default function RecoveryAndSignupLinks() {
     return (
-        <div className={classNames("text-right flex justify-between", additionalClasses)}>
+        <div className="text-right flex justify-between mb-8">
             <div className="text-sm">
                 <span>Don't have an account? </span>
                 <NavLink to="/signup" className="text-blue-500 hover:underline">

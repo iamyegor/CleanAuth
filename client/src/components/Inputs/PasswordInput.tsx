@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import openedEyeImage from "@/components/PasswordInput/images/opened_eye.png";
-import closedEyeImage from "@/components/PasswordInput/images/closed_eye.png";
+import openedEyeImage from "@/components/Inputs/images/opened_eye.png";
+import closedEyeImage from "@/components/Inputs/images/closed_eye.png";
 import classNames from "classnames";
 import ErrorMessage from "@/components/ui/ErrorMessage.tsx";
 
@@ -9,7 +9,7 @@ interface PasswordInputProps {
     placeholder: string;
     errorMessage?: string;
     defaultValue?: string;
-    addExtraMarginBottom?: boolean;
+    extraBottomMargin?: boolean;
 }
 
 export default function PasswordInput({
@@ -17,7 +17,7 @@ export default function PasswordInput({
     placeholder,
     errorMessage,
     defaultValue,
-    addExtraMarginBottom = false,
+    extraBottomMargin = false,
 }: PasswordInputProps) {
     const [isPasswordShown, setIsPasswordShown] = useState(false);
 
@@ -31,7 +31,7 @@ export default function PasswordInput({
     );
 
     return (
-        <div className={addExtraMarginBottom && !errorMessage ? "mb-8" : "mb-4"}>
+        <div className={extraBottomMargin && !errorMessage ? "mb-8" : "mb-4"}>
             <div className="relative">
                 <input
                     type={isPasswordShown ? "text" : "password"}
@@ -52,7 +52,7 @@ export default function PasswordInput({
                     )}
                 </button>
             </div>
-            {errorMessage && <ErrorMessage errorMessage={errorMessage} additionalClasses="mt-4" />}
+            {errorMessage && <ErrorMessage errorMessage={errorMessage} />}
         </div>
     );
 }

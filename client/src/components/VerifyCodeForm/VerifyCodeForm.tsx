@@ -1,5 +1,5 @@
 import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
-import SubmittingButton from "@/components/ui/SubmittingButton.tsx";
+import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx";
 import VerificationCodeInput from "@/components/VerifyCodeForm/components/VerificationCodeInput.tsx";
 import React, { useEffect, useRef, useState } from "react";
 import api from "@/lib/api.ts";
@@ -78,12 +78,7 @@ export default function VerifyCodeForm({
             </p>
             <Form method="post" action={onSubmitActionRoute}>
                 <VerificationCodeInput inputs={inputs} setInputs={setInputs} message={message} />
-                <SubmittingButton
-                    loading={state == "loading"}
-                    text="Verify Code"
-                    additionalClasses="mb-6"
-                    additionalEnabledClasses="bg-blue-500 hover:bg-blue-600"
-                />
+                <SubmittingButton loading={state == "loading"} text="Verify Code" />
                 <div className="flex justify-center space-x-2 mb-8">
                     <BackToPrevPageButton route={goBackRoute} text={goBackButtonText} />
                     <ResendCodeButton

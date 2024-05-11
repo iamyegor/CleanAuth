@@ -4,7 +4,7 @@ import { IS_NUMBER_REGEX, ONLY_NUMBERS_REGEX } from "@/data/regularExpressions.t
 import classNames from "classnames";
 import focusInputBasedOnKey from "@/components/VerifyCodeForm/utils/focusInputBasedOnKey.ts";
 import addNewValueToInputs from "@/components/VerifyCodeForm/utils/addNewValueToInputs.ts";
-import "@/components/VerifyCodeForm/styles/index.css";
+import "@/components/VerifyCodeForm/verification-code-form.css";
 import ErrorMessage from "@/components/ui/ErrorMessage.tsx";
 import checkImage from "@/components/VerifyCodeForm/images/check.png";
 import DisplayedMessage from "@/components/VerifyCodeForm/utils/DisplayedMessage.ts";

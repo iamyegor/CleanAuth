@@ -1,6 +1,7 @@
 import BaseProps from "@/pages/Signup/types/BaseProps.ts";
 import ErrorMessage from "@/components/ui/ErrorMessage.tsx";
 import classNames from "classnames";
+import "@/components/ui/styles/login-input.css";
 
 interface InputFieldProps extends BaseProps {
     type: string;
@@ -18,14 +19,10 @@ export default function InputField({
     errorMessage,
     defaultValue,
 }: InputFieldProps) {
-    const defaultClasses =
-        "w-full p-4 border rounded-md shadow-sm shadow-gray-200 outline-none " +
-        "ring-offset-1 transition-all focus:border-white";
-
-    const noErrorClasses = "ring-blue-400 focus:ring-2";
-    const errorClasses = "ring-red-400 ring-2 border-white";
-
-    const classes = classNames(defaultClasses, errorMessage ? errorClasses : noErrorClasses);
+    const classes = classNames(
+        "login-input__default",
+        errorMessage ? "login-input__error" : "login-input__no-error",
+    );
 
     return (
         <div className={additionalClasses}>
@@ -36,7 +33,7 @@ export default function InputField({
                 className={classes}
                 defaultValue={defaultValue ?? ""}
             />
-            {errorMessage && <ErrorMessage errorMessage={errorMessage} />}
+            {errorMessage && <ErrorMessage errorMessage={errorMessage} additionalClasses="mt-4"/>}
         </div>
     );
 }

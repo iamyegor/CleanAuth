@@ -10,6 +10,7 @@ import parseResponseToSignupError from "@/pages/Signup/utils/parseResponseToSign
 import { getSignupData } from "@/pages/Signup/utils/getSignupData.ts";
 import useInitialSignupData from "@/pages/Signup/hooks/useInitialSignupData.ts";
 import storeSignupData from "@/utils/initialSignupData/storeSignupData.ts";
+import PasswordInput from "@/components/PasswordInput/PasswordInput.tsx";
 
 export async function action({ request }: any): Promise<SignupError | Response> {
     const form = await request.formData();
@@ -74,19 +75,16 @@ export default function SignupForm() {
                     errorMessage={getErrorMessage("email")}
                     defaultValue={initialSignupData?.email}
                 />
-                <InputField
-                    type="password"
+                <PasswordInput
                     name="password"
                     placeholder="Password"
-                    additionalClasses="mb-4"
                     errorMessage={getErrorMessage("password")}
                     defaultValue={initialSignupData?.password}
                 />
-                <InputField
-                    type="password"
+                <PasswordInput
                     name="repeatedPassword"
                     placeholder="Repeat Password"
-                    additionalClasses="mb-8"
+                    addExtraMarginBottom
                     errorMessage={getErrorMessage("repeatedPassword")}
                     defaultValue={initialSignupData?.repeatedPassword}
                 />

@@ -11,6 +11,7 @@ import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
 import LoginError from "@/pages/Login/types/LoginError.ts";
 import { Result } from "@/utils/resultOfT.ts";
 import { parseResponseToLoginError } from "@/pages/Login/utils/parseResponseToLoginError.ts";
+import PasswordInput from "@/components/PasswordInput/PasswordInput.tsx";
 
 export async function action({ request }: any): Promise<LoginError | Response> {
     const data = await request.formData();
@@ -62,11 +63,10 @@ export default function LoginForm() {
                     additionalClasses="mb-4"
                     errorMessage={getErrorMessage("loginOrEmail")}
                 />
-                <InputField
-                    type="password"
+                <PasswordInput
                     name="password"
                     placeholder="Password"
-                    additionalClasses="mb-8"
+                    addExtraMarginBottom
                     errorMessage={getErrorMessage("password")}
                 />
                 <RecoveryAndSignupLinks additionalClasses="mb-8" />

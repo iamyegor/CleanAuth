@@ -22,6 +22,9 @@ export async function action({ request }: any): Promise<DisplayedMessage> {
     const data = await request.formData();
 
     const emailOrUsername = data.get("emailOrUsername");
+    if (!emailOrUsername) {
+        return DisplayedMessage.createError("The field must not be empty");
+    }
 
     try {
         await api.post("api/request-password-reset", { emailOrUsername });

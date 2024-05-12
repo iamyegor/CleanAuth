@@ -58,40 +58,42 @@ export default function SignupForm() {
         <div className="w-full max-w-md text-center rounded-lg p-6 z-20">
             <h2 className="mb-3 text-4xl font-bold text-gray-900">Create account</h2>
             <p className="mb-10 text-lg text-gray-600">To get you started!</p>
-            <Form method="post" action={"/signup"} className="space-y-8">
-                <div className="space-y-4">
-                    <InputField
-                        type="text"
-                        name="username"
-                        placeholder="Username"
-                        errorMessage={getErrorMessage("username")}
-                        defaultValue={initialSignupData?.username}
-                    />
-                    <InputField
-                        type="email"
-                        name="email"
-                        placeholder="Email"
-                        errorMessage={getErrorMessage("email")}
-                        defaultValue={initialSignupData?.email}
-                    />
-                    <PasswordInput
-                        name="password"
-                        placeholder="Password"
-                        errorMessage={getErrorMessage("password")}
-                        defaultValue={initialSignupData?.password}
-                    />
-                    <PasswordInput
-                        name="repeatedPassword"
-                        placeholder="Repeat Password"
-                        errorMessage={getErrorMessage("repeatedPassword")}
-                        defaultValue={initialSignupData?.repeatedPassword}
-                    />
-                </div>
-                <div className="text-lef text-sm flex space-x-1 items-center">
-                    <span>Already a member?</span>
-                    <NavLink to="/login" className="hover:underline decoration-blue-500">
-                        <span className="text-blue-500">Sign in!</span>
-                    </NavLink>
+            <Form method="post" action={"/signup"} className={"space-y-8"}>
+                <div className={getErrorMessage("repeatedPassword") ? "space-y-4" : "space-y-8" }>
+                    <div className="space-y-4">
+                        <InputField
+                            type="text"
+                            name="username"
+                            placeholder="Username"
+                            errorMessage={getErrorMessage("username")}
+                            defaultValue={initialSignupData?.username}
+                        />
+                        <InputField
+                            type="email"
+                            name="email"
+                            placeholder="Email"
+                            errorMessage={getErrorMessage("email")}
+                            defaultValue={initialSignupData?.email}
+                        />
+                        <PasswordInput
+                            name="password"
+                            placeholder="Password"
+                            errorMessage={getErrorMessage("password")}
+                            defaultValue={initialSignupData?.password}
+                        />
+                        <PasswordInput
+                            name="repeatedPassword"
+                            placeholder="Repeat Password"
+                            errorMessage={getErrorMessage("repeatedPassword")}
+                            defaultValue={initialSignupData?.repeatedPassword}
+                        />
+                    </div>
+                    <div className="text-lef text-sm flex space-x-1 items-center">
+                        <span>Already a member?</span>
+                        <NavLink to="/login" className="hover:underline decoration-blue-500">
+                            <span className="text-blue-500">Sign in!</span>
+                        </NavLink>
+                    </div>
                 </div>
                 <SubmittingButton loading={state == "submitting"} text="Sign up" />
             </Form>

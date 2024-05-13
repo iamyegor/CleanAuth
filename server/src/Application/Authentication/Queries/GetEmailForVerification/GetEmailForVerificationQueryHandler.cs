@@ -10,11 +10,11 @@ namespace Application.Authentication.Queries.GetEmailForVerification;
 public class GetEmailForVerificationQueryHandler
     : IRequestHandler<GetEmailForVerificationQuery, Result<string, Error>>
 {
-    private readonly DapperConnectionFactory _connectionFactory;
+    private readonly NpgsqlConnection _connection;
 
     public GetEmailForVerificationQueryHandler(DapperConnectionFactory connectionFactory)
     {
-        _connectionFactory = connectionFactory;
+        _connection = connectionFactory.Create();
     }
 
     public async Task<Result<string, Error>> Handle(
@@ -24,7 +24,6 @@ public class GetEmailForVerificationQueryHandler
     {
         string sql = "select email from users where id = @Id";
 
-        NpgsqlConnection connection = _connectionFactory.Create();
-        return await connection.QuerySingleAsync<string>(sql, new { Id = query.UserId.Value });
+        return await _connection.QuerySingleAsync<string>(sql, new { Id = query.UserId.Value });
     }
 }

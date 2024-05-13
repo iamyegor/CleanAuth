@@ -10,11 +10,11 @@ namespace Application.Authentication.Queries.NeedToResetPassword;
 public class NeedToResetPasswordQueryHandler
     : IRequestHandler<NeedToResetPasswordQuery, SuccessOr<Error>>
 {
-    private readonly DapperConnectionFactory _connectionFactory;
+    private readonly NpgsqlConnection _connection;
 
     public NeedToResetPasswordQueryHandler(DapperConnectionFactory connectionFactory)
     {
-        _connectionFactory = connectionFactory;
+        _connection = connectionFactory.Create();
     }
 
     public async Task<SuccessOr<Error>> Handle(
@@ -28,9 +28,8 @@ public class NeedToResetPasswordQueryHandler
             from users 
             where id = @UserId::uuid";
 
-        NpgsqlConnection connection = _connectionFactory.Create();
         PasswordResetTokenInDb? data =
-            await connection.QuerySingleOrDefaultAsync<PasswordResetTokenInDb>(
+            await _connection.QuerySingleOrDefaultAsync<PasswordResetTokenInDb>(
                 sql,
                 new { query.UserId }
             );

@@ -4,7 +4,7 @@ using Application.Authentication.Commands.AddPhoneNumber;
 using Application.Authentication.Commands.ResendPhoneNumber;
 using Application.Authentication.Commands.VerifyPhoneNumber;
 using Application.Authentication.Queries.GetPhoneNumberForVerification;
-using Application.Authentication.Queries.NeedToAddPhoneNumber;
+using Application.Authentication.Queries.GetUnverifiedPhoneNumber;
 using Domain.DomainErrors;
 using Domain.User.ValueObjects;
 using Infrastructure.Authentication;

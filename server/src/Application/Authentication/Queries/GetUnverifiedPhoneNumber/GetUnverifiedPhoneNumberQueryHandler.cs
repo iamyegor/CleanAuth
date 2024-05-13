@@ -5,7 +5,7 @@ using MediatR;
 using Npgsql;
 using XResults;
 
-namespace Application.Authentication.Queries.NeedToAddPhoneNumber;
+namespace Application.Authentication.Queries.GetUnverifiedPhoneNumber;
 
 public class GetUnverifiedPhoneNumberQueryHandler
     : IRequestHandler<GetUnverifiedPhoneNumberQuery, Result<string, Error>>

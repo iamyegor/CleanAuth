@@ -5,10 +5,10 @@ using Application.Authentication.Commands.ResetPassword;
 using Application.Authentication.Queries.NeedToResetPassword;
 using Domain.DomainErrors;
 using Infrastructure.Authentication;
+using Infrastructure.Authentication.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using XResults;
-using Infrastructure.Authentication.Extensions;
 
 namespace Api.Controllers;
 
@@ -32,7 +32,7 @@ public class PasswordResetController : ApplicationController
         return FromResult(result);
     }
 
-    [HttpGet("need-to-reset-password")]
+    [HttpHead("need-to-reset-password")]
     public async Task<IActionResult> NeedToResetPassword(
         [FromQuery] string userId,
         [FromQuery] string token
@@ -57,7 +57,7 @@ public class PasswordResetController : ApplicationController
         {
             return Problem(tokensOrError.Error);
         }
-        
+
         Response.Cookies.Append(tokensOrError.Value);
 
         return Ok();

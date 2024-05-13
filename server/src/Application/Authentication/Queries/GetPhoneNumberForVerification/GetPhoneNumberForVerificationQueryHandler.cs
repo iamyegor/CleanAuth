@@ -10,11 +10,11 @@ namespace Application.Authentication.Queries.GetPhoneNumberForVerification;
 public class GetPhoneNumberForVerificationQueryHandler
     : IRequestHandler<GetPhoneNumberForVerificationQuery, Result<string, Error>>
 {
-    private readonly DapperConnectionFactory _connectionFactory;
+    private readonly NpgsqlConnection _connection;
 
     public GetPhoneNumberForVerificationQueryHandler(DapperConnectionFactory connectionFactory)
     {
-        _connectionFactory = connectionFactory;
+        _connection = connectionFactory.Create();
     }
 
     public async Task<Result<string, Error>> Handle(
@@ -24,8 +24,7 @@ public class GetPhoneNumberForVerificationQueryHandler
     {
         string sql = "select phone_number from users where id = @Id";
 
-        NpgsqlConnection connection = _connectionFactory.Create();
-        string? phoneNumber = await connection.QueryFirstOrDefaultAsync<string>(
+        string? phoneNumber = await _connection.QueryFirstOrDefaultAsync<string>(
             sql,
             new { Id = query.UserId.Value }
         );

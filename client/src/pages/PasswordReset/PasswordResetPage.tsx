@@ -11,15 +11,14 @@ import PasswordResetErrorMessage from "@/pages/PasswordReset/components/Password
 import PasswordResetForm from "@/pages/PasswordReset/components/PasswordResetForm.tsx";
 
 export async function loader({ request }: any): Promise<ErrorMessage | ResetPasswordLoaderData> {
+    const token: string | null = getQueryParam(request.url, "token");
+    const uid: string | null = getQueryParam(request.url, "uid");
+    if (!token || !uid) {
+        return ErrorMessage.create("Invalid link.");
+    }
+
     try {
-        const token: string | null = getQueryParam(request.url, "token");
-        const uid: string | null = getQueryParam(request.url, "uid");
-        if (!token || !uid) {
-            return ErrorMessage.create("Invalid link.");
-        }
-
-        await api.get(`api/need-to-reset-password?userId=${uid}&token=${token}`);
-
+        await api.head(`api/need-to-reset-password?userId=${uid}&token=${token}`);
         return { userId: uid, token };
     } catch (err) {
         const error = err as AxiosError<ServerErrorResponse>;

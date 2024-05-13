@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
-import ErrorMessage from "@/components/ui/ErrorMessage.tsx";
+import DisplayedErrorMessage from "@/components/ui/DisplayedErrorMessage.tsx";
 import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx";
 import PhoneInput from "@/pages/AddPhoneNumber/components/PhoneInput.tsx";
 import Country from "@/pages/AddPhoneNumber/types/Country.ts";
@@ -69,7 +69,7 @@ export default function AddPhoneNumberForm() {
                         setCountry={setCountry}
                         setPhoneNumber={setPhoneNumber}
                     />
-                    {errorMessage && <ErrorMessage errorMessage={errorMessage} />}
+                    {errorMessage && <DisplayedErrorMessage errorMessage={errorMessage} />}
                 </div>
                 <SubmittingButton
                     disabled={!validator.isMobilePhone(keepOnlyDigits(phoneNumber))}

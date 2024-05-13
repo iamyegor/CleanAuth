@@ -24,25 +24,25 @@ public class NeedToResetPasswordQueryHandler
     {
         string sql =
             @"
-            select restore_password_token, restore_password_token_expiry_time 
+            select password_reset_token, password_reset_token_expiry_time
             from users 
-            where restore_password_token = @Token";
+            where id = @UserId::uuid";
 
         NpgsqlConnection connection = _connectionFactory.Create();
-        PasswordResetTokenInDb? token =
+        PasswordResetTokenInDb? data =
             await connection.QuerySingleOrDefaultAsync<PasswordResetTokenInDb>(
                 sql,
-                new { query.Token }
+                new { query.UserId }
             );
 
-        if (token == null)
+        if (data == null || data.PasswordResetToken != Guid.Parse(query.Token))
         {
-            return Errors.RestorePasswordToken.Incorrect(query.Token);
+            return Errors.PasswordResetToken.Incorrect(query.Token);
         }
 
-        if (token.ExpiryTime < DateTime.UtcNow)
+        if (data.PasswordResetTokenExpiryTime < DateTime.UtcNow)
         {
-            return Errors.RestorePasswordToken.IsExpired();
+            return Errors.PasswordResetToken.IsExpired();
         }
 
         return Result.Ok();

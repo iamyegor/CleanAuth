@@ -1,5 +1,7 @@
 using Domain.DomainErrors;
 using Domain.User;
+using Domain.User.ValueObjects;
+using Infrastructure.Authentication;
 using Infrastructure.Data;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
@@ -8,16 +10,18 @@ using XResults;
 namespace Application.Authentication.Commands.ResetPassword;
 
 public class ResetPasswordCommandHandler
-    : IRequestHandler<ResetPasswordCommand, SuccessOr<Error>>
+    : IRequestHandler<ResetPasswordCommand, Result<Tokens, Error>>
 {
     private readonly ApplicationContext _context;
+    private readonly JwtService _jwtService;
 
-    public ResetPasswordCommandHandler(ApplicationContext context)
+    public ResetPasswordCommandHandler(ApplicationContext context, JwtService jwtService)
     {
         _context = context;
+        _jwtService = jwtService;
     }
 
-    public async Task<SuccessOr<Error>> Handle(
+    public async Task<Result<Tokens, Error>> Handle(
         ResetPasswordCommand command,
         CancellationToken cancellationToken
     )
@@ -30,19 +34,32 @@ public class ResetPasswordCommandHandler
 
         if (user == null)
         {
-            return Errors.RestorePasswordToken.Incorrect(token);
+            return Errors.PasswordResetToken.Incorrect(token);
         }
 
         if (user.PasswordResetToken == null)
         {
-            return Errors.RestorePasswordToken.WasntRequested();
+            return Errors.PasswordResetToken.WasntRequested();
         }
 
         if (user.PasswordResetToken.IsExpired)
         {
-            return Errors.RestorePasswordToken.IsExpired();
+            return Errors.PasswordResetToken.IsExpired();
         }
 
-        return Result.Ok();
+        if (user.Password.Matches(command.Password))
+        {
+            return Errors.Password.SameAsCurrent();
+        }
+
+        user.SetPassword(Password.Create(command.Password));
+        user.RemovePasswordResetToken();
+
+        Tokens tokens = _jwtService.GenerateTokens(user);
+        user.SetRefreshToken(new RefreshToken(tokens.RefreshToken));
+
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return tokens;
     }
 }

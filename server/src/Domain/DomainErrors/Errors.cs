@@ -1,4 +1,3 @@
-using Domain.User.ValueObjects;
 using XResults;
 
 namespace Domain.DomainErrors;
@@ -86,6 +85,11 @@ public static class Errors
                 details
             );
         }
+
+        public static Error SameAsCurrent()
+        {
+            return new Error("password.same.as.current", "Password is the same as the current one");
+        }
     }
 
     public class User
@@ -101,7 +105,7 @@ public static class Errors
             return new Error("incorrect.login.or.password", "Incorrect login or password", details);
         }
 
-        public static Error NotFound(UserId userId)
+        public static Error NotFound(Domain.User.ValueObjects.UserId userId)
         {
             var details = new Dictionary<string, object?>() { ["userId"] = userId.Value };
             return new Error("user.not.found", "User was not found", details);
@@ -232,7 +236,7 @@ public static class Errors
         }
     }
 
-    public class RestorePasswordToken
+    public class PasswordResetToken
     {
         public static Error Incorrect(object value)
         {
@@ -244,7 +248,7 @@ public static class Errors
             );
         }
 
-        public static SuccessOr<Error> WasntRequested()
+        public static Error WasntRequested()
         {
             return new Error(
                 "restore.password.token.wasnt.requested",
@@ -252,9 +256,18 @@ public static class Errors
             );
         }
 
-        public static SuccessOr<Error> IsExpired()
+        public static Error IsExpired()
         {
             return new Error("restore.password.token.expired", "Restore password token is expired");
+        }
+    }
+
+    public class UserId
+    {
+        public static Error Incorrect(string value)
+        {
+            var details = new Dictionary<string, object?>() { ["userId"] = value };
+            return new Error("user.id.incorrect", "User id is incorrect", details);
         }
     }
 }

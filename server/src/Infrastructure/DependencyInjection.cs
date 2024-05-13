@@ -23,14 +23,14 @@ public static class DependencyInjection
                 config.GetConnectionString("Default")!,
                 isDevelopment
             ))
-            .AddMessageBus(config)
+            .AddEmailMesssages(config)
             .AddJwtAuthentication(config)
             .AddAuthorization()
             .AddDapper()
             .AddSmsMessages();
     }
 
-    private static IServiceCollection AddMessageBus(
+    private static IServiceCollection AddEmailMesssages(
         this IServiceCollection services,
         IConfiguration config
     )
@@ -41,7 +41,8 @@ public static class DependencyInjection
             settings.Password = Environment.GetEnvironmentVariable("OUTLOOK_PASSWORD")!;
         });
 
-        services.AddTransient<EmailMessageSender>();
+        services.AddTransient<DomainEmailSender>();
+        services.AddTransient<EmailMessageBus>();
 
         return services;
     }

@@ -13,17 +13,17 @@ namespace Application.Authentication.Commands.Signup;
 public class SignUpCommandHandler : IRequestHandler<SignUpCommand, Result<Tokens, Error>>
 {
     private readonly ApplicationContext _context;
-    private readonly EmailMessageSender _emailMessageSender;
+    private readonly DomainEmailSender _emailSender;
     private readonly JwtService _jwtService;
 
     public SignUpCommandHandler(
         ApplicationContext context,
-        EmailMessageSender emailMessageSender,
+        DomainEmailSender emailSender,
         JwtService jwtService
     )
     {
         _context = context;
-        _emailMessageSender = emailMessageSender;
+        _emailSender = emailSender;
         _jwtService = jwtService;
     }
 
@@ -63,7 +63,7 @@ public class SignUpCommandHandler : IRequestHandler<SignUpCommand, Result<Tokens
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        await _emailMessageSender.SendEmailVerificationCode(email.Value, verificationCode.Value);
+        await _emailSender.SendEmailVerificationCode(email.Value, verificationCode.Value);
 
         return tokens;
     }

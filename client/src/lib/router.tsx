@@ -16,13 +16,14 @@ import VerifyPhoneNumberPage, {
     action as verifyPhoneNumberAction,
     loader as verifyPhoneNumberLoader,
 } from "@/pages/VerifyPhoneNumber/VerifyPhoneNumberPage.tsx";
-import ResetPasswordPage, {
+import PasswordResetPage, {
     loader as resetPasswordLoader,
-} from "@/pages/ResetPassword/ResetPasswordPage.tsx";
+} from "@/pages/PasswordReset/PasswordResetPage.tsx";
 import RequestPasswordResetPage, {
     action as requestPasswordResetAction,
     loader as requestPasswordResetLoader,
 } from "@/pages/RequestPasswordReset/RequestPasswordResetPage.tsx";
+import { action as resetPasswordAction } from "@/pages/PasswordReset/components/PasswordResetForm.tsx";
 
 const router = createBrowserRouter([
     { path: "/", element: <WelcomePage />, loader: welcomePageLoader },
@@ -59,8 +60,9 @@ const router = createBrowserRouter([
     },
     {
         path: "reset-password",
-        element: <ResetPasswordPage />,
+        element: <PasswordResetPage />,
         loader: resetPasswordLoader,
+        action: resetPasswordAction,
     },
 ]);
 

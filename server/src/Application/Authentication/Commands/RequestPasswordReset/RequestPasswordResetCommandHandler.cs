@@ -13,15 +13,15 @@ public class RequestPasswordResetCommandHandler
     : IRequestHandler<RequestPasswordResetCommand, SuccessOr<Error>>
 {
     private readonly ApplicationContext _context;
-    private readonly EmailMessageSender _emailMessageSender;
+    private readonly DomainEmailSender _emailSender;
 
     public RequestPasswordResetCommandHandler(
         ApplicationContext context,
-        EmailMessageSender emailMessageSender
+        DomainEmailSender emailSender
     )
     {
         _context = context;
-        _emailMessageSender = emailMessageSender;
+        _emailSender = emailSender;
     }
 
     public async Task<SuccessOr<Error>> Handle(
@@ -44,7 +44,7 @@ public class RequestPasswordResetCommandHandler
 
         PasswordResetToken token = new PasswordResetToken();
         user.SetPasswordResetToken(token);
-        _emailMessageSender.SendPasswordResetToken(token);
+        await _emailSender.SendPasswordReset(user.Id.Value, token.Value, user.Email.Value);
 
         await _context.SaveChangesAsync(cancellationToken);
 

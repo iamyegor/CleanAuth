@@ -4,4 +4,4 @@ using XResults;
 
 namespace Application.Authentication.Queries.NeedToResetPassword;
 
-public record NeedToResetPasswordQuery(string Token) : IRequest<SuccessOr<Error>>;
+public record NeedToResetPasswordQuery(string UserId, string Token) : IRequest<SuccessOr<Error>>;

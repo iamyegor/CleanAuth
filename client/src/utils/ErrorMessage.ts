@@ -1,8 +1,8 @@
 export default class ErrorMessage {
-    message: string;
+    errorMessage: string;
 
     constructor(message: string) {
-        this.message = message;
+        this.errorMessage = message;
     }
 
     static create(message: string): ErrorMessage {
@@ -10,6 +10,6 @@ export default class ErrorMessage {
     }
 
     static toString(error: ErrorMessage): string {
-        return error.message;
+        return error.errorMessage;
     }
 }

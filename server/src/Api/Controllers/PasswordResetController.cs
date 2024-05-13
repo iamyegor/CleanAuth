@@ -4,9 +4,11 @@ using Application.Authentication.Commands.RequestPasswordReset;
 using Application.Authentication.Commands.ResetPassword;
 using Application.Authentication.Queries.NeedToResetPassword;
 using Domain.DomainErrors;
+using Infrastructure.Authentication;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using XResults;
+using Infrastructure.Authentication.Extensions;
 
 namespace Api.Controllers;
 
@@ -31,20 +33,33 @@ public class PasswordResetController : ApplicationController
     }
 
     [HttpGet("need-to-reset-password")]
-    public async Task<IActionResult> NeedToResetPassword([FromRoute] string token)
+    public async Task<IActionResult> NeedToResetPassword(
+        [FromQuery] string userId,
+        [FromQuery] string token
+    )
     {
-        NeedToResetPasswordQuery query = new NeedToResetPasswordQuery(token);
+        NeedToResetPasswordQuery query = new NeedToResetPasswordQuery(userId, token);
         SuccessOr<Error> result = await _mediator.Send(query);
 
         return FromResult(result);
     }
 
     [HttpPost("reset-password")]
-    public async Task<IActionResult> ResetPassword(ResetPasswordDto dto, [FromRoute] string token)
+    public async Task<IActionResult> ResetPassword(
+        ResetPasswordDto dto,
+        [FromQuery] string userId,
+        [FromQuery] string token
+    )
     {
-        ResetPasswordCommand command = new ResetPasswordCommand(token, dto.Password);
-        SuccessOr<Error> result = await _mediator.Send(command);
+        ResetPasswordCommand command = new ResetPasswordCommand(userId, token, dto.Password);
+        Result<Tokens, Error> tokensOrError = await _mediator.Send(command);
+        if (tokensOrError.IsFailure)
+        {
+            return Problem(tokensOrError.Error);
+        }
+        
+        Response.Cookies.Append(tokensOrError.Value);
 
-        return FromResult(result);
+        return Ok();
     }
 }

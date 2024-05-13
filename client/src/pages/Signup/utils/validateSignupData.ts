@@ -1,6 +1,7 @@
 import { Result } from "@/utils/resultOfT.ts";
+import { Result as SimpleResult } from "@/utils/result.ts";
 import isNullOrWhitespace from "@/utils/isNullOrWhitespace.ts";
-import { PWD_REGEX } from "@/data/regularExpressions.ts";
+import validatePassword from "@/utils/validatePassword.ts";
 
 const EMAIL_REGEX = new RegExp("^[^@]+@[^@]+.[^@]+$");
 
@@ -26,18 +27,11 @@ export function validateSignupData(signupData: SignupData): Result<SignupError> 
         });
     }
 
-    if (signupData.password.length < 6 || signupData.password.length > 50) {
+    const passwordValidation: SimpleResult = validatePassword(signupData.password);
+    if (passwordValidation.isFailure) {
         return Result.Fail<SignupError>({
             problematicField: "password",
-            errorMessage: "Password length must be between 6 and 50 characters",
-        });
-    }
-
-    if (!PWD_REGEX.test(signupData.password)) {
-        return Result.Fail<SignupError>({
-            problematicField: "password",
-            errorMessage:
-                "Password must contain at least one upper case, one lower case, and either one number or a special character",
+            errorMessage: passwordValidation.errorMessage!,
         });
     }
 

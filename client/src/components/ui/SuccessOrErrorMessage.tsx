@@ -1,5 +1,5 @@
 import DisplayedMessage from "@/DisplayedMessage.ts";
-import ErrorMessage from "@/components/ui/ErrorMessage.tsx";
+import DisplayedErrorMessage from "@/components/ui/DisplayedErrorMessage.tsx";
 import checkImage from "@/components/VerifyCodeForm/images/check.png";
 import Image from "@/components/ui/Image.tsx";
 
@@ -17,7 +17,7 @@ export default function SuccessOrErrorMessage({ message }: SuccessOrErrorMessage
                             <p className="text-green-500">{message.message}</p>
                         </div>
                     ) : (
-                        <ErrorMessage errorMessage={message.message} />
+                        <DisplayedErrorMessage errorMessage={message.message} />
                     )}
                 </div>
             )}

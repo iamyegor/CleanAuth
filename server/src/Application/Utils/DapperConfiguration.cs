@@ -1,21 +1,22 @@
-using Application;
+using System.Reflection;
 using Dapper;
 
-namespace Api.Infrastructure;
+namespace Application.Utils;
 
 public class DapperConfiguration
 {
     public static void ConfigureSnakeCaseMapping()
     {
-        Type[] types = typeof(IApplication).Assembly.GetTypes();
+        Type[] types = Assembly.GetExecutingAssembly().GetTypes();
         foreach (Type model in types)
         {
             SqlMapper.SetTypeMap(
                 model,
                 new CustomPropertyTypeMap(
                     model,
-                    (type, columnName) =>
-                        type.GetProperties()
+                    (modelType, columnName) =>
+                        modelType
+                            .GetProperties()
                             .FirstOrDefault(prop => prop.Name.ToSnakeCase() == columnName)!
                 )
             );

@@ -12,12 +12,12 @@ namespace Application.Authentication.Commands.ResendEmailCommand;
 public class ResendEmailCommandHandler : IRequestHandler<ResendEmailCommand, SuccessOr<Error>>
 {
     private readonly ApplicationContext _context;
-    private readonly EmailMessageSender _emailMessageSender;
+    private readonly DomainEmailSender _emailSender;
 
-    public ResendEmailCommandHandler(ApplicationContext context, EmailMessageSender emailMessageSender)
+    public ResendEmailCommandHandler(ApplicationContext context, DomainEmailSender emailSender)
     {
         _context = context;
-        _emailMessageSender = emailMessageSender;
+        _emailSender = emailSender;
     }
 
     public async Task<SuccessOr<Error>> Handle(
@@ -34,7 +34,7 @@ public class ResendEmailCommandHandler : IRequestHandler<ResendEmailCommand, Suc
         user.EmailVerificationCode = code;
 
         await _context.SaveChangesAsync(cancellationToken);
-        await _emailMessageSender.SendEmailVerificationCode(user.Email.Value, code.Value);
+        await _emailSender.SendEmailVerificationCode(user.Email.Value, code.Value);
 
         return Result.Ok();
     }

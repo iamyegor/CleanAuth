@@ -7,7 +7,7 @@ import clearStoredResendTimer from "@/utils/secondsToResendCode/clearStoredResen
 export default function useSecondsLeft(initialTime: number) {
     const [secondsLeft, setSecondsLeft] = useState<number>(() => {
         const savedTime = getStoredResendTimer();
-        return savedTime ? savedTime : initialTime;
+        return savedTime == null ? initialTime : savedTime;
     });
 
     const location = useLocation();

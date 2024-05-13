@@ -28,7 +28,7 @@ public static partial class Errors
             var details = new Dictionary<string, object?>() { ["phoneNumber"] = value };
             return new Error(
                 "phone.number.invalid.signature",
-                "Phone number has an invalidsignature",
+                "Phone number has an invalid signature",
                 details
             );
         }

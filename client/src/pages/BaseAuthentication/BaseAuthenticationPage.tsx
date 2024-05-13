@@ -8,7 +8,7 @@ interface BaseLoginPage {
     image: string;
 }
 
-export default function BaseLoginPage({ children, image }: BaseLoginPage) {
+export default function BaseAuthenticationPage({ children, image }: BaseLoginPage) {
     return (
         <div className="flex min-h-screen bg-white">
             <PrimaryImage src={image} alt="Login Page" />

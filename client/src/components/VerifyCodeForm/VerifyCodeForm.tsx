@@ -11,7 +11,7 @@ import getCodeFromForm from "@/components/VerifyCodeForm/utils/getCodeFromForm.t
 import BackToPrevPageButton from "@/components/VerifyCodeForm/components/BackToSignupButton.tsx";
 import ResendCodeButton from "@/components/VerifyCodeForm/components/ResendCodeButton.tsx";
 import useSecondsLeft from "@/components/VerifyCodeForm/hooks/useSecondsLeft.tsx";
-import DisplayedMessage from "@/DisplayedMessage.ts";
+import FeedbackMessage from "@/utils/FeedbackMessage.ts";
 
 interface VerifyCodeFormProps {
     contactDetail: string;
@@ -28,19 +28,19 @@ export async function baseAction(
     maxCodeLength: number,
     verificationEndpoint: string,
     redirectRoute: string,
-): Promise<DisplayedMessage | Response> {
+): Promise<FeedbackMessage | Response> {
     const code: string = await getCodeFromForm(request, maxCodeLength);
 
     const validationResult: Result = validateCode(code, maxCodeLength);
     if (validationResult.isFailure) {
-        return DisplayedMessage.createError(validationResult.errorMessage!);
+        return FeedbackMessage.createError(validationResult.errorMessage!);
     }
 
     try {
         await api.post(verificationEndpoint, { code });
         return redirect(redirectRoute);
     } catch (err) {
-        return DisplayedMessage.createError(getServerErrorMessageOrThrow(err));
+        return FeedbackMessage.createError(getServerErrorMessageOrThrow(err));
     }
 }
 
@@ -54,11 +54,11 @@ export default function VerifyCodeForm({
     resendCodeEndpoint,
 }: VerifyCodeFormProps) {
     const maxSeconds = useRef<number>(60);
-    const actionError = useActionData() as DisplayedMessage;
+    const actionError = useActionData() as FeedbackMessage;
     const { state } = useNavigation();
     const [inputs, setInputs] = useState<string[]>(Array(codeLength).fill(""));
     const { secondsLeft, setSecondsLeft } = useSecondsLeft(maxSeconds.current);
-    const [message, setMessage] = useState<DisplayedMessage | null>(null);
+    const [message, setMessage] = useState<FeedbackMessage | null>(null);
 
     useEffect(() => {
         if (!actionError) {
@@ -77,7 +77,7 @@ export default function VerifyCodeForm({
                 Please enter the verification code sent to <u>{contactValue}</u>
             </p>
             <Form method="post" action={onSubmitActionRoute} className="space-y-8">
-                <div className={message ? "space-y-4" : "space-y-8"}>
+                <div className={message ? "space-y-6" : "space-y-8"}>
                     <VerificationCodeInput
                         inputs={inputs}
                         setInputs={setInputs}

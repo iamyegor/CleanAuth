@@ -1,5 +1,5 @@
 import SeparatorLine from "@/pages/Login/components/SeparatorLine.tsx";
-import InputField from "@/components/Inputs/InputField.tsx";
+import InputField from "@/components/ui/InputField.tsx";
 import RecoveryAndSignupLinks from "@/pages/Login/components/RecoveryAndSignupLinks.tsx";
 import SocialLoginButtons from "@/pages/Login/components/SocialLoginButtons.tsx";
 import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
@@ -11,7 +11,9 @@ import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
 import LoginError from "@/pages/Login/types/LoginError.ts";
 import { Result } from "@/utils/resultOfT.ts";
 import { parseResponseToLoginError } from "@/pages/Login/utils/parseResponseToLoginError.ts";
-import PasswordInput from "@/components/Inputs/PasswordInput.tsx";
+import PasswordInput from "@/components/ui/PasswordInput.tsx";
+import ErrorMessage from "@/utils/ErrorMessage.ts";
+import getErrorMessageForField from "@/utils/getErrorMessageForField.ts";
 
 export async function action({ request }: any): Promise<LoginError | Response> {
     const data = await request.formData();
@@ -43,39 +45,27 @@ export default function LoginForm() {
     const loginError = useActionData() as LoginError;
     const { state } = useNavigation();
 
-    function getErrorMessage(problematicField: string): string | undefined {
-        if (loginError) {
-            return loginError.problematicField == problematicField
-                ? loginError.errorMessage
-                : undefined;
-        }
-    }
-
     return (
-        <div className="w-full max-w-md text-center rounded-lg p-6 z-20">
-            <h2 className="mb-3 text-4xl font-bold text-gray-900">Hello Again!</h2>
-            <p className="mb-10 text-lg text-gray-600">Welcome back you've been missed!</p>
-            <Form method="post" action={"/login"} replace>
-                <div className={getErrorMessage("password") ? "mb-4" : "mb-8"}>
-                    <div className="space-y-4">
-                        <InputField
-                            type="text"
-                            name="loginOrEmail"
-                            placeholder="Login or Email"
-                            errorMessage={getErrorMessage("loginOrEmail")}
-                        />
-                        <PasswordInput
-                            name="password"
-                            placeholder="Password"
-                            errorMessage={getErrorMessage("password")}
-                        />
-                    </div>
+        <Form method="post" action={"/login"} replace>
+            <div className={getErrorMessageForField("password", loginError) ? "mb-4" : "mb-8"}>
+                <div className="space-y-4">
+                    <InputField
+                        type="text"
+                        name="loginOrEmail"
+                        placeholder="Login or Email"
+                        errorMessage={getErrorMessageForField("loginOrEmail", loginError)}
+                    />
+                    <PasswordInput
+                        name="password"
+                        placeholder="Password"
+                        errorMessage={getErrorMessageForField("password", loginError)}
+                    />
                 </div>
-                <RecoveryAndSignupLinks />
-                <SubmittingButton loading={state == "submitting"} text="Sign in" />
-                <SeparatorLine text="Or continue with" />
-                <SocialLoginButtons />
-            </Form>
-        </div>
+            </div>
+            <RecoveryAndSignupLinks />
+            <SubmittingButton loading={state == "submitting"} text="Sign in" />
+            <SeparatorLine text="Or continue with" />
+            <SocialLoginButtons />
+        </Form>
     );
 }

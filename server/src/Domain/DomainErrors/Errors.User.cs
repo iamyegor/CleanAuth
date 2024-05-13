@@ -1,3 +1,5 @@
+using XResults;
+
 namespace Domain.DomainErrors;
 
 public static partial class Errors
@@ -31,6 +33,16 @@ public static partial class Errors
         {
             var details = new Dictionary<string, object?>() { ["userId"] = userId.Value };
             return new Error("user.has.no.phone.number", "User has no phone number", details);
+        }
+
+        public static Error AlreadyHasNumber(Domain.User.ValueObjects.UserId userId)
+        {
+            var details = new Dictionary<string, object?>() { ["userId"] = userId.Value };
+            return new Error(
+                "user.already.has.phone.number",
+                "User already has phone number",
+                details
+            );
         }
     }
 }

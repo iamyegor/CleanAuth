@@ -4,7 +4,7 @@ using Application.Authentication.Commands.AddPhoneNumber;
 using Application.Authentication.Commands.ResendPhoneNumber;
 using Application.Authentication.Commands.VerifyPhoneNumber;
 using Application.Authentication.Queries.GetPhoneNumberForVerification;
-using Application.Authentication.Queries.GetUnverifiedPhoneNumber;
+using Application.Authentication.Queries.NeedToAddPhoneNumber;
 using Domain.DomainErrors;
 using Domain.User.ValueObjects;
 using Infrastructure.Authentication;
@@ -29,15 +29,15 @@ public class PhoneNumberVerificationController : ApplicationController
         _mediator = mediator;
     }
 
-    [HttpHead("get-unverified-phone-number"), Authorize(PoliciyNames.PhoneNumberNotVerified)]
-    public async Task<IActionResult> GetUnverifiedPhoneNumber()
+    [HttpGet("need-to-add-phone-number"), Authorize(PoliciyNames.PhoneNumberNotVerified)]
+    public async Task<IActionResult> NeedToAddPhoneNumber()
     {
         UserId userId = _jwtClaims.GetUserIdFromCookieJwt(Request.Cookies);
 
-        GetUnverifiedPhoneNumberQuery query = new GetUnverifiedPhoneNumberQuery(userId);
-        string result = await _mediator.Send(query);
+        NeedToAddPhoneNumberQuery query = new NeedToAddPhoneNumberQuery(userId);
+        SuccessOr<Error> result = await _mediator.Send(query);
 
-        return Ok(new { PhoneNumber = result });
+        return FromResult(result);
     }
 
     [HttpPost("add-phone-number"), Authorize(PoliciyNames.EmailVerified)]

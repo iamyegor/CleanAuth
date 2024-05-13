@@ -20,9 +20,9 @@ import PasswordResetPage, {
     loader as resetPasswordLoader,
 } from "@/pages/PasswordReset/PasswordResetPage.tsx";
 import RequestPasswordResetPage, {
-    action as requestPasswordResetAction,
     loader as requestPasswordResetLoader,
 } from "@/pages/RequestPasswordReset/RequestPasswordResetPage.tsx";
+import { action as requestPasswordResetAction } from "@/pages/RequestPasswordReset/components/RequestPasswordResetForm.tsx";
 import { action as resetPasswordAction } from "@/pages/PasswordReset/components/PasswordResetForm.tsx";
 
 const router = createBrowserRouter([

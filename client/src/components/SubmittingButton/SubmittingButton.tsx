@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import { SpinnerCircularFixed } from "spinners-react";
-import "@/components/SubmittingButton/submitting-button.css";
+import "@/components/SubmittingButton/styles/submitting-button.css";
 
 interface SubmittingButton {
     loading: boolean;

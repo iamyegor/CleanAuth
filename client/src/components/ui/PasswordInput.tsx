@@ -1,14 +1,15 @@
 import React, { useState } from "react";
-import openedEyeImage from "@/components/Inputs/images/opened_eye.png";
-import closedEyeImage from "@/components/Inputs/images/closed_eye.png";
+import openedEyeImage from "@/assets/opened_eye.png";
+import closedEyeImage from "@/assets/closed_eye.png";
 import classNames from "classnames";
-import DisplayedErrorMessage from "@/components/ui/DisplayedErrorMessage.tsx";
+import ErrorMessageComponent from "@/components/ui/ErrorMessageComponent.tsx";
 import Image from "@/components/ui/Image.tsx";
+import ErrorMessage from "@/utils/ErrorMessage.ts";
 
 interface PasswordInputProps {
     name: string;
     placeholder: string;
-    errorMessage?: string;
+    errorMessage?: ErrorMessage | null;
     defaultValue?: string;
 }
 
@@ -51,7 +52,7 @@ export default function PasswordInput({
                     )}
                 </button>
             </div>
-            {errorMessage && <DisplayedErrorMessage errorMessage={errorMessage} />}
+            <ErrorMessageComponent errorMessage={errorMessage ?? null} />
         </div>
     );
 }

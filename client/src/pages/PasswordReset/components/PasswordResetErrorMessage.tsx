@@ -2,9 +2,10 @@ import React from "react";
 import { NavLink } from "react-router-dom";
 import Image from "@/components/ui/Image.tsx";
 import returnImage from "@/pages/RequestPasswordReset/images/return.png";
+import ErrorMessage from "@/utils/ErrorMessage.ts";
 
 interface PasswordResetErrorMessageProps {
-    errorMessage: string;
+    errorMessage: ErrorMessage;
 }
 
 export default function PasswordResetErrorMessage({
@@ -13,7 +14,7 @@ export default function PasswordResetErrorMessage({
     return (
         <div className="flex flex-col items-center">
             <h2 className="text-center text-4xl font-bold text-red-500 mb-6">Error</h2>
-            <p className="text-center text-lg text-red-500 mb-6">{errorMessage}</p>
+            <p className="text-center text-lg text-red-500 mb-6">{errorMessage.errorMessage}</p>
             <NavLink
                 to={"/request-password-reset"}
                 className="flex justify-start items-center space-x-1 hover:underline"

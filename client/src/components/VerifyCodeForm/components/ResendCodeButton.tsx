@@ -5,14 +5,14 @@ import React, { useState } from "react";
 import sendImage from "@/components/VerifyCodeForm/images/send.png";
 import disabledSendImage from "@/components/VerifyCodeForm/images/send_disabled.png";
 import Spinner from "@/components/ui/Spinner.tsx";
-import DisplayedMessage from "@/DisplayedMessage.ts";
+import FeedbackMessage from "@/utils/FeedbackMessage.ts";
 import Image from "@/components/ui/Image.tsx";
 
 interface ResendCodeButtonProps {
     setSecondsLeft: (seconds: number) => void;
     secondsLeft: number;
     maxSeconds: number;
-    setMessage: (value: DisplayedMessage) => void;
+    setMessage: (value: FeedbackMessage) => void;
     resendCodeEndpoint: string;
 }
 
@@ -30,11 +30,11 @@ export default function ResendCodeButton({
 
         try {
             await api.post(resendCodeEndpoint);
-            setMessage(DisplayedMessage.createSuccess("Verification code sent successfully!"));
+            setMessage(FeedbackMessage.createSuccess("Verification code sent successfully!"));
             setSecondsLeft(maxSeconds);
         } catch (err) {
             const error = getServerErrorMessageOrThrow(err);
-            setMessage(DisplayedMessage.createError(error));
+            setMessage(FeedbackMessage.createError(error));
         }
 
         setIsLoading(false);

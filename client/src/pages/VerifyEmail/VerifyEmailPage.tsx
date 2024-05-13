@@ -1,29 +1,29 @@
-import BaseLoginPage from "@/pages/BaseLogin/BaseLoginPage.tsx";
+import BaseAuthenticationPage from "@/pages/BaseAuthentication/BaseAuthenticationPage.tsx";
 import signupPrimaryImage from "@/pages/Signup/images/signup_image.jpg";
 import { redirect, useLoaderData } from "react-router-dom";
 import api from "@/lib/api.ts";
 import VerifyCodeForm, { baseAction } from "@/components/VerifyCodeForm/VerifyCodeForm.tsx";
-import DisplayedMessage from "@/DisplayedMessage.ts";
+import FeedbackMessage from "@/utils/FeedbackMessage.ts";
+import VerifyEmailLoaderData from "@/pages/VerifyEmail/types/VerifyEmailLoaderData.ts";
 
-export async function loader(): Promise<string | Response> {
+export async function loader(): Promise<VerifyEmailLoaderData | Response> {
     try {
         const response = await api.get<string>("api/email-for-verification");
-
-        return response.data;
+        return { email: response.data };
     } catch {
         return redirect("/signup");
     }
 }
 
-export async function action({ request }: any): Promise<DisplayedMessage | Response> {
+export async function action({ request }: any): Promise<FeedbackMessage | Response> {
     return await baseAction(request, 5, "api/verify-email", "/add-phone-number");
 }
 
 export default function VerifyEmailPage() {
-    const email = useLoaderData() as string;
+    const { email } = useLoaderData() as VerifyEmailLoaderData;
 
     return (
-        <BaseLoginPage image={signupPrimaryImage}>
+        <BaseAuthenticationPage image={signupPrimaryImage}>
             <VerifyCodeForm
                 goBackRoute="/signup"
                 goBackButtonText="Go back to signup"
@@ -33,6 +33,6 @@ export default function VerifyEmailPage() {
                 codeLength={5}
                 onSubmitActionRoute="/verify-email"
             />
-        </BaseLoginPage>
+        </BaseAuthenticationPage>
     );
 }

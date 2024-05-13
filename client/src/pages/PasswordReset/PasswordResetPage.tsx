@@ -42,9 +42,19 @@ export default function PasswordResetPage() {
     return (
         <BasePasswordResetPage>
             {loaderData instanceof ErrorMessage ? (
-                <PasswordResetErrorMessage errorMessage={loaderData.errorMessage} />
+                <PasswordResetErrorMessage errorMessage={loaderData} />
             ) : (
-                <PasswordResetForm />
+                <div>
+                    <div>
+                        <h2 className="text-center text-4xl font-bold text-gray-900 mb-3">
+                            Set your new password
+                        </h2>
+                        <p className="text-center text-lg text-gray-600 mb-8">
+                            Please enter your new password below
+                        </p>
+                    </div>
+                    <PasswordResetForm />
+                </div>
             )}
         </BasePasswordResetPage>
     );

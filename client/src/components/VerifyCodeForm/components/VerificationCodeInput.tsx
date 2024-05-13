@@ -4,14 +4,14 @@ import { IS_NUMBER_REGEX, ONLY_NUMBERS_REGEX } from "@/data/regularExpressions.t
 import classNames from "classnames";
 import focusInputBasedOnKey from "@/components/VerifyCodeForm/utils/focusInputBasedOnKey.ts";
 import addNewValueToInputs from "@/components/VerifyCodeForm/utils/addNewValueToInputs.ts";
-import "@/components/VerifyCodeForm/verification-code-form.css";
-import DisplayedMessage from "@/DisplayedMessage.ts";
-import SuccessOrErrorMessage from "@/components/ui/SuccessOrErrorMessage.tsx";
+import "@/components/VerifyCodeForm/styles/verification-code-form.css";
+import FeedbackMessage from "@/utils/FeedbackMessage.ts";
+import FeedbackMessageComponent from "@/components/ui/FeedbackMessageComponent.tsx";
 
 interface VerificationCodeProps {
     inputs: string[];
     setInputs: (inputs: string[]) => void;
-    message: DisplayedMessage | null;
+    message: FeedbackMessage | null;
 }
 
 export default function VerificationCodeInput({
@@ -60,7 +60,7 @@ export default function VerificationCodeInput({
     );
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-6">
             <div className="flex justify-center space-x-3">
                 {inputs.map((value, index) => (
                     <input
@@ -81,7 +81,7 @@ export default function VerificationCodeInput({
                     />
                 ))}
             </div>
-            <SuccessOrErrorMessage message={message} />
+            <FeedbackMessageComponent feedback={message} />
         </div>
     );
 }

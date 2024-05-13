@@ -1,14 +1,10 @@
 import React from "react";
-import { Form, NavLink, redirect, useActionData, useNavigation } from "react-router-dom";
-import getServerErrorMessageOrThrow from "@/utils/getServerErrorMessageOrThrow.ts";
+import { NavLink, redirect } from "react-router-dom";
 import api from "@/lib/api.ts";
-import DisplayedMessage from "@/DisplayedMessage.ts";
-import SuccessOrErrorMessage from "@/components/ui/SuccessOrErrorMessage.tsx";
-import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx";
-import InputField from "@/components/Inputs/InputField.tsx";
 import returnImage from "@/pages/RequestPasswordReset/images/return.png";
 import Image from "@/components/ui/Image.tsx";
 import BasePasswordResetPage from "@/pages/BasePasswordReset/BasePasswordResetPage.tsx";
+import RequestPasswordResetForm from "@/pages/RequestPasswordReset/components/RequestPasswordResetForm.tsx";
 
 export async function loader(): Promise<Response | null> {
     try {
@@ -19,27 +15,7 @@ export async function loader(): Promise<Response | null> {
     }
 }
 
-export async function action({ request }: any): Promise<DisplayedMessage> {
-    const data = await request.formData();
-
-    const emailOrUsername = data.get("emailOrUsername");
-    if (!emailOrUsername) {
-        return DisplayedMessage.createError("The field must not be empty");
-    }
-
-    try {
-        await api.post("api/request-password-reset", { emailOrUsername });
-        return DisplayedMessage.createSuccess("Password reset link sent successfully.");
-    } catch (err) {
-        return DisplayedMessage.createError(getServerErrorMessageOrThrow(err));
-    }
-}
-
 export default function RequestPasswordResetPage() {
-    const { state } = useNavigation();
-    console.log({ state });
-    const displayedMessage = useActionData() as DisplayedMessage | null;
-
     return (
         <BasePasswordResetPage>
             <div>
@@ -50,26 +26,7 @@ export default function RequestPasswordResetPage() {
                     If we find your account, we will send you email message with instructions
                 </p>
             </div>
-            <Form
-                method="post"
-                action={"/request-password-reset"}
-                className={displayedMessage ? "space-y-6" : "space-y-8"}
-            >
-                <InputField
-                    type="text"
-                    name="emailOrUsername"
-                    placeholder="Enter email or username"
-                />
-                {displayedMessage && (
-                    <div className="w-full flex justify-start">
-                        <SuccessOrErrorMessage message={displayedMessage} />
-                    </div>
-                )}
-                <SubmittingButton
-                    loading={state === "loading" || state === "submitting"}
-                    text="Request password reset"
-                />
-            </Form>
+            <RequestPasswordResetForm />
             <div className="flex justify-center mt-8">
                 <NavLink
                     to={"/login"}

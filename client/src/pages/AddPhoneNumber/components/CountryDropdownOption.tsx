@@ -1,16 +1,14 @@
-import countries from "@/pages/AddPhoneNumber/utils/countries.ts";
+import countries from "@/pages/AddPhoneNumber/data/countries.ts";
 import React from "react";
 import Country from "@/pages/AddPhoneNumber/types/Country.ts";
-import CountryCodes from "@/pages/AddPhoneNumber/utils/countries.ts";
+import CountryCodes from "@/pages/AddPhoneNumber/data/countries.ts";
 
 interface CountryDropdownOptionsProps {
-    index: number;
     handleClick: () => void;
     country: Country;
 }
 
 export default function CountryDropdownOption({
-    index,
     handleClick,
     country,
 }: CountryDropdownOptionsProps) {

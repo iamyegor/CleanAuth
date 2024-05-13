@@ -3,15 +3,15 @@ import Image from "@/components/ui/Image.tsx";
 import ErrorMessage from "@/utils/ErrorMessage.ts";
 import { useEffect } from "react";
 
-interface DisplayedErrorMessageProps {
+interface ErrorMessageComponentProps {
     errorMessage: ErrorMessage | null;
     setIsErrorShown?: (isErrorShown: boolean) => void;
 }
 
-export default function DisplayedErrorMessage({
+export default function ErrorMessageComponent({
     errorMessage,
     setIsErrorShown,
-}: DisplayedErrorMessageProps) {
+}: ErrorMessageComponentProps) {
     useEffect(() => {
         if (setIsErrorShown) {
             setIsErrorShown(shouldShowErrorMessage());

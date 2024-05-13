@@ -1,12 +1,13 @@
-import DisplayedErrorMessage from "@/components/ui/DisplayedErrorMessage.tsx";
+import ErrorMessageComponent from "@/components/ui/ErrorMessageComponent.tsx";
 import classNames from "classnames";
-import "@/components/Inputs/login-input.css";
+import "@/styles/login-input.css";
+import ErrorMessage from "@/utils/ErrorMessage.ts";
 
 interface InputFieldProps {
     type: string;
     name: string;
     placeholder: string;
-    errorMessage?: string;
+    errorMessage?: ErrorMessage | null;
     defaultValue?: string;
 }
 
@@ -31,7 +32,7 @@ export default function InputField({
                 className={classes}
                 defaultValue={defaultValue ?? ""}
             />
-            {errorMessage && <DisplayedErrorMessage errorMessage={errorMessage} />}
+            <ErrorMessageComponent errorMessage={errorMessage ?? null} />
         </div>
     );
 }

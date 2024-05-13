@@ -71,8 +71,8 @@ public class SignUpCommandHandler : IRequestHandler<SignUpCommand, Result<Tokens
     private Error UserAlreadyExists(User user, string login, string email)
     {
         return user.Login.Value == login
-            ? Errors.Login.TheSameLoginExists(login)
-            : Errors.Login.TheSameEmailExists(email);
+            ? Errors.Login.IsAlreadyTaken(login)
+            : Errors.Email.IsAlreadyTaken(email);
     }
 
     private User UpdateExistingUser(

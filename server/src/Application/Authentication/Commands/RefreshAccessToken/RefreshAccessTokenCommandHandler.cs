@@ -27,24 +27,16 @@ public class RefreshAccessTokenCommandHandler
     {
         if (string.IsNullOrWhiteSpace(command.RefreshToken))
         {
-            return Errors.RefreshToken.NotProvided();
+            return Errors.RefreshToken.IsRequired();
         }
 
         User? user = _context.Users.FirstOrDefault(u =>
             u.RefreshToken != null && u.RefreshToken.Value == command.RefreshToken
         );
-        if (user == null)
-        {
-            return Errors.User.NotFoundWithRefreshToken(command.RefreshToken);
-        }
 
-        if (
-            user.RefreshToken == null
-            || !user.RefreshToken.Matches(command.RefreshToken)
-            || user.RefreshToken.IsExpired
-        )
+        if (user == null || user.RefreshToken!.IsExpired)
         {
-            return Errors.RefreshToken.Invalid(command.RefreshToken);
+            return Errors.RefreshToken.IsInvalid(command.RefreshToken);
         }
 
         Tokens tokens = _jwtService.GenerateTokens(user);

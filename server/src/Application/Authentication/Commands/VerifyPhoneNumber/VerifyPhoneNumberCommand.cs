@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices.JavaScript;
 using Domain.DomainErrors;
 using Domain.User.ValueObjects;
 using Infrastructure.Authentication;

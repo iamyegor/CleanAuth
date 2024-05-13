@@ -39,7 +39,7 @@ public class RequestPasswordResetCommandHandler
 
         if (user == null)
         {
-            return Errors.User.NotFound(command.EmailOrLogin);
+            return Errors.User.DoesNotExist(command.EmailOrLogin);
         }
 
         PasswordResetToken token = new PasswordResetToken();

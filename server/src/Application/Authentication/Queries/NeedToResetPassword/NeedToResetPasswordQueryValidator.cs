@@ -8,7 +8,7 @@ public class NeedToResetPasswordQueryValidator : AbstractValidator<NeedToResetPa
 {
     public NeedToResetPasswordQueryValidator()
     {
-        RuleFor(x => x.UserId).MustBeGuid(Errors.UserId.Incorrect);
-        RuleFor(x => x.Token).MustBeGuid(Errors.PasswordResetToken.Incorrect);
+        RuleFor(x => x.UserId).MustBeGuid(Errors.UserId.IsInvalid);
+        RuleFor(x => x.Token).MustBeGuid(Errors.PasswordResetToken.IsInvalid);
     }
 }

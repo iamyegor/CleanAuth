@@ -20,18 +20,18 @@ public class Password : ValueObject
     {
         if (string.IsNullOrWhiteSpace(input))
         {
-            return Result.Fail(Errors.Generic.IsRequired(nameof(Password), input));
+            return Errors.Password.IsRequired();
         }
 
         string password = input.Trim();
         if (password.Length < 6 || password.Length > 50)
         {
-            return Result.Fail(Errors.Password.InvalidLength(password));
+            return Errors.Password.HasInvalidLength(password);
         }
 
         if (Regex.IsMatch(password, "^(?=.*[a-z])(?=.*[A-Z])(?=.*[\\d\\W]).*$\n"))
         {
-            return Result.Fail(Errors.Password.InvalidSignature(password));
+            return Errors.Password.HasInvalidSignature(password);
         }
 
         string hashedPassword = Convert.ToHexString(

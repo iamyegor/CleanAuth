@@ -99,7 +99,7 @@ public class JwtService
         }
         catch (SecurityTokenValidationException)
         {
-            return Result.Fail(Errors.AccessToken.InvalidToken());
+            return Result.Fail(Errors.AccessToken.IsInvalid());
         }
     }
 }

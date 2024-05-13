@@ -36,7 +36,7 @@ public class VerifyPhoneNumberCommandHandler
 
         if (user == null)
         {
-            return Errors.PhoneNumberVerificationCode.IsIncorrect();
+            return Errors.PhoneNumberVerificationCode.IsInvalid();
         }
 
         if (user.PhoneNumberVerificationCode!.IsExpired)

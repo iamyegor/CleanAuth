@@ -34,6 +34,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             {
                 emailBuilder.HasIndex(l => l.Value).IsUnique();
                 emailBuilder.Property(e => e.Value).HasColumnName("email");
+                emailBuilder.HasIndex(e => e.Value).IsUnique();
             }
         );
 

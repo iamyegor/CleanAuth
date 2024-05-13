@@ -41,12 +41,12 @@ public class UserController : ApplicationController
 
             if (user == null || !user.IsEmailVerified)
             {
-                return Problem(Errors.User.NotFound(userIdOrError.Value));
+                return Problem(Errors.User.DoesNotExist(userIdOrError.Value));
             }
 
             return Ok(user.Login.Value);
         }
 
-        return Problem(Errors.AccessToken.NotProvided());
+        return Problem(Errors.AccessToken.IsRequired());
     }
 }

@@ -34,7 +34,7 @@ public class ResetPasswordCommandHandler
 
         if (user == null)
         {
-            return Errors.PasswordResetToken.Incorrect(token);
+            return Errors.PasswordResetToken.IsInvalid(token);
         }
 
         if (user.PasswordResetToken == null)
@@ -49,7 +49,7 @@ public class ResetPasswordCommandHandler
 
         if (user.Password.Matches(command.Password))
         {
-            return Errors.Password.SameAsCurrent();
+            return Errors.Password.IsSameAsCurrent();
         }
 
         user.SetPassword(Password.Create(command.Password));

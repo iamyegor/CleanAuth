@@ -8,8 +8,6 @@ public class PhoneNumberVerificationCode : ValueObject
     public DateTime ExpiryTime { get; private set; } = DateTime.UtcNow.AddMinutes(10);
     public bool IsExpired => DateTime.UtcNow > ExpiryTime;
 
-    public PhoneNumberVerificationCode() { }
-
     protected override IEnumerable<object?> GetPropertiesForComparison()
     {
         yield return Value;

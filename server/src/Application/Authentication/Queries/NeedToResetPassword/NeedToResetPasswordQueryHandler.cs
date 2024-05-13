@@ -37,7 +37,7 @@ public class NeedToResetPasswordQueryHandler
 
         if (data == null || data.PasswordResetToken != Guid.Parse(query.Token))
         {
-            return Errors.PasswordResetToken.Incorrect(query.Token);
+            return Errors.PasswordResetToken.IsInvalid(query.Token);
         }
 
         if (data.PasswordResetTokenExpiryTime < DateTime.UtcNow)

@@ -1,5 +1,4 @@
 using Domain.DomainErrors;
-using Domain.User.ValueObjects;
 using FluentValidation;
 using XResults;
 
@@ -26,7 +25,8 @@ public static class CustomValidationRules
 
     public static IRuleBuilderOptionsConditions<T, int> MustHaveLength<T>(
         this IRuleBuilder<T, int> ruleBuilder,
-        int expectedLength
+        int expectedLength,
+        Func<int, Error> callback
     )
     {
         return ruleBuilder.Custom(
@@ -35,7 +35,8 @@ public static class CustomValidationRules
                 int length = value.ToString().Length;
                 if (length != expectedLength)
                 {
-                    context.AddError(Errors.Generic.IncorrectLength(context.PropertyPath, length));
+                    Error error = callback(value);
+                    context.AddError(error);
                 }
             }
         );

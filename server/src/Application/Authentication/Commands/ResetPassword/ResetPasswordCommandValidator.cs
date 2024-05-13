@@ -9,7 +9,7 @@ public class ResetPasswordCommandValidator : AbstractValidator<ResetPasswordComm
 {
     public ResetPasswordCommandValidator()
     {
-        RuleFor(x => x.TokenString).MustBeGuid(Errors.PasswordResetToken.Incorrect);
+        RuleFor(x => x.TokenString).MustBeGuid(Errors.PasswordResetToken.IsInvalid);
         RuleFor(x => x.Password).MustBeOk(Password.Create);
     }
 }

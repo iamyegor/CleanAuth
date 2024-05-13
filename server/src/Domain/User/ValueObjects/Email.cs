@@ -17,18 +17,18 @@ public class Email
     {
         if (string.IsNullOrWhiteSpace(input))
         {
-            return Errors.Generic.IsRequired(nameof(Email), input);
+            return Errors.Email.IsRequired();
         }
 
         string email = input.Trim().ToLower();
         if (email.Length > 150)
         {
-            return Errors.Generic.TooLong(nameof(Email), email.Length);
+            return Errors.Email.IsTooLong(email);
         }
 
         if (!Regex.IsMatch(email, @"^[^@]+@[^@]+\.[^@]+$"))
         {
-            return Errors.Email.IncorrectSignature(email);
+            return Errors.Email.HasInvalidSignature(email);
         }
 
         return new Email(email);

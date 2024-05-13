@@ -18,23 +18,18 @@ public class Login : ValueObject
     {
         if (string.IsNullOrWhiteSpace(input))
         {
-            return Errors.Generic.IsRequired(nameof(Login), input);
+            return Errors.Login.IsRequired();
         }
 
         string login = input.Trim();
-        if (login.Length > 32)
+        if (login.Length < 3 || login.Length > 32)
         {
-            return Errors.Generic.TooLong(nameof(Login), login.Length);
-        }
-
-        if (login.Length < 3)
-        {
-            return Errors.Generic.TooShort(nameof(Login), login.Length);
+            return Errors.Login.HasInvalidLength(login);
         }
 
         if (!Regex.IsMatch(login, "^[a-zA-Z0-9_]*$"))
         {
-            return Errors.Login.InvalidSymbols(login);
+            return Errors.Login.HasInvalidSymbols(login);
         }
 
         return new Login(input);

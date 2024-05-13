@@ -35,7 +35,7 @@ public class AddPhoneNumberCommandHandler : IRequestHandler<AddPhoneNumberComman
 
         if (userWithSamePhoneNumber != null && userWithSamePhoneNumber.IsPhoneNumberVerified)
         {
-            return Errors.PhoneNumber.AlreadyTaken(command.PhoneNumber);
+            return Errors.PhoneNumber.IsAlreadyTaken(command.PhoneNumber);
         }
 
         User user = await _context.Users.SingleAsync(

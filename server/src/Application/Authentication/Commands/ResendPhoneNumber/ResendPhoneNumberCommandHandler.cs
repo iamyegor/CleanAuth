@@ -36,7 +36,7 @@ public class ResendPhoneNumberCommandHandler
 
         if (user.PhoneNumber == null)
         {
-            return Errors.User.NoPhoneNumber();
+            return Errors.User.HasNoPhoneNumber(command.UserId);
         }
 
         PhoneNumberVerificationCode code = new PhoneNumberVerificationCode();

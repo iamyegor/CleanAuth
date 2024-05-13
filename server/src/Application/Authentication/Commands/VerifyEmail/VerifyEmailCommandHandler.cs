@@ -35,7 +35,7 @@ public class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, Res
 
         if (user == null)
         {
-            return Errors.EmailVerificationCode.IsIncorrect(command.Code);
+            return Errors.EmailVerificationCode.IsInvalid(command.Code);
         }
 
         if (user.EmailVerificationCode!.IsExpired)

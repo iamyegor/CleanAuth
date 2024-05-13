@@ -34,7 +34,7 @@ public class LogInCommandHandler : IRequestHandler<LogInCommand, Result<Tokens, 
 
         if (user == null || !user.Password.Matches(command.Password))
         {
-            return Errors.User.IncorrectLoginOrPassword(command.LoginOrEmail, command.Password);
+            return Errors.User.HasInvalidCredentials(command.LoginOrEmail, command.Password);
         }
 
         Tokens tokens = _jwtService.GenerateTokens(user);

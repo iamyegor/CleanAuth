@@ -32,7 +32,7 @@ public class GetPhoneNumberForVerificationQueryHandler
 
         if (phoneNumber == null)
         {
-            return Errors.User.NoPhoneNumber();
+            return Errors.User.HasNoPhoneNumber(query.UserId);
         }
 
         return phoneNumber;

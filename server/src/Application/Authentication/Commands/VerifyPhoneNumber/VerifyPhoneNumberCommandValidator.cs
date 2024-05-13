@@ -1,4 +1,5 @@
 using Application.Common.FluentValidation;
+using Domain.DomainErrors;
 using FluentValidation;
 
 namespace Application.Authentication.Commands.VerifyPhoneNumber;
@@ -7,6 +8,6 @@ public class VerifyPhoneNumberCommandValidator : AbstractValidator<VerifyPhoneNu
 {
     public VerifyPhoneNumberCommandValidator()
     {
-        RuleFor(x => x.Code).MustHaveLength(4);
+        RuleFor(x => x.Code).MustHaveLength(4, Errors.PhoneNumberVerificationCode.HasInvalidLength);
     }
 }

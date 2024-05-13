@@ -19,18 +19,18 @@ public class PhoneNumber
     {
         if (string.IsNullOrWhiteSpace(input))
         {
-            return Errors.Generic.IsRequired(nameof(PhoneNumber), input);
+            return Errors.PhoneNumber.IsRequired();
         }
 
         string phoneNumber = input.Trim();
-        if (phoneNumber.Length > 20)
+        if (phoneNumber.Length > 15)
         {
-            return Errors.Generic.TooLong(nameof(PhoneNumber), phoneNumber.Length);
+            return Errors.PhoneNumber.IsTooLong(phoneNumber);
         }
 
         if (!Regex.IsMatch(phoneNumber, @"^\+\d{10,15}$"))
         {
-            return Errors.PhoneNumber.IncorrectSignature(phoneNumber);
+            return Errors.PhoneNumber.HasInvalidSignature(phoneNumber);
         }
 
         return new PhoneNumber(phoneNumber);

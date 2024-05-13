@@ -7,12 +7,8 @@ import { redirect } from "react-router-dom";
 
 export async function loader(): Promise<Response | null> {
     try {
-        const needToAddPhoneNumber = await api.get<boolean>("api/need-to-add-phone-number");
-        if (needToAddPhoneNumber) {
-            return null;
-        }
-
-        return redirect("/signup");
+        await api.head("api/get-unverified-phone-number");
+        return null;
     } catch (err) {
         return redirect("/signup");
     }

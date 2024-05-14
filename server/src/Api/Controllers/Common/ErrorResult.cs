@@ -23,12 +23,9 @@ public class ErrorResult : IActionResult
             ["errorMessage"] = _error.Message
         };
 
-        if (_error.Details != null)
+        foreach ((string? key, object? value) in _error.Details)
         {
-            foreach ((string? key, object? value) in _error.Details)
-            {
-                payload.Add(key, value);
-            }
+            payload.Add(key, value);
         }
 
         ObjectResult objectResult = new ObjectResult(payload)

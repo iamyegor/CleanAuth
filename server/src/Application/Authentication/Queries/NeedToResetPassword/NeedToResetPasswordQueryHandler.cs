@@ -29,7 +29,7 @@ public class NeedToResetPasswordQueryHandler
             where id = @UserId::uuid";
 
         PasswordResetTokenInDb? data =
-            await _connection.QuerySingleOrDefaultAsync<PasswordResetTokenInDb>(
+            await _connection.QueryFirstOrDefaultAsync<PasswordResetTokenInDb>(
                 sql,
                 new { query.UserId }
             );

@@ -6,12 +6,12 @@ import { Result } from "@/utils/resultOfT.ts";
 import api from "@/lib/api.ts";
 import { AxiosError } from "axios";
 import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
-import parseResponseToSignupError from "@/pages/Signup/utils/parseResponseToSignupError.ts";
 import { getSignupData } from "@/pages/Signup/utils/getSignupData.ts";
 import useStoredSignupData from "@/pages/Signup/hooks/useInitialSignupData.ts";
 import storeSignupData from "@/utils/initialSignupData/storeSignupData.ts";
 import PasswordInput from "@/components/ui/PasswordInput.tsx";
 import getErrorMessageForField from "@/utils/getErrorMessageForField.ts";
+import extractSignupError from "@/pages/Signup/utils/extractSignupError.ts";
 
 export async function action({ request }: any): Promise<SignupError | Response> {
     const form = await request.formData();
@@ -33,12 +33,7 @@ export async function action({ request }: any): Promise<SignupError | Response> 
 
         return redirect("/verify-email");
     } catch (err) {
-        const error = err as AxiosError<ServerErrorResponse>;
-        if (error.response?.data) {
-            return parseResponseToSignupError(error.response.data);
-        }
-
-        throw new Error("No response was received");
+        return extractSignupError(err as AxiosError<ServerErrorResponse>);
     }
 }
 

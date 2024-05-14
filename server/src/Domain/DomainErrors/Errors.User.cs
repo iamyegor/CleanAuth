@@ -1,5 +1,3 @@
-using XResults;
-
 namespace Domain.DomainErrors;
 
 public static partial class Errors

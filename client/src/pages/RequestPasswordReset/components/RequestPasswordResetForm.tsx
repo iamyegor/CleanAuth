@@ -5,7 +5,9 @@ import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx
 import FeedbackMessageComponent from "@/components/ui/FeedbackMessageComponent.tsx";
 import FeedbackMessage from "@/utils/FeedbackMessage.ts";
 import api from "@/lib/api.ts";
-import getServerErrorMessageOrThrow from "@/utils/getServerErrorMessageOrThrow.ts";
+import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
+import { AxiosError } from "axios";
+import extractRequestPasswordResetError from "@/pages/RequestPasswordReset/utils/extractRequestPasswordResetError.ts";
 
 export async function action({ request }: any): Promise<FeedbackMessage> {
     const data = await request.formData();
@@ -19,7 +21,7 @@ export async function action({ request }: any): Promise<FeedbackMessage> {
         await api.post("api/request-password-reset", { emailOrUsername });
         return FeedbackMessage.createSuccess("Password reset link sent successfully.");
     } catch (err) {
-        return FeedbackMessage.createError(getServerErrorMessageOrThrow(err));
+        return extractRequestPasswordResetError(err as AxiosError<ServerErrorResponse>);
     }
 }
 

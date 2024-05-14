@@ -16,7 +16,6 @@ export default function CountriesComponent({ countries, handleClick }: Countries
             {countries.map((country, index) => (
                 <div key={index}>
                     <CountryDropdownOption
-                        index={index}
                         handleClick={() => handleClick(country)}
                         country={country}
                     />

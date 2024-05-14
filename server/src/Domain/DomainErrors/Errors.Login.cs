@@ -18,7 +18,7 @@ public static partial class Errors
         {
             var details = new Dictionary<string, object?>() { ["login"] = value };
             return new Error(
-                "same.login.exists",
+                "login.already.taken",
                 "User with the same login already exists",
                 details
             );

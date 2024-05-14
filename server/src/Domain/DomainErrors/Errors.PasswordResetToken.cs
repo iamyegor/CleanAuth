@@ -8,23 +8,15 @@ public static partial class Errors
         {
             var details = new Dictionary<string, object?>() { ["token"] = value };
             return new Error(
-                "restore.password.token.invalid",
-                "Restore password token is invalid",
+                "password.reset.token.invalid",
+                "Password reset token is invalid",
                 details
-            );
-        }
-
-        public static Error WasntRequested()
-        {
-            return new Error(
-                "restore.password.token.wasnt.requested",
-                "Restore password token wasn't requested"
             );
         }
 
         public static Error IsExpired()
         {
-            return new Error("restore.password.token.expired", "Restore password token is expired");
+            return new Error("password.reset.token.expired", "Password reset token is expired");
         }
     }
 }

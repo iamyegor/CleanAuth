@@ -15,6 +15,7 @@ import storePhoneNumber from "@/utils/phoneNumberData/storePhoneNumber.ts";
 import storeCountryCodeIndex from "@/utils/phoneNumberData/storeCountryCode.ts";
 import useCountryCode from "@/pages/AddPhoneNumber/hooks/useCountryCode.ts";
 import ErrorMessage from "@/utils/ErrorMessage.ts";
+import extractAddPhoneNumberError from "@/pages/AddPhoneNumber/utils/extractAddPhoneNumberError.ts";
 
 export async function action({ request }: any): Promise<ErrorMessage | Response> {
     const data = await request.formData();
@@ -33,12 +34,7 @@ export async function action({ request }: any): Promise<ErrorMessage | Response>
 
         return redirect("/verify-phone-number");
     } catch (err) {
-        const error = err as AxiosError<ServerErrorResponse>;
-        if (error.response?.data) {
-            return ErrorMessage.create(error.response.data.errorMessage);
-        }
-
-        throw new Error("No response was received");
+        return extractAddPhoneNumberError(err as AxiosError<ServerErrorResponse>);
     }
 }
 

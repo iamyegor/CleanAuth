@@ -3,7 +3,6 @@ import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx
 import VerificationCodeInput from "@/components/VerifyCodeForm/components/VerificationCodeInput.tsx";
 import React, { useEffect, useRef, useState } from "react";
 import api from "@/lib/api.ts";
-import getServerErrorMessageOrThrow from "@/utils/getServerErrorMessageOrThrow.ts";
 import validateCode from "@/components/VerifyCodeForm/utils/validateCode.ts";
 import { Result } from "@/utils/result.ts";
 import CountdownDisplay from "@/components/VerifyCodeForm/components/CountdownDisplay.tsx";
@@ -28,6 +27,7 @@ export async function baseAction(
     maxCodeLength: number,
     verificationEndpoint: string,
     redirectRoute: string,
+    errorExtractor: (err: any) => string,
 ): Promise<FeedbackMessage | Response> {
     const code: string = await getCodeFromForm(request, maxCodeLength);
 
@@ -40,7 +40,8 @@ export async function baseAction(
         await api.post(verificationEndpoint, { code });
         return redirect(redirectRoute);
     } catch (err) {
-        return FeedbackMessage.createError(getServerErrorMessageOrThrow(err));
+        const errorMessage: string = errorExtractor(err);
+        return FeedbackMessage.createError(errorMessage);
     }
 }
 

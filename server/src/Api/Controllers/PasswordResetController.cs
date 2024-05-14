@@ -32,7 +32,7 @@ public class PasswordResetController : ApplicationController
         return FromResult(result);
     }
 
-    [HttpHead("need-to-reset-password")]
+    [HttpGet("need-to-reset-password")]
     public async Task<IActionResult> NeedToResetPassword(
         [FromQuery] string userId,
         [FromQuery] string token

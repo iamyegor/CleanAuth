@@ -1,5 +1,4 @@
 import SeparatorLine from "@/pages/Login/components/SeparatorLine.tsx";
-import InputField from "@/components/ui/InputField.tsx";
 import RecoveryAndSignupLinks from "@/pages/Login/components/RecoveryAndSignupLinks.tsx";
 import SocialLoginButtons from "@/pages/Login/components/SocialLoginButtons.tsx";
 import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
@@ -10,10 +9,12 @@ import { validateCredentials } from "@/pages/Login/utils/validateCredentials.ts"
 import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
 import LoginError from "@/pages/Login/types/LoginError.ts";
 import { Result } from "@/utils/resultOfT.ts";
-import { parseResponseToLoginError } from "@/pages/Login/utils/parseResponseToLoginError.ts";
-import PasswordInput from "@/components/ui/PasswordInput.tsx";
+import { extractLoginError } from "@/pages/Login/utils/extractLoginError.ts";
 import ErrorMessage from "@/utils/ErrorMessage.ts";
 import getErrorMessageForField from "@/utils/getErrorMessageForField.ts";
+import LoginPageLoginOrEmailInput from "@/pages/Login/components/LoginOrEmailInput.tsx";
+import ErrorMessageComponent from "@/components/ui/ErrorMessageComponent.tsx";
+import LoginPagePasswordInput from "@/pages/Login/components/LoginPagePasswordInput.tsx";
 
 export async function action({ request }: any): Promise<LoginError | Response> {
     const data = await request.formData();
@@ -32,35 +33,34 @@ export async function action({ request }: any): Promise<LoginError | Response> {
         await api.post("api/login", credentials);
         return redirect("/");
     } catch (err) {
-        const error = err as AxiosError<ServerErrorResponse>;
-        if (error.response?.data) {
-            return parseResponseToLoginError(error.response.data);
-        }
-
-        throw new Error("No response war received");
+        return extractLoginError(err as AxiosError<ServerErrorResponse>);
     }
 }
 
 export default function LoginForm() {
-    const loginError = useActionData() as LoginError;
+    const loginError = useActionData() as LoginError | null;
     const { state } = useNavigation();
+
+    function isPasswordError(): boolean {
+        return loginError?.problematicField === "password";
+    }
+
+    function isBothError(): boolean {
+        return loginError?.problematicField === "both";
+    }
+
+    function getBothErrorMessage(): ErrorMessage | null {
+        return getErrorMessageForField("both", loginError);
+    }
 
     return (
         <Form method="post" action={"/login"} replace>
-            <div className={getErrorMessageForField("password", loginError) ? "mb-4" : "mb-8"}>
-                <div className="space-y-4">
-                    <InputField
-                        type="text"
-                        name="loginOrEmail"
-                        placeholder="Login or Email"
-                        errorMessage={getErrorMessageForField("loginOrEmail", loginError)}
-                    />
-                    <PasswordInput
-                        name="password"
-                        placeholder="Password"
-                        errorMessage={getErrorMessageForField("password", loginError)}
-                    />
+            <div className={isBothError() || isPasswordError() ? "mb-6" : "mb-8"}>
+                <div className={`space-y-4 ${isBothError() && "mb-6"}`}>
+                    <LoginPageLoginOrEmailInput loginError={loginError} />
+                    <LoginPagePasswordInput loginError={loginError} />
                 </div>
+                <ErrorMessageComponent errorMessage={getBothErrorMessage()} />
             </div>
             <RecoveryAndSignupLinks />
             <SubmittingButton loading={state == "submitting"} text="Sign in" />

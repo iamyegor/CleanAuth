@@ -1,10 +1,11 @@
-import BaseAuthenticationPage from "@/pages/BaseAuthentication/BaseAuthenticationPage.tsx";
+import BaseAuthentication from "@/components/ui/BaseAuthentication.tsx";
 import signupPrimaryImage from "@/pages/Signup/images/signup_image.jpg";
 import { redirect, useLoaderData } from "react-router-dom";
 import api from "@/lib/api.ts";
 import VerifyCodeForm, { baseAction } from "@/components/VerifyCodeForm/VerifyCodeForm.tsx";
 import FeedbackMessage from "@/utils/FeedbackMessage.ts";
 import VerifyEmailLoaderData from "@/pages/VerifyEmail/types/VerifyEmailLoaderData.ts";
+import extractVerifyEmailError from "@/pages/VerifyEmail/utils/extractVerifyEmailError.ts";
 
 export async function loader(): Promise<VerifyEmailLoaderData | Response> {
     try {
@@ -16,14 +17,20 @@ export async function loader(): Promise<VerifyEmailLoaderData | Response> {
 }
 
 export async function action({ request }: any): Promise<FeedbackMessage | Response> {
-    return await baseAction(request, 5, "api/verify-email", "/add-phone-number");
+    return await baseAction(
+        request,
+        5,
+        "api/verify-email",
+        "/add-phone-number",
+        extractVerifyEmailError,
+    );
 }
 
 export default function VerifyEmailPage() {
     const { email } = useLoaderData() as VerifyEmailLoaderData;
 
     return (
-        <BaseAuthenticationPage image={signupPrimaryImage}>
+        <BaseAuthentication image={signupPrimaryImage}>
             <VerifyCodeForm
                 goBackRoute="/signup"
                 goBackButtonText="Go back to signup"
@@ -33,6 +40,6 @@ export default function VerifyEmailPage() {
                 codeLength={5}
                 onSubmitActionRoute="/verify-email"
             />
-        </BaseAuthenticationPage>
+        </BaseAuthentication>
     );
 }

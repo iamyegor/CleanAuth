@@ -3,7 +3,7 @@ import { NavLink, redirect } from "react-router-dom";
 import api from "@/lib/api.ts";
 import returnImage from "@/pages/RequestPasswordReset/images/return.png";
 import Image from "@/components/ui/Image.tsx";
-import BasePasswordResetPage from "@/pages/BasePasswordReset/BasePasswordResetPage.tsx";
+import BasePasswordReset from "@/components/ui/BasePasswordReset.tsx";
 import RequestPasswordResetForm from "@/pages/RequestPasswordReset/components/RequestPasswordResetForm.tsx";
 
 export async function loader(): Promise<Response | null> {
@@ -17,7 +17,7 @@ export async function loader(): Promise<Response | null> {
 
 export default function RequestPasswordResetPage() {
     return (
-        <BasePasswordResetPage>
+        <BasePasswordReset>
             <div>
                 <h2 className="text-center text-4xl font-bold text-gray-900 mb-3">
                     Reset your password
@@ -37,6 +37,6 @@ export default function RequestPasswordResetPage() {
                     <span>Go back to login</span>
                 </NavLink>
             </div>
-        </BasePasswordResetPage>
+        </BasePasswordReset>
     );
 }

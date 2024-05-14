@@ -23,7 +23,7 @@ public static partial class Errors
             var details = new Dictionary<string, object?>() { ["code"] = code };
             return new Error(
                 "email.verification.code.invalid.length",
-                "Email verification code must be 6 characters long",
+                "Email verification code must be 5 characters long",
                 details
             );
         }

@@ -7,13 +7,13 @@ public class Error
 {
     public string Code { get; set; }
     public string Message { get; set; }
-    public IDictionary<string, object?>? Details { get; set; }
+    public IDictionary<string, object?> Details { get; set; }
 
     public Error(string code, string message, IDictionary<string, object?>? details = null)
     {
         Code = code;
         Message = message;
-        Details = details;
+        Details = details ?? new Dictionary<string, object?>();
     }
 
     public string Serialize()

@@ -5,10 +5,12 @@ import validatePassword from "@/utils/validatePassword.ts";
 import { Result } from "@/utils/result.ts";
 import ErrorMessage from "@/utils/ErrorMessage.ts";
 import api from "@/lib/api.ts";
-import getServerErrorMessageOrThrow from "@/utils/getServerErrorMessageOrThrow.ts";
 import ErrorMessageComponent from "@/components/ui/ErrorMessageComponent.tsx";
 import { useState } from "react";
 import getQueryParam from "@/utils/getQueryParam.ts";
+import extractPasswordResetError from "@/pages/PasswordReset/utils/extractPasswordResetError.ts";
+import { AxiosError } from "axios";
+import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
 
 export async function action({ request }: any): Promise<Response | ErrorMessage> {
     const data = await request.formData();
@@ -26,7 +28,7 @@ export async function action({ request }: any): Promise<Response | ErrorMessage>
         await api.post(`api/reset-password?userId=${uid}&token=${token}`, { password });
         return redirect("/login");
     } catch (err) {
-        return ErrorMessage.create(getServerErrorMessageOrThrow(err));
+        return extractPasswordResetError(err as AxiosError<ServerErrorResponse>);
     }
 }
 

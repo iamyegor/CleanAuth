@@ -8,7 +8,7 @@ interface BaseResetPasswordPageProps {
 export default function BasePasswordReset({ children }: BaseResetPasswordPageProps) {
     return (
         <BaseRoundedPage>
-            <div className="h-full w-[410px] flex flex-col justify-center">{children}</div>
+            <div className="h-full max-w-[410px] px-4 flex flex-col justify-center">{children}</div>
         </BaseRoundedPage>
     );
 }

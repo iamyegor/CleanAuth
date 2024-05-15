@@ -16,8 +16,9 @@ export default function CountdownDisplay({ secondsLeft }: CountdownDisplayProps)
         <>
             {secondsLeft > 0 && (
                 <div className="mb-8 text-neutral-500 space-x-1 flex justify-center">
-                    <span className="text-neutral-500">You will be able resend code in</span>
-                    <div>{getFormattedTime()}</div>
+                    <span className="text-neutral-500">
+                        You will be able resend code in {getFormattedTime()}
+                    </span>
                 </div>
             )}
         </>

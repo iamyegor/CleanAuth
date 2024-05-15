@@ -1,6 +1,6 @@
 .default-verification-code-input {
-    @apply w-14 h-14 text-center text-xl font-semibold border rounded-md shadow-sm shadow-gray-200 
-    outline-none ring-offset-1 transition-all;
+    @apply w-[50px] sm:w-14 h-[50px] sm:h-14 text-center text-xl font-semibold border rounded-md 
+    shadow-sm shadow-gray-200 outline-none ring-offset-1 transition-all;
 }
 
 .verification-code-input-ok {
@@ -11,18 +11,11 @@
     @apply ring-red-400 ring-2;
 }
 
-/*.verification-code-auxiliary-button {*/
-/*    @apply text-white hover:bg-blue-600 flex-1 bg-blue-500 rounded-md transition h-14 flex */
-/*    justify-center items-center disabled:bg-neutral-500 disabled:text-neutral-200*/
-/*    shadow-lg shadow-blue-200 disabled:shadow-gray-200;*/
-/*}*/
-
-
 .verification-code-auxiliary-button {
   @apply text-blue-500 flex-1 bg-transparent rounded-md transition h-14 flex
   justify-center items-center disabled:bg-neutral-500/70 disabled:shadow-none disabled:border-0
   shadow shadow-blue-200 hover:shadow-lg disabled:shadow-gray-200 border border-blue-500 
-   disabled:text-neutral-100;
+   disabled:text-neutral-100 p-2;
 }
 
 .verification-code-auxiliary-button--loading {

@@ -7,6 +7,9 @@ export default {
             fontFamily: {
                 sans: ["Inter", ...defaultTheme.fontFamily.sans],
             },
+            screens: {
+                "sm": "430px",
+            }
         },
     },
     plugins: [],

@@ -15,8 +15,8 @@ export default function FeedbackMessageComponent({ feedback }: SuccessOrErrorMes
     return (
         <>
             {feedback!.isSuccess ? (
-                <div className="flex space-x-1.5 items-center">
-                    <Image src={checkImage} alt="check" className="w-5 h-5" />
+                <div className="flex space-x-1.5 text-left">
+                    <Image src={checkImage} alt="check" className="w-5 h-5 mt-0.5" />
                     <p className="text-green-500">{feedback!.message}</p>
                 </div>
             ) : (

@@ -7,7 +7,7 @@ interface PrimaryImageProps {
 
 export default function PrimaryImage(props: PrimaryImageProps) {
     return (
-        <div className="w-2/5 flex justify-center items-center">
+        <div className="w-2/5 justify-center items-center hidden xl:flex">
             <Image
                 src={props.src}
                 alt={props.alt}

@@ -61,7 +61,7 @@ export default function VerificationCodeInput({
 
     return (
         <div className="space-y-6">
-            <div className="flex justify-center space-x-3">
+            <div className="flex justify-center space-x-2 sm:space-x-3">
                 {inputs.map((value, index) => (
                     <input
                         ref={(el) => (inputRefs.current[index] = el!)}

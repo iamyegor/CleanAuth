@@ -40,15 +40,24 @@ export default function ErrorPage() {
 
     return (
         <BaseRoundedPage>
-            <div className="h-full flex items-center">
-                <Image src={sadRobotImage} alt="Error" className="w-[350px] mb-8 mr-8" />
+            <div className="h-full flex flex-col md:flex-row items-center justify-center">
+                <Image
+                    src={sadRobotImage}
+                    alt="Error"
+                    className="w-[220px] md:w-[350px] mb-4 mr-0 md:mb-8 md:mr-8"
+                />
                 <div className="flex flex-col items-center md:items-start">
                     <h1 className="text-8xl font-bold mb-8">{title}</h1>
-                    <div className="text-lg max-w-[500px] mb-10 ">{message}</div>
+                    <div
+                        className="text-lg max-w-[500px] mb-10 text-center md:text-left mx-4 
+                    md:mx-0"
+                    >
+                        {message}
+                    </div>
                     <div className="flex space-x-4">
                         <button
-                            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-6 
-                            rounded mr-5"
+                            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-2 
+                            sm:px-6 rounded mr-5"
                             onClick={reloadPage}
                         >
                             Reload Page

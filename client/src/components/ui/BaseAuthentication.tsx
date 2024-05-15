@@ -13,8 +13,8 @@ export default function BaseAuthentication({ children, image }: BaseLoginPage) {
         <div className="flex min-h-screen bg-white">
             <PrimaryImage src={image} alt="Login Page" />
             <div
-                className="flex-1 flex justify-center items-center relative m-3 ml-0 rounded-2xl 
-            bg-neutral-100"
+                className="flex-1 flex justify-center items-center relative m-3 rounded-2xl 
+            bg-neutral-100 lg:ml-0"
             >
                 <Image
                     src={abstractFormImage}

@@ -4,7 +4,7 @@ export default function RecoveryAndSignupLinks() {
     return (
         <div className="text-right flex justify-between mb-8">
             <div className="text-sm">
-                <span>Don't have an account? </span>
+                <span className="hidden sm:inline-block sm:mr-1">Don't have an account?</span>
                 <NavLink to="/signup" className="text-blue-500 hover:underline">
                     Sign up!
                 </NavLink>

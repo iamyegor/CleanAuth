@@ -33,7 +33,7 @@ export default function VerifyEmailPage() {
         <BaseAuthentication image={signupPrimaryImage}>
             <VerifyCodeForm
                 goBackRoute="/signup"
-                goBackButtonText="Go back to signup"
+                goBackButtonText="Back to signup"
                 resendCodeEndpoint="api/resend-email-code"
                 contactDetail="Email"
                 contactValue={email}

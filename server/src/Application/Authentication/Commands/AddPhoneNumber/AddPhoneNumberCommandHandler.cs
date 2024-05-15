@@ -29,7 +29,11 @@ public class AddPhoneNumberCommandHandler : IRequestHandler<AddPhoneNumberComman
     )
     {
         User? userWithSamePhoneNumber = await _context.Users.SingleOrDefaultAsync(
-            u => u.PhoneNumber != null && u.PhoneNumber.Value == command.PhoneNumber,
+            u =>
+                u.PhoneNumber != null
+                && u.PhoneNumber.Value == command.PhoneNumber
+                && u.IsEmailVerified
+                && u.IsPhoneNumberVerified,
             cancellationToken: cancellationToken
         );
 

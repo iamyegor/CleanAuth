@@ -25,22 +25,20 @@ export default function WelcomePage() {
     }
 
     return (
-        <div className="flex h-screen animated-gradient bg-neutral-500">
-            <div className="m-auto">
-                <div className={"relative h-16"}>
-                    <h1
-                        className="text-[3.75rem] font-bold bg-clip-text text-transparent 
-                        bg-gradient-to-r from-purple-200 to-sky-300 absolute top-0 left-0"
-                    >
-                        Hello, <span>{username}</span>.
-                    </h1>
-                </div>
-                <p className="text-6xl mt-4 font-semibold text-white">Do you want to exit?</p>
+        <div className="flex items-center justify-center h-screen animated-gradient bg-neutral-500">
+            <div className="p-8 space-y-4 text-4xl sm:text-5xl md:text-6xl">
+                <h1
+                    className="font-bold bg-clip-text text-transparent bg-gradient-to-r 
+                    from-purple-200 to-sky-300 leading-[1.25] -mb-3"
+                >
+                    Hello, {username}.
+                </h1>
+                <p className="font-semibold text-white">Do you want to exit?</p>
                 <button
                     type="button"
-                    className="mt-8 px-6 py-3 bg-white bg-opacity-20 rounded-full 
+                    className="px-6 py-3 bg-white bg-opacity-20 rounded-full 
                     font-bold text-white hover:bg-opacity-30 transition-opacity 
-                    duration-300 ease-in-out"
+                    duration-300 ease-in-out text-base"
                     onClick={handleLogout}
                 >
                     Exit!

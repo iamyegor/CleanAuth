@@ -26,15 +26,15 @@ public class ResetPasswordCommandHandler
         CancellationToken cancellationToken
     )
     {
-        Guid token = Guid.Parse(command.TokenString);
+        UserId userId = new UserId(Guid.Parse(command.UserId));
         User? user = await _context.Users.FirstOrDefaultAsync(
-            u => u.Id.Value == Guid.Parse(command.UserId),
+            u => u.Id == userId,
             cancellationToken: cancellationToken
         );
 
         if (user == null || user.PasswordResetToken == null)
         {
-            return Errors.PasswordResetToken.IsInvalid(token);
+            return Errors.PasswordResetToken.IsInvalid(command.TokenString);
         }
 
         if (user.PasswordResetToken.IsExpired)

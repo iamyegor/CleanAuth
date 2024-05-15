@@ -2,7 +2,7 @@ import InputField from "@/components/ui/InputField.tsx";
 import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx";
 import { Form, NavLink, redirect, useActionData, useNavigation } from "react-router-dom";
 import { validateSignupData } from "@/pages/Signup/utils/validateSignupData.ts";
-import { Result } from "@/utils/resultOfT.ts";
+import { ResultOf } from "@/utils/resultOfT.ts";
 import api from "@/lib/api.ts";
 import { AxiosError } from "axios";
 import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
@@ -17,7 +17,7 @@ export async function action({ request }: any): Promise<SignupError | Response> 
     const form = await request.formData();
     const data: SignupData = getSignupData(form);
 
-    const validationResult: Result<SignupError> = validateSignupData(data);
+    const validationResult: ResultOf<SignupError> = validateSignupData(data);
     if (validationResult.isFailure) {
         return validationResult.error!;
     }

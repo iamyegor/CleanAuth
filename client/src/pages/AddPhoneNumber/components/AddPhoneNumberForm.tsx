@@ -64,7 +64,7 @@ export default function AddPhoneNumberForm() {
                 />
                 <ErrorMessageComponent
                     errorMessage={errorMessage}
-                    setIsErrorShown={setIsErrorShown}
+                    handleErrorShown={setIsErrorShown}
                 />
             </div>
             <SubmittingButton

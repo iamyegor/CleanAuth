@@ -5,16 +5,16 @@ import { useEffect } from "react";
 
 interface ErrorMessageComponentProps {
     errorMessage: ErrorMessage | null;
-    setIsErrorShown?: (isErrorShown: boolean) => void;
+    handleErrorShown?: (isErrorShown: boolean) => void;
 }
 
 export default function ErrorMessageComponent({
     errorMessage,
-    setIsErrorShown,
+    handleErrorShown,
 }: ErrorMessageComponentProps) {
     useEffect(() => {
-        if (setIsErrorShown) {
-            setIsErrorShown(shouldShowErrorMessage());
+        if (handleErrorShown) {
+            handleErrorShown(shouldShowErrorMessage());
         }
     }, [shouldShowErrorMessage()]);
 

@@ -11,6 +11,7 @@ interface PasswordInputProps {
     placeholder: string;
     errorMessage?: ErrorMessage | null;
     defaultValue?: string;
+    handleErrorShown?: (isErrorShown: boolean) => void;
 }
 
 export default function PasswordInput({
@@ -18,6 +19,7 @@ export default function PasswordInput({
     placeholder,
     errorMessage,
     defaultValue,
+    handleErrorShown,
 }: PasswordInputProps) {
     const [isPasswordShown, setIsPasswordShown] = useState(false);
 
@@ -31,7 +33,7 @@ export default function PasswordInput({
     );
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-6">
             <div className="relative">
                 <input
                     type={isPasswordShown ? "text" : "password"}
@@ -52,7 +54,10 @@ export default function PasswordInput({
                     )}
                 </button>
             </div>
-            <ErrorMessageComponent errorMessage={errorMessage ?? null} />
+            <ErrorMessageComponent
+                errorMessage={errorMessage ?? null}
+                handleErrorShown={handleErrorShown}
+            />
         </div>
     );
 }

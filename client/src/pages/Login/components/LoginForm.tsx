@@ -8,7 +8,7 @@ import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx
 import { validateCredentials } from "@/pages/Login/utils/validateCredentials.ts";
 import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
 import LoginError from "@/pages/Login/types/LoginError.ts";
-import { Result } from "@/utils/resultOfT.ts";
+import { ResultOf } from "@/utils/resultOfT.ts";
 import { extractLoginError } from "@/pages/Login/utils/extractLoginError.ts";
 import ErrorMessage from "@/utils/ErrorMessage.ts";
 import getErrorMessageForField from "@/utils/getErrorMessageForField.ts";
@@ -24,7 +24,7 @@ export async function action({ request }: any): Promise<LoginError | Response> {
         password: data.get("password"),
     };
 
-    const validationResult: Result<LoginError> = validateCredentials(credentials);
+    const validationResult: ResultOf<LoginError> = validateCredentials(credentials);
     if (validationResult.isFailure) {
         return validationResult.error!;
     }

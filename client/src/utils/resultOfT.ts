@@ -1,4 +1,4 @@
-export class Result<TError> {
+export class ResultOf<TError> {
     isSuccess: boolean;
     isFailure: boolean;
     error: TError | null;
@@ -9,11 +9,11 @@ export class Result<TError> {
         this.error = errorMessage;
     }
 
-    public static Ok<TError>(): Result<TError> {
-        return new Result<TError>(true, null);
+    public static Ok<TError>(): ResultOf<TError> {
+        return new ResultOf<TError>(true, null);
     }
 
-    public static Fail<TError>(errorMessage: TError): Result<TError> {
-        return new Result<TError>(false, errorMessage);
+    public static Fail<TError>(errorMessage: TError): ResultOf<TError> {
+        return new ResultOf<TError>(false, errorMessage);
     }
 }

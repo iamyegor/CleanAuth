@@ -26,6 +26,7 @@ export default function SubmittingButton({
             type="submit"
             className={`${classes} mb-8`}
             onClick={onClick}
+            data-testid="SubmittingButton"
         >
             {loading ? (
                 <SpinnerCircularFixed
@@ -34,9 +35,10 @@ export default function SubmittingButton({
                     speed={100}
                     color="rgba(194, 194, 194, 1)"
                     secondaryColor="rgba(173, 173, 173, 0.3)"
+                    data-testid={"SubmittingButton.Spinner"}
                 />
             ) : (
-                <span>{text}</span>
+                <span data-testid="SubmittingButton.Text">{text}</span>
             )}
         </button>
     );

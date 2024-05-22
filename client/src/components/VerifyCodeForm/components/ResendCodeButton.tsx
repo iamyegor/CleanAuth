@@ -55,6 +55,7 @@ export default function ResendCodeButton({
             className={resendCodeButtonClasses}
             disabled={isDisabled()}
             onClick={() => resendCode()}
+            data-testid="ResendCodeButton"
         >
             {isLoading ? (
                 <Spinner size={20} />

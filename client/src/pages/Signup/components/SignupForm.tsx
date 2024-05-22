@@ -43,7 +43,7 @@ export default function SignupForm() {
     const { state } = useNavigation();
 
     return (
-        <Form method="post" action={"/signup"} className={"space-y-8"}>
+        <Form method="post" action={"/signup"} className={"space-y-8"} data-testid="SignupForm">
             <div
                 className={
                     getErrorMessageForField("repeatedPassword", signupError)

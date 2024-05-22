@@ -19,12 +19,13 @@ export default function LoginOrEmailInput({ loginError }: LoginOrEmailInputProps
     );
 
     return (
-        <div className="space-y-4">
+        <div className="space-y-4" data-testid="LoginOrEmailInput">
             <input
                 type={"text"}
                 name={"loginOrEmail"}
                 placeholder={"Login or Email"}
                 className={classes}
+                data-testid="LoginOrEmailInput.Input"
             />
             <ErrorMessageComponent errorMessage={errorMessage ?? null} />
         </div>

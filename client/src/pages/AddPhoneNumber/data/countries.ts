@@ -255,6 +255,6 @@ const countries: Country[] = [
     { flag: "🇿🇲", name: "Zambia", code: "ZM", dialCode: "+260" },
     { flag: "🇿🇼", name: "Zimbabwe", code: "ZW", dialCode: "+263" },
     { flag: "🇦🇽", name: "Åland Islands", code: "AX", dialCode: "+358" },
-];
+].sort((a, b) => a.name.localeCompare(b.name));
 
 export default countries;

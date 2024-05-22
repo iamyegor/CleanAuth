@@ -18,6 +18,12 @@ function PhoneInput({ country, setCountry, phoneNumber, setPhoneNumber }: PhoneI
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const countriesDropdownRef = useRef<HTMLDivElement>(null);
 
+    useEffect(() => {
+        setPhoneNumber(formatPhoneNumber(country, phoneNumber));
+    }, [phoneNumber, country]);
+
+    useCloseOnOutsideClick(countriesDropdownRef.current, setIsDropdownOpen);
+
     function handlePhoneChange(event: React.ChangeEvent<HTMLInputElement>) {
         setPhoneNumber(formatPhoneNumber(country, event.target.value));
     }
@@ -29,12 +35,6 @@ function PhoneInput({ country, setCountry, phoneNumber, setPhoneNumber }: PhoneI
     function handleBlur() {
         setIsFocused(false);
     }
-
-    useEffect(() => {
-        setPhoneNumber(formatPhoneNumber(country, phoneNumber));
-    }, [phoneNumber, country]);
-
-    useCloseOnOutsideClick(countriesDropdownRef.current, setIsDropdownOpen);
 
     return (
         <div
@@ -61,6 +61,7 @@ function PhoneInput({ country, setCountry, phoneNumber, setPhoneNumber }: PhoneI
                 placeholder={getPlaceholderBasedOnMaxDigits(country.maxDigits)}
                 onFocus={handleFocus}
                 onBlur={handleBlur}
+                data-testid="PhoneInput.Input"
             />
         </div>
     );

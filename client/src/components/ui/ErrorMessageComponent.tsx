@@ -24,9 +24,11 @@ export default function ErrorMessageComponent({
 
     return shouldShowErrorMessage() ? (
         <>
-            <div className="flex items-start space-x-2">
+            <div className="flex items-start space-x-2" data-testid="ErrorMessageComponent">
                 <Image src={exclamationMark} alt="exclamationMark" className="w-5 h-5 mt-0.5" />
-                <div className="text-red-500 text-left">{errorMessage!.errorMessage}</div>
+                <p data-testid="ErrorMessageComponent.Message" className="text-red-500 text-left">
+                    {errorMessage!.errorMessage}
+                </p>
             </div>
         </>
     ) : null;

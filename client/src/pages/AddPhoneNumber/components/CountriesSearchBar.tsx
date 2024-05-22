@@ -20,6 +20,7 @@ export default function CountriesSearchBar({ search, setSearch }: CountriesSearc
                     className="ml-1 outline-none w-full bg-transparent"
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
+                    data-testid="CountriesSearchBar.Input"
                 />
             </div>
         </div>

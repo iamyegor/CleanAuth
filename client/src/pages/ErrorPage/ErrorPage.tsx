@@ -47,10 +47,13 @@ export default function ErrorPage() {
                     className="w-[220px] md:w-[350px] mb-4 mr-0 md:mb-8 md:mr-8"
                 />
                 <div className="flex flex-col items-center md:items-start">
-                    <h1 className="text-8xl font-bold mb-8">{title}</h1>
+                    <h1 className="text-8xl font-bold mb-8" data-testid="ErrorPage.Title">
+                        {title}
+                    </h1>
                     <div
                         className="text-lg max-w-[500px] mb-10 text-center md:text-left mx-4 
                     md:mx-0"
+                        data-testid="ErrorMessage.Message"
                     >
                         {message}
                     </div>
@@ -59,6 +62,7 @@ export default function ErrorPage() {
                             className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-2 
                             sm:px-6 rounded mr-5"
                             onClick={reloadPage}
+                            data-testid="ErrorPage.ReloadButton"
                         >
                             Reload Page
                         </button>

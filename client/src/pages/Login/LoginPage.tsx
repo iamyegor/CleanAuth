@@ -15,7 +15,7 @@ export async function loader(): Promise<Response | null> {
 
 export default function LoginPage() {
     return (
-        <BaseAuthentication image={loginPrimaryImage}>
+        <BaseAuthentication image={loginPrimaryImage} data-testid="LoginPage">
             <div className="w-full max-w-md text-center rounded-lg p-6 z-20">
                 <h2 className="mb-3 text-4xl font-bold text-gray-900">Hello Again!</h2>
                 <p className="mb-10 text-lg text-gray-600">Welcome back you've been missed!</p>

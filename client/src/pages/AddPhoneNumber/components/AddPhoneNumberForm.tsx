@@ -4,7 +4,6 @@ import ErrorMessageComponent from "@/components/ui/ErrorMessageComponent.tsx";
 import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx";
 import PhoneInput from "@/pages/AddPhoneNumber/components/PhoneInput.tsx";
 import Country from "@/pages/AddPhoneNumber/types/Country.ts";
-import countries from "@/pages/AddPhoneNumber/data/countries.ts";
 import validator from "validator";
 import { keepOnlyDigits } from "@/pages/AddPhoneNumber/utils/keepOnlyDigits.ts";
 import api from "@/lib/api.ts";
@@ -16,6 +15,7 @@ import storeCountryCodeIndex from "@/utils/phoneNumberData/storeCountryCode.ts";
 import useCountryCode from "@/pages/AddPhoneNumber/hooks/useCountryCode.ts";
 import ErrorMessage from "@/utils/ErrorMessage.ts";
 import extractAddPhoneNumberError from "@/pages/AddPhoneNumber/utils/extractAddPhoneNumberError.ts";
+import countries from "@/pages/AddPhoneNumber/data/countries.ts";
 
 export async function action({ request }: any): Promise<ErrorMessage | Response> {
     const data = await request.formData();
@@ -54,6 +54,7 @@ export default function AddPhoneNumberForm() {
             method="post"
             action={"/add-phone-number"}
             className={isErrorShown ? "space-y-6" : "space-y-8"}
+            data-testid="AddPhoneNumberForm"
         >
             <div className="space-y-4">
                 <PhoneInput

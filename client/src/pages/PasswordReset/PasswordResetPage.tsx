@@ -5,7 +5,7 @@ import getQueryParam from "@/utils/getQueryParam.ts";
 import BasePasswordReset from "@/components/ui/BasePasswordReset.tsx";
 import React from "react";
 import ResetPasswordLoaderData from "@/pages/PasswordReset/types/ResetPasswordLoaderData.ts";
-import PasswordResetErrorMessage from "@/pages/PasswordReset/components/PasswordResetErrorMessage.tsx";
+import PasswordResetError from "@/pages/PasswordReset/components/PasswordResetError.tsx";
 import PasswordResetForm from "@/pages/PasswordReset/components/PasswordResetForm.tsx";
 import extractPasswordResetLoadingError from "@/pages/PasswordReset/utils/extractPasswordResetLoadingError.ts";
 import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
@@ -17,7 +17,7 @@ export async function loader({ request }: any): Promise<ErrorMessage | ResetPass
     if (!token || !uid) {
         return ErrorMessage.create("Invalid link.");
     }
-
+    
     try {
         await api.get(`api/need-to-reset-password?userId=${uid}&token=${token}`);
         return { userId: uid, token };
@@ -28,11 +28,11 @@ export async function loader({ request }: any): Promise<ErrorMessage | ResetPass
 
 export default function PasswordResetPage() {
     const loaderData = useLoaderData() as ErrorMessage | ResetPasswordLoaderData;
-
+    
     return (
         <BasePasswordReset>
             {loaderData instanceof ErrorMessage ? (
-                <PasswordResetErrorMessage errorMessage={loaderData} />
+                <PasswordResetError errorMessage={loaderData} />
             ) : (
                 <div>
                     <div>

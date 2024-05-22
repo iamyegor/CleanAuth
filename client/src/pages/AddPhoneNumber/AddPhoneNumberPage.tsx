@@ -17,7 +17,7 @@ export async function loader(): Promise<Response | null> {
 
 export default function AddPhoneNumberPage() {
     return (
-        <BaseAuthentication image={signupPrimaryImage}>
+        <BaseAuthentication image={signupPrimaryImage} data-testid="AddPhoneNumberPage">
             <div className="w-full max-w-md text-center rounded-lg p-6 z-20">
                 <h2 className="mb-3 text-4xl font-bold text-gray-900">Verify Your Phone Number</h2>
                 <p className="mb-8 text-lg text-gray-600">

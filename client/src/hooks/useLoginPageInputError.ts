@@ -10,11 +10,11 @@ export default function useLoginPageInputError(
     const [errorMessage, setErrorMessage] = useState<ErrorMessage | null>(null);
 
     useEffect(() => {
-        const hasLoginOrEmailError = loginError?.problematicField === problematicField;
+        const hasProblematicFieldError = loginError?.problematicField === problematicField;
         const hasBothError = loginError?.problematicField === "both";
 
-        setShouldApplyErrorClass(hasLoginOrEmailError || hasBothError);
-        setErrorMessage(hasLoginOrEmailError ? ErrorMessage.create(loginError.errorMessage) : null);
+        setShouldApplyErrorClass(hasProblematicFieldError || hasBothError);
+        setErrorMessage(hasProblematicFieldError ? ErrorMessage.create(loginError.errorMessage) : null);
     }, [loginError, problematicField]);
 
     return { shouldApplyErrorClass, errorMessage };

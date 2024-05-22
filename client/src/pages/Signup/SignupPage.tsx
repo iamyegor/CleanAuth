@@ -15,7 +15,7 @@ export async function loader(): Promise<string | null | Response> {
 
 export default function SignupPage() {
     return (
-        <BaseAuthentication image={signupPrimaryImage}>
+        <BaseAuthentication image={signupPrimaryImage} data-testid="SignupPage">
             <div className="w-full max-w-md text-center rounded-lg p-6 z-20">
                 <h2 className="mb-3 text-4xl font-bold text-gray-900">Create account</h2>
                 <p className="mb-10 text-lg text-gray-600">To get you started!</p>

@@ -31,7 +31,7 @@ export default function VerifyPhoneNumberPage() {
     const { phoneNumber } = useLoaderData() as VerifyPhoneNumberLoaderData;
 
     return (
-        <BaseAuthentication image={primaryImage}>
+        <BaseAuthentication image={primaryImage} data-testid="VerifyPhoneNumberPage">
             <VerifyCodeForm
                 goBackRoute="/add-phone-number"
                 goBackButtonText="Change number"
@@ -40,6 +40,7 @@ export default function VerifyPhoneNumberPage() {
                 contactValue={phoneNumber}
                 codeLength={4}
                 onSubmitActionRoute="/verify-phone-number"
+                maxSeconds={60}
             />
         </BaseAuthentication>
     );

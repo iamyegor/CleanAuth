@@ -12,7 +12,7 @@ using XResults;
 namespace Api.Controllers;
 
 [ApiController]
-[Route("api/user")]
+[Route("api")]
 public class UserController : ApplicationController
 {
     private readonly JwtService _jwtService;
@@ -24,8 +24,8 @@ public class UserController : ApplicationController
         _context = context;
     }
 
-    [HttpGet, Authorize]
-    public async Task<IActionResult> GetLogin()
+    [HttpGet("username"), Authorize]
+    public async Task<IActionResult> GetUsername()
     {
         if (HttpContext.Request.Cookies.TryGetValue("accessToken", out string? token))
         {

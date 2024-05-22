@@ -16,7 +16,7 @@ export default function CountdownDisplay({ secondsLeft }: CountdownDisplayProps)
         <>
             {secondsLeft > 0 && (
                 <div className="mb-8 text-neutral-500 space-x-1 flex justify-center">
-                    <span className="text-neutral-500">
+                    <span className="text-neutral-500" data-testid="CountdownDisplay.Text">
                         You will be able resend code in {getFormattedTime()}
                     </span>
                 </div>

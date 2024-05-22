@@ -33,17 +33,19 @@ export default function PasswordInput({
     );
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" data-testid="PasswordInput">
             <div className="relative">
                 <input
                     type={isPasswordShown ? "text" : "password"}
                     name={name}
+                    data-testid="PasswordInput.Input"
                     placeholder={placeholder}
                     className={classes}
                     defaultValue={defaultValue ?? ""}
                 />
                 <button
                     type="button"
+                    data-testid="PasswordInput.ToggleVisibility"
                     onClick={togglePasswordVisibility}
                     className="absolute inset-y-0 right-4 text-sm leading-5"
                 >

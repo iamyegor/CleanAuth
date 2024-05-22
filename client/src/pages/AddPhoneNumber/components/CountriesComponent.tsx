@@ -18,6 +18,7 @@ export default function CountriesComponent({ countries, handleClick }: Countries
                     <CountryDropdownOption
                         handleClick={() => handleClick(country)}
                         country={country}
+                        isLast={index === countries.length - 1}
                     />
                 </div>
             ))}

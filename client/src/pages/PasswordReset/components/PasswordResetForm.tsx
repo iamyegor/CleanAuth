@@ -31,7 +31,7 @@ export async function action({ request }: any): Promise<Response | PasswordReset
 
     try {
         await api.post(`api/reset-password?userId=${uid}&token=${token}`, { password });
-        return redirect("/login");
+        return redirect("/");
     } catch (err) {
         const errorMessage: ErrorMessage = extractPasswordResetError(
             err as AxiosError<ServerErrorResponse>,
@@ -51,7 +51,7 @@ export default function PasswordResetForm() {
     }
 
     return (
-        <Form method="post">
+        <Form method="post" data-testid="PasswordResetForm">
             <div className={`space-y-4 ${isConfirmPasswordError ? "mb-6" : "mb-8"}`}>
                 <PasswordInput
                     name="password"

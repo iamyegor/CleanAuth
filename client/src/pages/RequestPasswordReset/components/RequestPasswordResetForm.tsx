@@ -34,6 +34,7 @@ export default function RequestPasswordResetForm() {
             method="post"
             action={"/request-password-reset"}
             className={feedbackMessage ? "space-y-6" : "space-y-8"}
+            data-testid="RequestPasswordResetForm"
         >
             <InputField type="text" name="emailOrUsername" placeholder="Enter email or username" />
             <FeedbackMessageComponent feedback={feedbackMessage} />

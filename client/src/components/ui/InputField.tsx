@@ -31,6 +31,7 @@ export default function InputField({
                 placeholder={placeholder}
                 className={classes}
                 defaultValue={defaultValue ?? ""}
+                data-testid="InputField.Input"
             />
             <ErrorMessageComponent errorMessage={errorMessage ?? null} />
         </div>

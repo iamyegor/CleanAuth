@@ -30,7 +30,7 @@ export default function VerifyEmailPage() {
     const { email } = useLoaderData() as VerifyEmailLoaderData;
 
     return (
-        <BaseAuthentication image={signupPrimaryImage}>
+        <BaseAuthentication image={signupPrimaryImage} data-testid="VerifyEmailPage">
             <VerifyCodeForm
                 goBackRoute="/signup"
                 goBackButtonText="Back to signup"
@@ -39,6 +39,7 @@ export default function VerifyEmailPage() {
                 contactValue={email}
                 codeLength={5}
                 onSubmitActionRoute="/verify-email"
+                maxSeconds={60}
             />
         </BaseAuthentication>
     );

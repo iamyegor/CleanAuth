@@ -1,5 +1,5 @@
 import { ResultOf } from "@/utils/resultOfT.ts";
-import { Result as SimpleResult } from "@/utils/result.ts";
+import { Result } from "@/utils/result.ts";
 import isNullOrWhitespace from "@/utils/isNullOrWhitespace.ts";
 import validatePassword from "@/utils/validatePassword.ts";
 
@@ -27,7 +27,7 @@ export function validateSignupData(signupData: SignupData): ResultOf<SignupError
         });
     }
 
-    const passwordValidation: SimpleResult = validatePassword(signupData.password);
+    const passwordValidation: Result = validatePassword(signupData.password);
     if (passwordValidation.isFailure) {
         return ResultOf.Fail<SignupError>({
             problematicField: "password",

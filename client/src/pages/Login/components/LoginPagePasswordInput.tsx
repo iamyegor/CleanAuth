@@ -25,18 +25,20 @@ export default function LoginPagePasswordInput({ loginError }: LoginPasswordInpu
     );
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-6" data-testid="LoginPagePasswordInput">
             <div className="relative">
                 <input
                     type={isPasswordShown ? "text" : "password"}
                     name="password"
                     placeholder="Password"
                     className={classes}
+                    data-testid="LoginPagePasswordInput.Input"
                 />
                 <button
                     type="button"
                     onClick={togglePasswordVisibility}
                     className="absolute inset-y-0 right-4 text-sm leading-5"
+                    data-testid="LoginPagePasswordInput.ToggleButton"
                 >
                     {isPasswordShown ? (
                         <Image src={openedEyeImage} alt="eye" className="w-5" />

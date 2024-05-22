@@ -17,7 +17,7 @@ export async function loader(): Promise<Response | null> {
 
 export default function RequestPasswordResetPage() {
     return (
-        <BasePasswordReset>
+        <BasePasswordReset data-testid="RequestPasswordResetPage">
             <div>
                 <h2 className="text-center text-4xl font-bold text-gray-900 mb-3">
                     Reset your password

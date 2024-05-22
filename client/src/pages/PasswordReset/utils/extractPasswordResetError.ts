@@ -13,7 +13,7 @@ export default function extractPasswordResetError(
     const { errorCode, errorMessage } = error.response!.data;
     if (isInvalidPasswordErrorCode(errorCode)) {
         return ErrorMessage.create(errorMessage);
-    } else if (errorCode === "password.same.as.current ") {
+    } else if (errorCode === "password.same.as.current") {
         return ErrorMessage.create("The new password cannot be the same as the current one.");
     } else {
         throw RouteError.unexpected();

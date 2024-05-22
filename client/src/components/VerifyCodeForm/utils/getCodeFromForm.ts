@@ -1,3 +1,5 @@
+import { RouteError } from "@/types/RouteError.ts";
+
 export default async function getCodeFromForm(
     request: any,
     maxCodeLength: number,

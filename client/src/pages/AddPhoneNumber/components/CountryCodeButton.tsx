@@ -13,17 +13,18 @@ export default function CountryCodeButton({ country, setIsOpen }: CountriesDropd
 
     return (
         <div ref={wrapperRef} className="relative select-none">
-            <div
+            <button
                 onClick={() => setIsOpen((prev) => !prev)}
+                data-testid="CountryCodeButton.Button"
                 className="flex items-center justify-center bg-neutral-100
                 rounded-md h-10 cursor-pointer mx-1.5 px-4 space-x-2"
             >
                 <span className="flex items-center space-x-1">
-                    <span>{country.flag}</span>
-                    <span>{country.dialCode}</span>
+                    <span data-testid="CountryCodeButton.Flag">{country.flag}</span>
+                    <span data-testid="CountryCodeButton.DialCode">{country.dialCode}</span>
                 </span>
                 <Image src={downArrowImage} alt="Expand" className="w-4 h-4" />
-            </div>
+            </button>
         </div>
     );
 }

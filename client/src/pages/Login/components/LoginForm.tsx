@@ -1,6 +1,6 @@
 import SeparatorLine from "@/pages/Login/components/SeparatorLine.tsx";
 import RecoveryAndSignupLinks from "@/pages/Login/components/RecoveryAndSignupLinks.tsx";
-import SocialLoginButtons from "@/pages/Login/components/SocialLoginButtons.tsx";
+import SocialLoginButtons from "@/pages/Login/components/socialLoginButtons/SocialLoginButtons.tsx";
 import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
 import api from "@/lib/api.ts";
 import { AxiosError } from "axios";
@@ -54,7 +54,7 @@ export default function LoginForm() {
     }
 
     return (
-        <Form method="post" action={"/login"} replace>
+        <Form method="post" action={"/login"} replace data-testid="LoginForm">
             <div className={isBothError() || isPasswordError() ? "mb-6" : "mb-8"}>
                 <div className={`space-y-4 ${isBothError() && "mb-6"}`}>
                     <LoginPageLoginOrEmailInput loginError={loginError} />

@@ -1,3 +1,4 @@
+using Domain.DateTimeProviders;
 using Domain.DomainErrors;
 using Domain.User;
 using Domain.User.ValueObjects;
@@ -7,17 +8,17 @@ using MediatR;
 using Microsoft.EntityFrameworkCore;
 using XResults;
 
-namespace Application.Authentication.Commands.ResendPhoneNumber;
+namespace Application.Authentication.Commands.ResendPhoneNumberVerificationCodeCommand;
 
-public record ResendPhoneNumberCommand(UserId UserId) : IRequest<SuccessOr<Error>>;
+public record ResendPhoneNumberVerificationCodeCommand(UserId UserId) : IRequest<SuccessOr<Error>>;
 
-public class ResendPhoneNumberCommandHandler
-    : IRequestHandler<ResendPhoneNumberCommand, SuccessOr<Error>>
+public class ResendPhoneNumberVerificationCodeCommandHandler
+    : IRequestHandler<ResendPhoneNumberVerificationCodeCommand, SuccessOr<Error>>
 {
     private readonly ApplicationContext _context;
     private readonly VerificationCodeSender _verificationCodeSender;
 
-    public ResendPhoneNumberCommandHandler(
+    public ResendPhoneNumberVerificationCodeCommandHandler(
         ApplicationContext context,
         VerificationCodeSender verificationCodeSender
     )
@@ -27,7 +28,7 @@ public class ResendPhoneNumberCommandHandler
     }
 
     public async Task<SuccessOr<Error>> Handle(
-        ResendPhoneNumberCommand command,
+        ResendPhoneNumberVerificationCodeCommand command,
         CancellationToken cancellationToken
     )
     {
@@ -41,7 +42,7 @@ public class ResendPhoneNumberCommandHandler
             return Errors.User.HasNoPhoneNumber(command.UserId);
         }
 
-        PhoneNumberVerificationCode code = new PhoneNumberVerificationCode();
+        PhoneNumberVerificationCode code = new PhoneNumberVerificationCode(new DateTimeProvider());
         user.PhoneNumberVerificationCode = code;
 
         await _context.SaveChangesAsync(cancellationToken);

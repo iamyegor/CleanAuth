@@ -1,3 +1,4 @@
+using Domain.DateTimeProviders;
 using Domain.DomainErrors;
 using Domain.User;
 using Domain.User.ValueObjects;
@@ -16,12 +17,12 @@ public record SignUpCommand(string Login, string Email, string Password)
 public class SignUpCommandHandler : IRequestHandler<SignUpCommand, Result<Tokens, Error>>
 {
     private readonly ApplicationContext _context;
-    private readonly DomainEmailSender _emailSender;
+    private readonly IDomainEmailSender _emailSender;
     private readonly JwtService _jwtService;
 
     public SignUpCommandHandler(
         ApplicationContext context,
-        DomainEmailSender emailSender,
+        IDomainEmailSender emailSender,
         JwtService jwtService
     )
     {
@@ -35,7 +36,7 @@ public class SignUpCommandHandler : IRequestHandler<SignUpCommand, Result<Tokens
         CancellationToken cancellationToken
     )
     {
-        EmailVerificationCode verificationCode = new EmailVerificationCode();
+        EmailVerificationCode verificationCode = new EmailVerificationCode(new DateTimeProvider());
         Password password = Password.Create(command.Password);
         Login login = Login.Create(command.Login);
         Email email = Email.Create(command.Email);

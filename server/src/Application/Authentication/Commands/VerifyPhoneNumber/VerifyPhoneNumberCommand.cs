@@ -29,14 +29,11 @@ public class VerifyPhoneNumberCommandHandler
     )
     {
         User? user = await _context.Users.SingleOrDefaultAsync(
-            u =>
-                u.Id == command.UserId
-                && u.PhoneNumberVerificationCode != null
-                && u.PhoneNumberVerificationCode.Value == command.Code,
+            u => u.Id == command.UserId,
             cancellationToken: cancellationToken
         );
 
-        if (user == null)
+        if (user == null || user.PhoneNumberVerificationCode?.Value != command.Code)
         {
             return Errors.PhoneNumberVerificationCode.IsInvalid();
         }

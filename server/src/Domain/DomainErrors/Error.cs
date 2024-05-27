@@ -1,9 +1,10 @@
+using Domain.Common;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
 namespace Domain.DomainErrors;
 
-public class Error
+public class Error : ValueObject
 {
     public string Code { get; set; }
     public string Message { get; set; }
@@ -35,5 +36,10 @@ public class Error
         }
 
         return error;
+    }
+
+    protected override IEnumerable<object?> GetPropertiesForComparison()
+    {
+        yield return Code;
     }
 }

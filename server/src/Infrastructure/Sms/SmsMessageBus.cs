@@ -5,7 +5,7 @@ using Twilio.Rest.Api.V2010.Account;
 
 namespace Infrastructure.Sms;
 
-public class SmsMessageBus
+public class SmsMessageBus : ISmsMessageBus
 {
     private readonly string _fromPhoneNumber;
 

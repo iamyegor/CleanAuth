@@ -2,7 +2,7 @@ using System.Reflection;
 
 namespace Infrastructure.Emails;
 
-public class DomainEmailSender
+public class DomainEmailSender : IDomainEmailSender
 {
     private readonly EmailMessageBus _emailMessageBus;
     private readonly string _htmlFolderPath = Path.Combine(

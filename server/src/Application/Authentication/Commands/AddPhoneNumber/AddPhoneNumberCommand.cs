@@ -1,3 +1,4 @@
+using Domain.DateTimeProviders;
 using Domain.DomainErrors;
 using Domain.User;
 using Domain.User.ValueObjects;
@@ -31,17 +32,21 @@ public class AddPhoneNumberCommandHandler : IRequestHandler<AddPhoneNumberComman
     )
     {
         User? userWithSamePhoneNumber = await _context.Users.SingleOrDefaultAsync(
-            u =>
-                u.PhoneNumber != null
-                && u.PhoneNumber.Value == command.PhoneNumber
-                && u.IsEmailVerified
-                && u.IsPhoneNumberVerified,
+            u => u.PhoneNumber != null && u.PhoneNumber.Value == command.PhoneNumber,
             cancellationToken: cancellationToken
         );
 
-        if (userWithSamePhoneNumber != null && userWithSamePhoneNumber.IsPhoneNumberVerified)
+        if (userWithSamePhoneNumber != null)
         {
-            return Errors.PhoneNumber.IsAlreadyTaken(command.PhoneNumber);
+            if (userWithSamePhoneNumber is { IsPhoneNumberVerified: true, IsEmailVerified: true })
+            {
+                return Errors.PhoneNumber.IsAlreadyTaken(command.PhoneNumber);
+            }
+
+            await _context.Database.ExecuteSqlAsync(
+                $"update users set phone_number = null where id = {userWithSamePhoneNumber.Id.Value}",
+                cancellationToken
+            );
         }
 
         User user = await _context.Users.SingleAsync(
@@ -50,14 +55,14 @@ public class AddPhoneNumberCommandHandler : IRequestHandler<AddPhoneNumberComman
         );
 
         user.PhoneNumber = PhoneNumber.Create(command.PhoneNumber);
-        user.PhoneNumberVerificationCode = new PhoneNumberVerificationCode();
+        user.PhoneNumberVerificationCode = new PhoneNumberVerificationCode(new DateTimeProvider());
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        // await _verificationCodeSender.SendAsync(
-        //     user.PhoneNumber.Value,
-        //     user.PhoneNumberVerificationCode.Value
-        // );
+        await _verificationCodeSender.SendAsync(
+            user.PhoneNumber.Value,
+            user.PhoneNumberVerificationCode.Value
+        );
 
         return Result.Ok();
     }

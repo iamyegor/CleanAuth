@@ -1,3 +1,4 @@
+using Domain.DateTimeProviders;
 using Domain.DomainErrors;
 using Domain.User;
 using Domain.User.ValueObjects;
@@ -15,11 +16,11 @@ public class RequestPasswordResetCommandHandler
     : IRequestHandler<RequestPasswordResetCommand, SuccessOr<Error>>
 {
     private readonly ApplicationContext _context;
-    private readonly DomainEmailSender _emailSender;
+    private readonly IDomainEmailSender _emailSender;
 
     public RequestPasswordResetCommandHandler(
         ApplicationContext context,
-        DomainEmailSender emailSender
+        IDomainEmailSender emailSender
     )
     {
         _context = context;
@@ -44,8 +45,8 @@ public class RequestPasswordResetCommandHandler
             return Errors.User.DoesNotExist(command.EmailOrLogin);
         }
 
-        PasswordResetToken token = new PasswordResetToken();
-        user.SetPasswordResetToken(token);
+        PasswordResetToken token = new PasswordResetToken(new DateTimeProvider());
+        user.PasswordResetToken = token;
         await _emailSender.SendPasswordReset(user.Id.Value, token.Value, user.Email.Value);
 
         await _context.SaveChangesAsync(cancellationToken);

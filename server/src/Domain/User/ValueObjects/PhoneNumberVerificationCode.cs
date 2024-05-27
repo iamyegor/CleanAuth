@@ -1,12 +1,20 @@
 using Domain.Common;
+using Domain.DateTimeProviders;
 
 namespace Domain.User.ValueObjects;
 
 public class PhoneNumberVerificationCode : ValueObject
 {
     public int Value { get; private set; } = GetRandom5DigitNumber();
-    public DateTime ExpiryTime { get; private set; } = DateTime.UtcNow.AddMinutes(10);
+    public DateTime ExpiryTime { get; private set; }
     public bool IsExpired => DateTime.UtcNow > ExpiryTime;
+
+    private PhoneNumberVerificationCode() { }
+
+    public PhoneNumberVerificationCode(IDateTimeProvider dateTimeProvider)
+    {
+        ExpiryTime = dateTimeProvider.Now.AddMinutes(10);
+    }
 
     protected override IEnumerable<object?> GetPropertiesForComparison()
     {

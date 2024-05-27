@@ -1,3 +1,4 @@
+using Domain.DateTimeProviders;
 using Domain.DomainErrors;
 using Domain.User;
 using Domain.User.ValueObjects;
@@ -14,9 +15,9 @@ public record ResendEmailCommand(UserId UserId) : IRequest<SuccessOr<Error>>;
 public class ResendEmailCommandHandler : IRequestHandler<ResendEmailCommand, SuccessOr<Error>>
 {
     private readonly ApplicationContext _context;
-    private readonly DomainEmailSender _emailSender;
+    private readonly IDomainEmailSender _emailSender;
 
-    public ResendEmailCommandHandler(ApplicationContext context, DomainEmailSender emailSender)
+    public ResendEmailCommandHandler(ApplicationContext context, IDomainEmailSender emailSender)
     {
         _context = context;
         _emailSender = emailSender;
@@ -32,7 +33,7 @@ public class ResendEmailCommandHandler : IRequestHandler<ResendEmailCommand, Suc
             cancellationToken: cancellationToken
         );
 
-        EmailVerificationCode code = new EmailVerificationCode();
+        EmailVerificationCode code = new EmailVerificationCode(new DateTimeProvider());
         user.EmailVerificationCode = code;
 
         await _context.SaveChangesAsync(cancellationToken);

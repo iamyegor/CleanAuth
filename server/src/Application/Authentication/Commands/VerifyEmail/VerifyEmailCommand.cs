@@ -28,14 +28,11 @@ public class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, Res
     )
     {
         User? user = await _context.Users.SingleOrDefaultAsync(
-            u =>
-                u.Id == command.UserId
-                && u.EmailVerificationCode != null
-                && u.EmailVerificationCode.Value == command.Code,
+            u => u.Id == command.UserId,
             cancellationToken: cancellationToken
         );
 
-        if (user == null)
+        if (user == null || user.EmailVerificationCode?.Value != command.Code)
         {
             return Errors.EmailVerificationCode.IsInvalid(command.Code);
         }

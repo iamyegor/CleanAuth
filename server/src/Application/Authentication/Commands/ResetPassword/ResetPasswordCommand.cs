@@ -35,7 +35,8 @@ public class ResetPasswordCommandHandler
             cancellationToken: cancellationToken
         );
 
-        if (user == null || user.PasswordResetToken == null)
+        Guid token = Guid.Parse(command.TokenString);
+        if (user == null || user.PasswordResetToken?.Value != token)
         {
             return Errors.PasswordResetToken.IsInvalid(command.TokenString);
         }
@@ -50,11 +51,11 @@ public class ResetPasswordCommandHandler
             return Errors.Password.IsSameAsCurrent();
         }
 
-        user.SetPassword(Password.Create(command.Password));
-        user.RemovePasswordResetToken();
+        user.Password = Password.Create(command.Password);
+        user.PasswordResetToken = null;
 
         Tokens tokens = _jwtService.GenerateTokens(user);
-        user.SetRefreshToken(new RefreshToken(tokens.RefreshToken));
+        user.RefreshToken = new RefreshToken(tokens.RefreshToken);
 
         await _context.SaveChangesAsync(cancellationToken);
 

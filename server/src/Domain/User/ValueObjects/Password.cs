@@ -29,7 +29,7 @@ public class Password : ValueObject
             return Errors.Password.HasInvalidLength(password);
         }
 
-        if (Regex.IsMatch(password, "^(?=.*[a-z])(?=.*[A-Z])(?=.*[\\d\\W]).*$\n"))
+        if (!Regex.IsMatch(password, "^(?=.*[a-z])(?=.*[A-Z])(?=.*[\\d\\W]).*$"))
         {
             return Errors.Password.HasInvalidSignature(password);
         }

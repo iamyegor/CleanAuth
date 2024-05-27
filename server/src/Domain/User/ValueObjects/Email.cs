@@ -1,10 +1,11 @@
 using System.Text.RegularExpressions;
+using Domain.Common;
 using Domain.DomainErrors;
 using XResults;
 
 namespace Domain.User.ValueObjects;
 
-public class Email
+public class Email : ValueObject
 {
     public string Value { get; }
 
@@ -32,5 +33,10 @@ public class Email
         }
 
         return new Email(email);
+    }
+
+    protected override IEnumerable<object?> GetPropertiesForComparison()
+    {
+        yield return Value;
     }
 }

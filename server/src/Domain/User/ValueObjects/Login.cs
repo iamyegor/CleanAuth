@@ -39,9 +39,4 @@ public class Login : ValueObject
     {
         yield return Value;
     }
-
-    public bool Equals(string login)
-    {
-        return Value == login;
-    }
 }

@@ -4,8 +4,8 @@ namespace Domain.User.ValueObjects;
 
 public class Role : ValueObject
 {
-    public static Role User = new Role("User");
-    public static Role Admin = new Role("Admin");
+    public static readonly Role User = new Role("User");
+    public static readonly Role Admin = new Role("Admin");
     
     public string Value { get; set; }
 

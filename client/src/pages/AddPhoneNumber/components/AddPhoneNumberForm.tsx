@@ -70,7 +70,7 @@ export default function AddPhoneNumberForm() {
             </div>
             <SubmittingButton
                 disabled={!validator.isMobilePhone(keepOnlyDigits(phoneNumber))}
-                loading={state === "loading"}
+                loading={state === "loading" || state === "submitting"}
                 text="Request code"
             />
             <input

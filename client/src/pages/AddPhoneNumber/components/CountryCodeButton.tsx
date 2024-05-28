@@ -18,6 +18,7 @@ export default function CountryCodeButton({ country, setIsOpen }: CountriesDropd
                 data-testid="CountryCodeButton.Button"
                 className="flex items-center justify-center bg-neutral-100
                 rounded-md h-10 cursor-pointer mx-1.5 px-4 space-x-2"
+                type="button"
             >
                 <span className="flex items-center space-x-1">
                     <span data-testid="CountryCodeButton.Flag">{country.flag}</span>

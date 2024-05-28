@@ -17,18 +17,20 @@ public class RefreshAccessTokenCommandTests : BaseIntegrationTest
 {
     private readonly UserFactory _userFactory;
     private readonly UserRepository _userRepository;
+    private readonly DeviceIdFactory _deviceIdFactory;
 
     public RefreshAccessTokenCommandTests(IntegrationTestWebApplicationFactory factory)
         : base(factory)
     {
         _userFactory = new UserFactory();
         _userRepository = new UserRepository();
+        _deviceIdFactory = new DeviceIdFactory();
     }
 
     [Fact]
     public async Task Does_not_allow_null_refresh_token()
     {
-        var command = new RefreshAccessTokenCommand(null);
+        var command = new RefreshAccessTokenCommand(null, _deviceIdFactory.Create());
 
         Result<Tokens, Error> result = await Mediator.Send(command);
 
@@ -36,9 +38,20 @@ public class RefreshAccessTokenCommandTests : BaseIntegrationTest
     }
 
     [Fact]
+    public async Task Does_not_allow_invalid_device_id()
+    {
+        string deviceId = _deviceIdFactory.CreateInvalid();
+        var command = new RefreshAccessTokenCommand("refresh_token", deviceId);
+
+        Result<Tokens, Error> result = await Mediator.Send(command);
+
+        result.Error.Should().Be(Errors.DeviceId.IsInvalid(deviceId));
+    }
+
+    [Fact]
     public async Task Does_not_allow_non_existing_token()
     {
-        var command = new RefreshAccessTokenCommand("invalid_token");
+        var command = new RefreshAccessTokenCommand("invalid_token", _deviceIdFactory.Create());
 
         Result<Tokens, Error> result = await Mediator.Send(command);
 
@@ -50,9 +63,10 @@ public class RefreshAccessTokenCommandTests : BaseIntegrationTest
     {
         // Arrange
         User user = await _userFactory.CreateAsync();
-        string refreshTokenString = await AddRefreshTokenToUser(user);
+        RefreshToken refreshToken = await AddRefreshTokenToUser(user);
 
-        var command = new RefreshAccessTokenCommand(refreshTokenString);
+        string deviceId = refreshToken.DeviceId.ToString();
+        var command = new RefreshAccessTokenCommand(refreshToken.Value, deviceId);
 
         // Act
         Result<Tokens, Error> result = await Mediator.Send(command);
@@ -62,10 +76,10 @@ public class RefreshAccessTokenCommandTests : BaseIntegrationTest
         result.Value.RefreshToken.Should().NotBeNullOrEmpty();
 
         User userFromDb = _userRepository.QueryUserById(user.Id);
-        userFromDb.ShouldHaveRefreshToken(result.Value.RefreshToken);
+        userFromDb.ShouldHaveOneRefreshToken(result.Value.RefreshToken, deviceId);
     }
 
-    private async Task<string> AddRefreshTokenToUser(User user)
+    private async Task<RefreshToken> AddRefreshTokenToUser(User user)
     {
         JwtService jwtService = ServiceProvider.GetRequiredService<JwtService>();
         string refreshTokenString = jwtService.GenerateTokens(user).RefreshToken;
@@ -73,11 +87,16 @@ public class RefreshAccessTokenCommandTests : BaseIntegrationTest
         using (var context = CreateDbContext())
         {
             User userFromDb = context.Users.Single(u => u.Login.Value == "yegor");
-            userFromDb.RefreshToken = new RefreshToken(refreshTokenString);
+            RefreshToken refreshToken = new RefreshToken(
+                refreshTokenString,
+                _deviceIdFactory.CreateGuid()
+            );
+
+            userFromDb.AddRefreshToken(refreshToken);
 
             await context.SaveChangesAsync();
-        }
 
-        return refreshTokenString;
+            return refreshToken;
+        }
     }
 }

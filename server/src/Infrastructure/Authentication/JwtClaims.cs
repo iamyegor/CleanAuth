@@ -14,7 +14,7 @@ public class JwtClaims
 
     public UserId GetUserIdFromCookieJwt(IRequestCookieCollection cookies)
     {
-        string jwtString = cookies.Extract(CookieTokens.Access.Name);
+        string jwtString = cookies.Extract(Cookies.AccessToken.Name);
         JwtSecurityToken jwt = new JwtSecurityTokenHandler().ReadJwtToken(jwtString);
         string claim = jwt.Claims.Single(c => c.Type == UserId).Value;
 

@@ -9,7 +9,8 @@ public class User : Entity<UserId>
     public Email Email { get; private set; }
     public Password Password { get; set; }
     public Role Role { get; } = Role.User;
-    public RefreshToken? RefreshToken { get; set; }
+    public IReadOnlyList<RefreshToken> RefreshTokens => _refreshTokens;
+    private readonly List<RefreshToken> _refreshTokens = [];
     public EmailVerificationCode? EmailVerificationCode { get; set; }
     public PhoneNumber? PhoneNumber { get; set; }
     public PhoneNumberVerificationCode? PhoneNumberVerificationCode { get; set; }
@@ -33,5 +34,16 @@ public class User : Entity<UserId>
         Password = password;
         EmailVerificationCode = emailVerificationCode;
         Email = email;
+    }
+
+    public void AddRefreshToken(RefreshToken refreshToken)
+    {
+        _refreshTokens.RemoveAll(rt => rt.DeviceId == refreshToken.DeviceId);
+        _refreshTokens.Add(refreshToken);
+    }
+
+    public bool IsRefreshTokenExpired(Guid deviceId)
+    {
+        return RefreshTokens.First(x => x.DeviceId == deviceId).IsExpired;
     }
 }

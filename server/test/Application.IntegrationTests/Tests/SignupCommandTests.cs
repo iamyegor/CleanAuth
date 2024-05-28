@@ -20,18 +20,21 @@ public class SignupCommandTests : BaseIntegrationTest
 {
     private readonly UserFactory _userFactory;
     private readonly UserRepository _userRepository;
+    private readonly DeviceIdFactory _deviceIdFactory;
 
     public SignupCommandTests(IntegrationTestWebApplicationFactory factory)
         : base(factory)
     {
         _userFactory = new UserFactory();
         _userRepository = new UserRepository();
+        _deviceIdFactory = new DeviceIdFactory();
     }
 
     [Fact]
     public async Task Doesn_not_allow_invalid_login()
     {
-        var command = new SignUpCommand("", "yegor@google.com", "PasswordA123");
+        string deviceId = _deviceIdFactory.Create();
+        var command = new SignUpCommand("", "yegor@google.com", "PasswordA123", deviceId);
 
         Result<Tokens, Error> result = await Mediator.Send(command);
 
@@ -41,7 +44,8 @@ public class SignupCommandTests : BaseIntegrationTest
     [Fact]
     public async Task Doesn_not_allow_invalid_email()
     {
-        var command = new SignUpCommand("yegor", "yegor", "PasswordA123");
+        string deviceId = _deviceIdFactory.Create();
+        var command = new SignUpCommand("yegor", "yegor", "PasswordA123", deviceId);
 
         Result<Tokens, Error> result = await Mediator.Send(command);
 
@@ -51,11 +55,23 @@ public class SignupCommandTests : BaseIntegrationTest
     [Fact]
     public async Task Doesn_not_allow_invalid_password()
     {
-        var command = new SignUpCommand("yegor", "yegor@google.com", "");
+        string deviceId = _deviceIdFactory.Create();
+        var command = new SignUpCommand("yegor", "yegor@google.com", "", deviceId);
 
         Result<Tokens, Error> result = await Mediator.Send(command);
 
         result.Error.Should().Be(Errors.Password.IsRequired());
+    }
+
+    [Fact]
+    public async Task Does_not_allow_invalid_device_id()
+    {
+        string deviceId = _deviceIdFactory.CreateInvalid();
+        var command = new SignUpCommand("yegor", "yegor@google.com", "PasswordA123", deviceId);
+
+        Result<Tokens, Error> result = await Mediator.Send(command);
+
+        result.Error.Should().Be(Errors.DeviceId.IsInvalid(deviceId));
     }
 
     [Fact]
@@ -64,7 +80,9 @@ public class SignupCommandTests : BaseIntegrationTest
         // Arrange
         Mock<IDomainEmailSender> emailSenderMock = new Mock<IDomainEmailSender>();
         SignUpCommandHandler handler = CreateSignUpCommandHandler(emailSenderMock);
-        var command = new SignUpCommand("yegor", "yegor@google.com", "passwordA123");
+
+        string deviceId = _deviceIdFactory.Create();
+        var command = new SignUpCommand("yegor", "yegor@google.com", "passwordA123", deviceId);
 
         // Act
         Result<Tokens, Error> result = await handler.Handle(command, new CancellationToken());
@@ -78,7 +96,7 @@ public class SignupCommandTests : BaseIntegrationTest
             .ShouldHaveEmail("yegor@google.com")
             .ShouldHavePassword("passwordA123")
             .ShouldHaveEmailVerificationCode()
-            .ShouldHaveRefreshToken(result.Value.RefreshToken);
+            .ShouldHaveOneRefreshToken(result.Value.RefreshToken, deviceId);
 
         emailSenderMock.Verify(sender =>
             sender.SendEmailVerificationCode(
@@ -107,7 +125,9 @@ public class SignupCommandTests : BaseIntegrationTest
 
         Mock<IDomainEmailSender> emailSenderMock = new Mock<IDomainEmailSender>();
         SignUpCommandHandler handler = CreateSignUpCommandHandler(emailSenderMock);
-        var command = new SignUpCommand("yegor", "yegor@google.com", "passwordA123");
+
+        string deviceId = _deviceIdFactory.Create();
+        var command = new SignUpCommand("yegor", "yegor@google.com", "passwordA123", deviceId);
 
         // Act
         Result<Tokens, Error> result = await handler.Handle(command, new CancellationToken());
@@ -121,7 +141,7 @@ public class SignupCommandTests : BaseIntegrationTest
             .ShouldHaveEmail("yegor@google.com")
             .ShouldHavePassword("passwordA123")
             .ShouldHaveEmailVerificationCode()
-            .ShouldHaveRefreshToken(result.Value.RefreshToken);
+            .ShouldHaveOneRefreshToken(result.Value.RefreshToken, deviceId);
 
         emailSenderMock.Verify(sender =>
             sender.SendEmailVerificationCode(
@@ -142,7 +162,9 @@ public class SignupCommandTests : BaseIntegrationTest
     )
     {
         await _userFactory.CreateAsync(existingUserLogin, existingUserEmail, "existingPassword123");
-        var command = new SignUpCommand(newLogin, newEmail, "passwordA123");
+
+        string deviceId = _deviceIdFactory.Create();
+        var command = new SignUpCommand(newLogin, newEmail, "passwordA123", deviceId);
 
         Result<Tokens, Error> result = await Mediator.Send(command);
 

@@ -42,8 +42,9 @@ public class EmailVerificationController : ApplicationController
     public async Task<IActionResult> VerifyEmail(VerifyEmailDto dto)
     {
         UserId userId = _jwtClaims.GetUserIdFromCookieJwt(Request.Cookies);
+        Request.Cookies.TryGetValue(Cookies.DeviceId.Name, out string? deviceId);
 
-        VerifyEmailCommand command = new VerifyEmailCommand(userId, dto.Code);
+        VerifyEmailCommand command = new VerifyEmailCommand(userId, dto.Code, deviceId);
         Result<Tokens, Error> tokensOrError = await _mediator.Send(command);
         if (tokensOrError.IsFailure)
         {

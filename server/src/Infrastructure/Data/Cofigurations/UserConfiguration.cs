@@ -54,14 +54,23 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             }
         );
 
-        builder.OwnsOne(
-            x => x.RefreshToken,
+        builder.OwnsMany(
+            x => x.RefreshTokens,
             refreshTokenBuilder =>
             {
+                refreshTokenBuilder.Property<int>("id").HasColumnName("id");
+                refreshTokenBuilder.HasKey("id");
+                refreshTokenBuilder.ToTable("refresh_tokens");
+
+                refreshTokenBuilder.WithOwner().HasForeignKey("user_id");
                 refreshTokenBuilder.Property(r => r.Value).HasColumnName("refresh_token");
+                refreshTokenBuilder.Property(r => r.DeviceId).HasColumnName("device_id");
                 refreshTokenBuilder
                     .Property(r => r.ExpiryTime)
                     .HasColumnName("refresh_token_expiry_time");
+
+                refreshTokenBuilder.WithOwner().HasForeignKey("user_id");
+                refreshTokenBuilder.Property("user_id").IsRequired();
             }
         );
 

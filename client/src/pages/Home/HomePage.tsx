@@ -26,7 +26,7 @@ export default function HomePage() {
 
     return (
         <div
-            className="flex items-center justify-center h-screen animated-gradient bg-neutral-500"
+            className="flex items-center justify-center h-screen animated-gradient bg-neutral-700"
             data-testid="HomePage"
         >
             <div className="p-8 space-y-4 text-4xl sm:text-5xl md:text-6xl">

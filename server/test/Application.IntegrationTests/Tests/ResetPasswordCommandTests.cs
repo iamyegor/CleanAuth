@@ -18,10 +18,12 @@ public class ResetPasswordCommandTests : BaseIntegrationTest
 {
     private readonly UserFactory _userFactory;
     private readonly UserRepository _userRepository;
+    private readonly DeviceIdFactory _deviceIdFactory;
 
     public ResetPasswordCommandTests(IntegrationTestWebApplicationFactory factory)
         : base(factory)
     {
+        _deviceIdFactory = new DeviceIdFactory();
         _userFactory = new UserFactory();
         _userRepository = new UserRepository();
     }
@@ -29,11 +31,32 @@ public class ResetPasswordCommandTests : BaseIntegrationTest
     [Fact]
     public async Task Does_not_allow_invalid_user_id()
     {
-        var command = new ResetPasswordCommand("invalid-guid", "tokenString", "PasswordA123");
+        var command = new ResetPasswordCommand(
+            "invalid-guid",
+            "tokenString",
+            "PasswordA123",
+            _deviceIdFactory.Create()
+        );
 
         Result<Tokens, Error> result = await Mediator.Send(command);
 
         result.Error.Should().Be(Errors.UserId.IsInvalid("invalid-guid"));
+    }
+
+    [Fact]
+    public async Task Does_not_allow_invalid_device_id()
+    {
+        string deviceId = _deviceIdFactory.CreateInvalid();
+        var command = new ResetPasswordCommand(
+            Guid.NewGuid().ToString(),
+            Guid.NewGuid().ToString(),
+            "PasswordA123",
+            deviceId
+        );
+
+        Result<Tokens, Error> result = await Mediator.Send(command);
+
+        result.Error.Should().Be(Errors.DeviceId.IsInvalid(deviceId));
     }
 
     [Fact]
@@ -42,7 +65,8 @@ public class ResetPasswordCommandTests : BaseIntegrationTest
         var command = new ResetPasswordCommand(
             Guid.NewGuid().ToString(),
             "invalid-guid",
-            "PasswordA123"
+            "PasswordA123",
+            _deviceIdFactory.Create()
         );
 
         Result<Tokens, Error> result = await Mediator.Send(command);
@@ -56,7 +80,8 @@ public class ResetPasswordCommandTests : BaseIntegrationTest
         var command = new ResetPasswordCommand(
             Guid.NewGuid().ToString(),
             Guid.NewGuid().ToString(),
-            ""
+            "",
+            _deviceIdFactory.Create()
         );
 
         Result<Tokens, Error> result = await Mediator.Send(command);
@@ -70,7 +95,8 @@ public class ResetPasswordCommandTests : BaseIntegrationTest
         var command = new ResetPasswordCommand(
             Guid.NewGuid().ToString(),
             Guid.NewGuid().ToString(),
-            "PasswordA123"
+            "PasswordA123",
+            _deviceIdFactory.Create()
         );
 
         Result<Tokens, Error> result = await Mediator.Send(command);
@@ -87,7 +113,8 @@ public class ResetPasswordCommandTests : BaseIntegrationTest
         var command = new ResetPasswordCommand(
             user.Id.Value.ToString(),
             Guid.NewGuid().ToString(),
-            "PasswordA123"
+            "PasswordA123",
+            _deviceIdFactory.Create()
         );
 
         // Act
@@ -109,7 +136,8 @@ public class ResetPasswordCommandTests : BaseIntegrationTest
         var command = new ResetPasswordCommand(
             user.Id.Value.ToString(),
             user.PasswordResetToken!.Value.ToString(),
-            "PasswordA123"
+            "PasswordA123",
+            _deviceIdFactory.Create()
         );
 
         // Act
@@ -132,7 +160,8 @@ public class ResetPasswordCommandTests : BaseIntegrationTest
         var command = new ResetPasswordCommand(
             user.Id.Value.ToString(),
             passwordResetToken.Value.ToString(),
-            "PasswordA123"
+            "PasswordA123",
+            _deviceIdFactory.Create()
         );
 
         // Act
@@ -150,10 +179,13 @@ public class ResetPasswordCommandTests : BaseIntegrationTest
         User user = await _userFactory.CreateAsync(passwordResetToken: passwordResetToken);
         string newPassword = "NewPasswordA123";
 
+        string deviceId = _deviceIdFactory.Create();
+
         var command = new ResetPasswordCommand(
             user.Id.Value.ToString(),
             passwordResetToken.Value.ToString(),
-            newPassword
+            newPassword,
+            deviceId
         );
 
         // Act
@@ -167,6 +199,6 @@ public class ResetPasswordCommandTests : BaseIntegrationTest
         userFromDb
             .ShouldHavePassword(newPassword)
             .ShouldNotHavePasswordResetToken()
-            .ShouldHaveRefreshToken(result.Value.RefreshToken);
+            .ShouldHaveOneRefreshToken(result.Value.RefreshToken, deviceId);
     }
 }

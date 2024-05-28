@@ -15,18 +15,20 @@ public class LogInCommandTests : BaseIntegrationTest
 {
     private readonly UserFactory _userFactory;
     private readonly UserRepository _userRepository;
+    private readonly DeviceIdFactory _deviceIdFactory;
 
     public LogInCommandTests(IntegrationTestWebApplicationFactory factory)
         : base(factory)
     {
         _userFactory = new UserFactory();
         _userRepository = new UserRepository();
+        _deviceIdFactory = new DeviceIdFactory();
     }
 
     [Fact]
     public async Task Does_not_allow_invalid_login_or_email()
     {
-        var command = new LogInCommand("", "PasswordA123");
+        var command = new LogInCommand("", "PasswordA123", _deviceIdFactory.Create());
 
         Result<Tokens, Error> result = await Mediator.Send(command);
 
@@ -36,11 +38,22 @@ public class LogInCommandTests : BaseIntegrationTest
     [Fact]
     public async Task Does_not_allow_invalid_password()
     {
-        var command = new LogInCommand("yegor@google.com", "");
+        var command = new LogInCommand("yegor@google.com", "", _deviceIdFactory.Create());
 
         Result<Tokens, Error> result = await Mediator.Send(command);
 
         result.Error.Should().Be(Errors.User.HasInvalidCredentials("yegor@google.com", ""));
+    }
+
+    [Fact]
+    public async Task Does_not_allow_invalid_device_id()
+    {
+        string deviceId = _deviceIdFactory.CreateInvalid();
+        var command = new LogInCommand("yegor@google.com", "PasswordA123", deviceId);
+
+        Result<Tokens, Error> result = await Mediator.Send(command);
+
+        result.Error.Should().Be(Errors.DeviceId.IsInvalid(deviceId));
     }
 
     [Fact]
@@ -49,7 +62,8 @@ public class LogInCommandTests : BaseIntegrationTest
         // Arrange
         await _userFactory.CreateAsync(email: "yegor@google.com", password: "PasswordA123");
 
-        var command = new LogInCommand("yegor@google.com", "PasswordA123");
+        string deviceId = _deviceIdFactory.Create();
+        var command = new LogInCommand("yegor@google.com", "PasswordA123", deviceId);
 
         // Act
         Result<Tokens, Error> result = await Mediator.Send(command);
@@ -59,7 +73,7 @@ public class LogInCommandTests : BaseIntegrationTest
         result.Value.RefreshToken.Should().NotBeNullOrEmpty();
 
         User userFromDb = _userRepository.QueryUserByEmail("yegor@google.com");
-        userFromDb.ShouldHaveRefreshToken(result.Value.RefreshToken);
+        userFromDb.ShouldHaveOneRefreshToken(result.Value.RefreshToken, deviceId);
     }
 
     [Theory]
@@ -70,15 +84,12 @@ public class LogInCommandTests : BaseIntegrationTest
         string password
     )
     {
-        // Arrange
         await _userFactory.CreateAsync(email: "yegor@google.com", password: "PasswordA123");
+        string deviceId = _deviceIdFactory.Create();
+        var command = new LogInCommand(loginOrEmail, password, deviceId);
 
-        var command = new LogInCommand(loginOrEmail, password);
-
-        // Act
         Result<Tokens, Error> result = await Mediator.Send(command);
 
-        // Assert
         result.Error.Should().Be(Errors.User.HasInvalidCredentials(loginOrEmail, password));
     }
 }

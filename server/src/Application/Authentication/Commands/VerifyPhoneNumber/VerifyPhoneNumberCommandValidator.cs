@@ -9,5 +9,6 @@ public class VerifyPhoneNumberCommandValidator : AbstractValidator<VerifyPhoneNu
     public VerifyPhoneNumberCommandValidator()
     {
         RuleFor(x => x.Code).MustHaveLength(4, Errors.PhoneNumberVerificationCode.HasInvalidLength);
+        RuleFor(x => x.DeviceId).MustBeValidDeviceId();
     }
 }

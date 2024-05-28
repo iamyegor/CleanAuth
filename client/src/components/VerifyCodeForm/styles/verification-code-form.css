@@ -12,7 +12,7 @@
 }
 
 .verification-code-auxiliary-button {
-  @apply text-blue-500 flex-1 bg-transparent rounded-md transition h-14 flex
+    @apply text-blue-500 flex-1 bg-transparent rounded-md transition h-14 flex
   justify-center items-center disabled:bg-neutral-500/70 disabled:shadow-none disabled:border-0
   shadow shadow-blue-200 hover:shadow-lg disabled:shadow-gray-200 border border-blue-500 
    disabled:text-neutral-100 p-2;
@@ -20,5 +20,5 @@
 
 .verification-code-auxiliary-button--loading {
     @apply text-white flex-1 bg-neutral-500 rounded-md transition h-14 flex justify-center 
-    items-center;
+    items-center p-2;
 }

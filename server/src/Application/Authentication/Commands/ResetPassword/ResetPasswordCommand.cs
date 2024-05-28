@@ -9,8 +9,12 @@ using XResults;
 
 namespace Application.Authentication.Commands.ResetPassword;
 
-public record ResetPasswordCommand(string UserId, string TokenString, string Password)
-    : IRequest<Result<Tokens, Error>>;
+public record ResetPasswordCommand(
+    string UserId,
+    string TokenString,
+    string Password,
+    string? DeviceId
+) : IRequest<Result<Tokens, Error>>;
 
 public class ResetPasswordCommandHandler
     : IRequestHandler<ResetPasswordCommand, Result<Tokens, Error>>
@@ -55,7 +59,7 @@ public class ResetPasswordCommandHandler
         user.PasswordResetToken = null;
 
         Tokens tokens = _jwtService.GenerateTokens(user);
-        user.RefreshToken = new RefreshToken(tokens.RefreshToken);
+        user.AddRefreshToken(new RefreshToken(tokens.RefreshToken, Guid.Parse(command.DeviceId!)));
 
         await _context.SaveChangesAsync(cancellationToken);
 

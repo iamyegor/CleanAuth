@@ -38,8 +38,12 @@ public class UserFactory
                 PasswordResetToken = passwordResetToken,
                 PhoneNumberVerificationCode = phoneNumberVerificationCode,
                 PhoneNumber = phoneNumberObj,
-                RefreshToken = refreshToken
             };
+
+            if (refreshToken != null)
+            {
+                user.AddRefreshToken(refreshToken);
+            }
 
             await context.Users.AddAsync(user);
             await context.SaveChangesAsync();

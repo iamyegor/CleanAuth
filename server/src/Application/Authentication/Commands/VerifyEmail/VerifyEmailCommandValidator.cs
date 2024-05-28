@@ -9,5 +9,6 @@ public class VerifyEmailCommandValidator : AbstractValidator<VerifyEmailCommand>
     public VerifyEmailCommandValidator()
     {
         RuleFor(x => x.Code).MustHaveLength(5, Errors.EmailVerificationCode.HasIncorrectLength);
+        RuleFor(x => x.DeviceId).MustBeValidDeviceId();
     }
 }

@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
+import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
 
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
     _retry?: boolean;
@@ -13,25 +14,37 @@ api.interceptors.response.use(
     (response: AxiosResponse): AxiosResponse => {
         return response;
     },
-    async (error: AxiosError): Promise<any> => {
+
+    async (error: AxiosError<ServerErrorResponse>): Promise<any> => {
         const originalRequest = error.config as CustomAxiosRequestConfig;
-        if (error.response?.status === 401 && !originalRequest._retry) {
+        console.log(error.response?.data);
+
+        try {
+            if (originalRequest._retry) {
+                return Promise.reject(error);
+            }
+
             originalRequest._retry = true;
 
-            try {
+            if (error.response?.data?.errorCode === "device.id.invalid") {
+                await issueNewDeviceId();
+            } else if (error.response?.status === 401) {
                 await refreshToken();
-                return api(originalRequest);
-            } catch (refreshError) {
-                return Promise.reject(refreshError);
             }
-        }
 
-        return Promise.reject(error);
+            return api(originalRequest);
+        } catch (newRequestError) {
+            return Promise.reject(newRequestError);
+        }
     },
 );
 
 async function refreshToken(): Promise<any> {
     await api.post("api/refresh-access-token");
+}
+
+async function issueNewDeviceId(): Promise<any> {
+    await api.post("api/issue-device-id");
 }
 
 export default api;

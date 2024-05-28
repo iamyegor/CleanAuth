@@ -11,7 +11,7 @@ using XResults;
 
 namespace Application.Authentication.Commands.Signup;
 
-public record SignUpCommand(string Login, string Email, string Password)
+public record SignUpCommand(string Login, string Email, string Password, string DeviceId)
     : IRequest<Result<Tokens, Error>>;
 
 public class SignUpCommandHandler : IRequestHandler<SignUpCommand, Result<Tokens, Error>>
@@ -63,10 +63,11 @@ public class SignUpCommandHandler : IRequestHandler<SignUpCommand, Result<Tokens
         }
 
         Tokens tokens = _jwtService.GenerateTokens(finalUser);
-        finalUser.RefreshToken = new RefreshToken(tokens.RefreshToken);
+
+        Guid deviceId = Guid.Parse(command.DeviceId);
+        finalUser.AddRefreshToken(new RefreshToken(tokens.RefreshToken, deviceId));
 
         await _context.SaveChangesAsync(cancellationToken);
-
         await _emailSender.SendEmailVerificationCode(email.Value, verificationCode.Value);
 
         return tokens;

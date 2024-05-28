@@ -14,6 +14,11 @@ export default function useSecondsLeft(initialTime: number) {
 
     useEffect(() => {
         storeResendTimer(secondsLeft);
+        const intervalId = setInterval(() => {
+            setSecondsLeft((prevSeconds) => (prevSeconds > 0 ? prevSeconds - 1 : 0));
+        }, 1000);
+
+        return () => clearInterval(intervalId);
     }, [secondsLeft]);
 
     useEffect(() => {
@@ -21,14 +26,6 @@ export default function useSecondsLeft(initialTime: number) {
             clearStoredResendTimer();
         };
     }, [location]);
-
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            setSecondsLeft((prevSeconds) => (prevSeconds > 0 ? prevSeconds - 1 : 0));
-        }, 1000);
-
-        return () => clearInterval(intervalId);
-    }, [secondsLeft]);
 
     return { secondsLeft, setSecondsLeft };
 }

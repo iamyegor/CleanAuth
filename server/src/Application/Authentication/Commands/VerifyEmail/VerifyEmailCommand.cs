@@ -9,7 +9,8 @@ using XResults;
 
 namespace Application.Authentication.Commands.VerifyEmail;
 
-public record VerifyEmailCommand(UserId UserId, int Code) : IRequest<Result<Tokens, Error>>;
+public record VerifyEmailCommand(UserId UserId, int Code, string? DeviceId)
+    : IRequest<Result<Tokens, Error>>;
 
 public class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, Result<Tokens, Error>>
 {
@@ -46,7 +47,7 @@ public class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, Res
         user.EmailVerificationCode = null;
 
         Tokens tokens = _jwtService.GenerateTokens(user);
-        user.RefreshToken = new RefreshToken(tokens.RefreshToken);
+        user.AddRefreshToken(new RefreshToken(tokens.RefreshToken, Guid.Parse(command.DeviceId!)));
 
         await _context.SaveChangesAsync(cancellationToken);
 

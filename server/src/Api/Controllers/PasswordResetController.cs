@@ -51,7 +51,14 @@ public class PasswordResetController : ApplicationController
         [FromQuery] string token
     )
     {
-        ResetPasswordCommand command = new ResetPasswordCommand(userId, token, dto.Password);
+        Request.Cookies.TryGetValue(Cookies.DeviceId.Name, out string? deviceId);
+
+        ResetPasswordCommand command = new ResetPasswordCommand(
+            userId,
+            token,
+            dto.Password,
+            deviceId
+        );
         Result<Tokens, Error> tokensOrError = await _mediator.Send(command);
         if (tokensOrError.IsFailure)
         {

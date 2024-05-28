@@ -1,5 +1,6 @@
 using Domain.User;
 using FluentAssertions;
+using Infrastructure.Authentication;
 
 namespace Application.IntegrationTests.CustomAssertions;
 
@@ -23,9 +24,16 @@ public static class UserAssertionsExtensions
         return user;
     }
 
-    public static User ShouldHaveRefreshToken(this User user, string refreshToken)
+    public static User ShouldHaveOneRefreshToken(
+        this User user,
+        string refreshToken,
+        string deviceId
+    )
     {
-        user.RefreshToken!.Value.Should().Be(refreshToken);
+        user.RefreshTokens.Should().ContainSingle();
+        user.RefreshTokens[0].Value.Should().Be(refreshToken);
+        user.RefreshTokens[0].DeviceId.Should().Be(deviceId);
+
         return user;
     }
 

@@ -9,7 +9,8 @@ using XResults;
 
 namespace Application.Authentication.Commands.LogIn;
 
-public record LogInCommand(string LoginOrEmail, string Password) : IRequest<Result<Tokens, Error>>;
+public record LogInCommand(string LoginOrEmail, string Password, string DeviceId)
+    : IRequest<Result<Tokens, Error>>;
 
 public class LogInCommandHandler : IRequestHandler<LogInCommand, Result<Tokens, Error>>
 {
@@ -40,7 +41,7 @@ public class LogInCommandHandler : IRequestHandler<LogInCommand, Result<Tokens, 
         }
 
         Tokens tokens = _jwtService.GenerateTokens(user);
-        user.RefreshToken = new RefreshToken(tokens.RefreshToken);
+        user.AddRefreshToken(new RefreshToken(tokens.RefreshToken, Guid.Parse(command.DeviceId)));
 
         await _context.SaveChangesAsync(cancellationToken);
 

@@ -8,7 +8,8 @@ using XResults;
 
 namespace Application.Authentication.Commands.RefreshAccessToken;
 
-public record RefreshAccessTokenCommand(string? RefreshToken) : IRequest<Result<Tokens, Error>>;
+public record RefreshAccessTokenCommand(string? RefreshToken, string DeviceId)
+    : IRequest<Result<Tokens, Error>>;
 
 public class RefreshAccessTokenCommandHandler
     : IRequestHandler<RefreshAccessTokenCommand, Result<Tokens, Error>>
@@ -27,22 +28,18 @@ public class RefreshAccessTokenCommandHandler
         CancellationToken cancellationToken
     )
     {
-        if (string.IsNullOrWhiteSpace(command.RefreshToken))
-        {
-            return Errors.RefreshToken.IsRequired();
-        }
-
+        Guid deviceId = Guid.Parse(command.DeviceId);
         User? user = _context.Users.FirstOrDefault(u =>
-            u.RefreshToken != null && u.RefreshToken.Value == command.RefreshToken
+            u.RefreshTokens.Any(t => t.Value == command.RefreshToken && t.DeviceId == deviceId)
         );
 
-        if (user == null || user.RefreshToken!.IsExpired)
+        if (user == null || user.IsRefreshTokenExpired(deviceId))
         {
-            return Errors.RefreshToken.IsInvalid(command.RefreshToken);
+            return Errors.RefreshToken.IsInvalid(command.RefreshToken!);
         }
 
         Tokens tokens = _jwtService.GenerateTokens(user);
-        user.RefreshToken = new RefreshToken(tokens.RefreshToken);
+        user.AddRefreshToken(new RefreshToken(tokens.RefreshToken, deviceId));
 
         await _context.SaveChangesAsync(cancellationToken);
 

@@ -9,7 +9,8 @@ using XResults;
 
 namespace Application.Authentication.Commands.VerifyPhoneNumber;
 
-public record VerifyPhoneNumberCommand(UserId UserId, int Code) : IRequest<Result<Tokens, Error>>;
+public record VerifyPhoneNumberCommand(UserId UserId, int Code, string? DeviceId)
+    : IRequest<Result<Tokens, Error>>;
 
 public class VerifyPhoneNumberCommandHandler
     : IRequestHandler<VerifyPhoneNumberCommand, Result<Tokens, Error>>
@@ -47,7 +48,7 @@ public class VerifyPhoneNumberCommandHandler
         user.PhoneNumberVerificationCode = null;
 
         Tokens tokens = _jwtService.GenerateTokens(user);
-        user.RefreshToken = new RefreshToken(tokens.RefreshToken);
+        user.AddRefreshToken(new RefreshToken(tokens.RefreshToken, Guid.Parse(command.DeviceId!)));
 
         await _context.SaveChangesAsync(cancellationToken);
 

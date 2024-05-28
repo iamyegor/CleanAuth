@@ -122,7 +122,7 @@ public static class DependencyInjection
                     OnMessageReceived = context =>
                     {
                         bool containsCookie = context.Request.Cookies.TryGetValue(
-                            CookieTokens.Access.Name,
+                            Cookies.AccessToken.Name,
                             out var accesToken
                         );
 

@@ -7,7 +7,7 @@ public static class RequestCookiesExtensions
     public static string Extract(this IRequestCookieCollection cookies, string key)
     {
         bool extractionSuccessful = cookies.TryGetValue(
-            CookieTokens.Access.Name,
+            Cookies.AccessToken.Name,
             out string? extractedValue
         );
 

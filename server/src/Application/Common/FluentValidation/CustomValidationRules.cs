@@ -6,6 +6,37 @@ namespace Application.Common.FluentValidation;
 
 public static class CustomValidationRules
 {
+    public static IRuleBuilderOptionsConditions<T, string> MustNotBeEmpty<T>(
+        this IRuleBuilder<T, string?> ruleBuilder,
+        Error error
+    )
+    {
+        return ruleBuilder.Custom(
+            (value, context) =>
+            {
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    context.AddError(error);
+                }
+            }
+        )!;
+    }
+
+    public static IRuleBuilderOptionsConditions<T, string> MustBeValidDeviceId<T>(
+        this IRuleBuilder<T, string?> ruleBuilder
+    )
+    {
+        return ruleBuilder.Custom(
+            (value, context) =>
+            {
+                if (string.IsNullOrWhiteSpace(value) || !Guid.TryParse(value, out _))
+                {
+                    context.AddError(Errors.DeviceId.IsInvalid(value));
+                }
+            }
+        )!;
+    }
+
     public static IRuleBuilderOptionsConditions<T, string> MustBeGuid<T>(
         this IRuleBuilder<T, string> ruleBuilder,
         Func<string, Error> callback

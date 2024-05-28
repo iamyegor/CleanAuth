@@ -1,6 +1,6 @@
 import classNames from "classnames";
 import api from "@/lib/api.ts";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import sendImage from "@/components/VerifyCodeForm/images/send.png";
 import disabledSendImage from "@/components/VerifyCodeForm/images/send_disabled.png";
 import Spinner from "@/components/ui/Spinner.tsx";
@@ -24,6 +24,13 @@ export default function ResendCodeButton({
     resendCodeEndpoint,
 }: ResendCodeButtonProps) {
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [unexpectedError, setUnexpectedError] = useState<boolean>(false);
+
+    useEffect(() => {
+        if (unexpectedError) {
+            throw RouteError.unexpected();
+        }
+    }, [unexpectedError]);
 
     async function resendCode() {
         setIsLoading(true);
@@ -33,7 +40,7 @@ export default function ResendCodeButton({
             setMessage(FeedbackMessage.createSuccess("Verification code sent successfully!"));
             setSecondsLeft(maxSeconds);
         } catch (err) {
-            throw RouteError.unexpected();
+            setUnexpectedError(true);
         }
 
         setIsLoading(false);
@@ -46,7 +53,7 @@ export default function ResendCodeButton({
     );
 
     function isDisabled() {
-        return secondsLeft > 0;
+        return secondsLeft > 0 || isLoading;
     }
 
     return (
@@ -54,11 +61,11 @@ export default function ResendCodeButton({
             type="button"
             className={resendCodeButtonClasses}
             disabled={isDisabled()}
-            onClick={() => resendCode()}
+            onClick={resendCode}
             data-testid="ResendCodeButton"
         >
             {isLoading ? (
-                <Spinner size={20} />
+                <Spinner size={26} />
             ) : (
                 <>
                     <Image

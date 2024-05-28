@@ -43,10 +43,16 @@ public class AddPhoneNumberCommandHandler : IRequestHandler<AddPhoneNumberComman
                 return Errors.PhoneNumber.IsAlreadyTaken(command.PhoneNumber);
             }
 
-            await _context.Database.ExecuteSqlAsync(
-                $"update users set phone_number = null where id = {userWithSamePhoneNumber.Id.Value}",
-                cancellationToken
-            );
+            if (userWithSamePhoneNumber.Id != command.UserId)
+            {
+                await _context.Database.ExecuteSqlAsync(
+                    $@"
+                    update users 
+                    set phone_number = null 
+                    where id = {userWithSamePhoneNumber.Id.Value}",
+                    cancellationToken
+                );
+            }
         }
 
         User user = await _context.Users.SingleAsync(
@@ -59,10 +65,10 @@ public class AddPhoneNumberCommandHandler : IRequestHandler<AddPhoneNumberComman
 
         await _context.SaveChangesAsync(cancellationToken);
 
-        await _verificationCodeSender.SendAsync(
-            user.PhoneNumber.Value,
-            user.PhoneNumberVerificationCode.Value
-        );
+        // await _verificationCodeSender.SendAsync(
+        //     user.PhoneNumber.Value,
+        //     user.PhoneNumberVerificationCode.Value
+        // );
 
         return Result.Ok();
     }

@@ -24,7 +24,7 @@ public class UserController : ApplicationController
         _context = context;
     }
 
-    [HttpGet("username"), Authorize]
+    [HttpGet("username"), Authorize(PoliciyNames.AccountAuthenticated)]
     public async Task<IActionResult> GetUsername()
     {
         if (HttpContext.Request.Cookies.TryGetValue("accessToken", out string? token))

@@ -6,11 +6,11 @@ public static class ResponseCookiesExtensions
 {
     public static void Append(this IResponseCookies cookies, Tokens tokens)
     {
-        cookies.Append(CookieTokens.Access.Name, tokens.AccessToken, CookieTokens.Access.Options);
+        cookies.Append(Cookies.AccessToken.Name, tokens.AccessToken, Cookies.AccessToken.Options);
         cookies.Append(
-            CookieTokens.Refresh.Name,
+            Cookies.RefreshToken.Name,
             tokens.RefreshToken,
-            CookieTokens.Refresh.Options
+            Cookies.RefreshToken.Options
         );
     }
 }

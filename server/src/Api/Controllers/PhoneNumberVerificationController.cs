@@ -62,8 +62,9 @@ public class PhoneNumberVerificationController : ApplicationController
     public async Task<IActionResult> VerifyPhoneNumber(VerifyPhoneNumberDto dto)
     {
         UserId userId = _jwtClaims.GetUserIdFromCookieJwt(Request.Cookies);
+        Request.Cookies.TryGetValue(Cookies.DeviceId.Name, out string? deviceId);
 
-        VerifyPhoneNumberCommand command = new VerifyPhoneNumberCommand(userId, dto.Code);
+        VerifyPhoneNumberCommand command = new VerifyPhoneNumberCommand(userId, dto.Code, deviceId);
         Result<Tokens, Error> tokensOrError = await _mediator.Send(command);
         if (tokensOrError.IsFailure)
         {

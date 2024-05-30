@@ -25,6 +25,10 @@ import RequestPasswordResetPage, {
 } from "@/pages/RequestPasswordReset/RequestPasswordResetPage.tsx";
 import { action as requestPasswordResetAction } from "@/pages/RequestPasswordReset/components/RequestPasswordResetForm.tsx";
 import { action as resetPasswordAction } from "@/pages/PasswordReset/components/PasswordResetForm.tsx";
+import AddUsernamePage, {
+    loader as addUsernameLoader,
+} from "@/pages/AddUsername/AddUsernamePage.tsx";
+import { action as addUsernameAction } from "@/pages/AddUsername/components/AddUsernameForm.tsx";
 
 const routes = [
     {
@@ -78,6 +82,12 @@ const routes = [
                 element: <PasswordResetPage />,
                 loader: resetPasswordLoader,
                 action: resetPasswordAction,
+            },
+            {
+                path: "add-username",
+                element: <AddUsernamePage />,
+                loader: addUsernameLoader,
+                action: addUsernameAction,
             },
         ],
     },

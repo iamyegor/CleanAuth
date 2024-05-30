@@ -3,28 +3,14 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { server } from "@/test/setup.ts";
-import { http, HttpResponse } from "msw";
 import routes from "@/lib/routes.tsx";
 import userEvent from "@testing-library/user-event";
-
-const needToAddPhoneNumberEndpoint = "*/api/need-to-add-phone-number";
-
-const successNeedToAddPhoneNumberHandler = http.get(needToAddPhoneNumberEndpoint, async () =>
-    HttpResponse.json({}, { status: 200 }),
-);
-
-const failNeedToAddPhoneNumberHandler = http.get(needToAddPhoneNumberEndpoint, async () =>
-    HttpResponse.json({}, { status: 400 }),
-);
-
-const successAddPhoneNumberHandler = http.post("*/api/add-phone-number", async () => {
-    return HttpResponse.json({}, { status: 200 });
-});
-
-const successGetPhoneNumberForVerificationHandler = http.get(
-    "*/api/phone-number-for-verification",
-    async () => HttpResponse.json("1234567890", { status: 200 }),
-);
+import {
+    failNeedToAddPhoneNumberHandler,
+    successAddPhoneNumberHandler,
+    successGetPhoneNumberForVerificationHandler,
+    successNeedToAddPhoneNumberHandler,
+} from "@/test/requestHandlers/addPhoneNumberPageHandlers.ts";
 
 const AddPhoneNumberPageDefault = () => {
     const router = createMemoryRouter(routes, {

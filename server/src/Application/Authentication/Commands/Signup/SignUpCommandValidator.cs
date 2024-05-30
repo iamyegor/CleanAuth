@@ -1,5 +1,4 @@
 using Application.Common.FluentValidation;
-using Domain.DomainErrors;
 using Domain.User.ValueObjects;
 using FluentValidation;
 

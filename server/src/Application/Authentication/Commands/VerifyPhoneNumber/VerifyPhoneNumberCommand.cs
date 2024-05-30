@@ -3,8 +3,8 @@ using Domain.User;
 using Domain.User.ValueObjects;
 using Infrastructure.Authentication;
 using Infrastructure.Data;
+using Infrastructure.Specifications.User;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using XResults;
 
 namespace Application.Authentication.Commands.VerifyPhoneNumber;
@@ -16,24 +16,23 @@ public class VerifyPhoneNumberCommandHandler
     : IRequestHandler<VerifyPhoneNumberCommand, Result<Tokens, Error>>
 {
     private readonly ApplicationContext _context;
-    private readonly JwtService _jwtService;
+    private readonly UserTokensUpdater _userTokensUpdater;
 
-    public VerifyPhoneNumberCommandHandler(ApplicationContext context, JwtService jwtService)
+    public VerifyPhoneNumberCommandHandler(
+        ApplicationContext context,
+        UserTokensUpdater userTokensUpdater
+    )
     {
         _context = context;
-        _jwtService = jwtService;
+        _userTokensUpdater = userTokensUpdater;
     }
 
     public async Task<Result<Tokens, Error>> Handle(
         VerifyPhoneNumberCommand command,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        User? user = await _context.Users.SingleOrDefaultAsync(
-            u => u.Id == command.UserId,
-            cancellationToken: cancellationToken
-        );
-
+        User? user = await _context.Query(new UserByIdSpec(command.UserId), ct);
         if (user == null || user.PhoneNumberVerificationCode?.Value != command.Code)
         {
             return Errors.PhoneNumberVerificationCode.IsInvalid();
@@ -44,13 +43,11 @@ public class VerifyPhoneNumberCommandHandler
             return Errors.PhoneNumberVerificationCode.IsExpired();
         }
 
-        user.IsPhoneNumberVerified = true;
-        user.PhoneNumberVerificationCode = null;
+        user.VerifyPhoneNumber();
 
-        Tokens tokens = _jwtService.GenerateTokens(user);
-        user.AddRefreshToken(new RefreshToken(tokens.RefreshToken, Guid.Parse(command.DeviceId!)));
+        Tokens tokens = _userTokensUpdater.UpdateTokens(user, command.DeviceId!);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(ct);
 
         return tokens;
     }

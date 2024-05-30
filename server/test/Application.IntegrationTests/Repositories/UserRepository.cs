@@ -10,7 +10,7 @@ public class UserRepository
     {
         using (var context = DbContextProvider.Create())
         {
-            return context.Users.Single(u => u.Login.Value == login);
+            return context.Users.Single(u => u.Login != null && u.Login.Value == login);
         }
     }
 

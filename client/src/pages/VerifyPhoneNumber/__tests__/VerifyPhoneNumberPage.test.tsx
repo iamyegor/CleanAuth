@@ -3,33 +3,15 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { server } from "@/test/setup.ts";
-import { http, HttpResponse } from "msw";
 import routes from "@/lib/routes.tsx";
 import userEvent from "@testing-library/user-event";
-
-const phoneNumberForVerificationEndpoint = "*/api/phone-number-for-verification";
-
-const failPhoneNumberForVerificationHandler = http.get(
-    phoneNumberForVerificationEndpoint,
-    async () => HttpResponse.json({}, { status: 400 }),
-);
-
-const successPhoneNumberForVerificationHandler = http.get(
-    phoneNumberForVerificationEndpoint,
-    async () => HttpResponse.json("123-456-7890", { status: 200 }),
-);
-
-const successVerifyPhoneNumberHandler = http.post("*/api/verify-phone-number", async () =>
-    HttpResponse.json({}, { status: 200 }),
-);
-
-const successGetUsernameHandler = http.get("*/api/username", async () =>
-    HttpResponse.json("yegor", { status: 200 }),
-);
-
-const successNeedToAddPhoneNumberHandler = http.get("*/api/need-to-add-phone-number", async () =>
-    HttpResponse.json({}, { status: 200 }),
-);
+import { successGetUsernameHandler } from "@/test/requestHandlers/loginPageHandlers.ts";
+import { successNeedToAddPhoneNumberHandler } from "@/test/requestHandlers/addPhoneNumberPageHandlers.ts";
+import {
+    failPhoneNumberForVerificationHandler,
+    successPhoneNumberForVerificationHandler,
+    successVerifyPhoneNumberHandler,
+} from "@/test/requestHandlers/verifyPhoneNumberPageHandlers.ts";
 
 const VerifyPhoneNumberPageDefault = () => {
     const router = createMemoryRouter(routes, {
@@ -89,9 +71,7 @@ describe("<VerifyPhoneNumberPage />", () => {
         await userEvent.click(verifyPhoneNumberPage.formElements.submittingButton);
 
         // Assert
-        await waitFor(() => {
-            expect(screen.getByTestId("HomePage")).toBeInTheDocument();
-        });
+        await waitFor(() => expect(screen.getByTestId("HomePage")).toBeInTheDocument());
     });
 
     test("4. Go back button redirects to add phone number page", async () => {

@@ -29,16 +29,24 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         );
 
         builder.OwnsOne(
+            x => x.AuthType,
+            authTypeBuilder =>
+            {
+                authTypeBuilder.Property(a => a.Value).HasColumnName("auth_type");
+            }
+        );
+
+        builder.OwnsOne(
             x => x.Email,
             emailBuilder =>
             {
                 emailBuilder.HasIndex(l => l.Value).IsUnique();
-                emailBuilder.Property(e => e.Value).HasColumnName("email");
+                emailBuilder.Property(e => e.Value).HasColumnName("email").IsRequired();
                 emailBuilder.HasIndex(e => e.Value).IsUnique();
             }
         );
 
-        builder.ComplexProperty(
+        builder.OwnsOne(
             x => x.Password,
             passwordBuilder =>
             {

@@ -1,11 +1,10 @@
-using Domain.DateTimeProviders;
 using Domain.DomainErrors;
 using Domain.User;
 using Domain.User.ValueObjects;
 using Infrastructure.Data;
 using Infrastructure.Sms;
+using Infrastructure.Specifications.User;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using XResults;
 
 namespace Application.Authentication.Commands.AddPhoneNumber;
@@ -26,15 +25,10 @@ public class AddPhoneNumberCommandHandler : IRequestHandler<AddPhoneNumberComman
         _verificationCodeSender = verificationCodeSender;
     }
 
-    public async Task<SuccessOr<Error>> Handle(
-        AddPhoneNumberCommand command,
-        CancellationToken cancellationToken
-    )
+    public async Task<SuccessOr<Error>> Handle(AddPhoneNumberCommand command, CancellationToken ct)
     {
-        User? userWithSamePhoneNumber = await _context.Users.SingleOrDefaultAsync(
-            u => u.PhoneNumber != null && u.PhoneNumber.Value == command.PhoneNumber,
-            cancellationToken: cancellationToken
-        );
+        UserByPhoneNumberSpec spec = new UserByPhoneNumberSpec(command.PhoneNumber);
+        User? userWithSamePhoneNumber = await _context.Query(spec, ct);
 
         if (userWithSamePhoneNumber != null)
         {
@@ -45,29 +39,18 @@ public class AddPhoneNumberCommandHandler : IRequestHandler<AddPhoneNumberComman
 
             if (userWithSamePhoneNumber.Id != command.UserId)
             {
-                await _context.Database.ExecuteSqlAsync(
-                    $@"
-                    update users 
-                    set phone_number = null 
-                    where id = {userWithSamePhoneNumber.Id.Value}",
-                    cancellationToken
-                );
+                userWithSamePhoneNumber.ClearPhoneNumber();
+                await _context.SaveChangesAsync(ct);
             }
         }
 
-        User user = await _context.Users.SingleAsync(
-            u => u.Id == command.UserId,
-            cancellationToken: cancellationToken
-        );
-
-        user.PhoneNumber = PhoneNumber.Create(command.PhoneNumber);
-        user.PhoneNumberVerificationCode = new PhoneNumberVerificationCode(new DateTimeProvider());
-
-        await _context.SaveChangesAsync(cancellationToken);
+        User user = (await _context.Query(new UserByIdSpec(command.UserId), ct))!;
+        user.AddUnverifiedPhoneNumber(PhoneNumber.Create(command.PhoneNumber));
+        await _context.SaveChangesAsync(ct);
 
         // await _verificationCodeSender.SendAsync(
-        //     user.PhoneNumber.Value,
-        //     user.PhoneNumberVerificationCode.Value
+        //     user.PhoneNumber!.Value,
+        //     user.PhoneNumberVerificationCode!.Value
         // );
 
         return Result.Ok();

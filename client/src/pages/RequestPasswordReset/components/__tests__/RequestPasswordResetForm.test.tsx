@@ -7,22 +7,10 @@ import RequestPasswordResetForm, {
     action,
 } from "@/pages/RequestPasswordReset/components/RequestPasswordResetForm.tsx";
 import { server } from "@/test/setup.ts";
-import { http, HttpResponse } from "msw";
-
-const failedRequestPasswordResetHandler = http.post(`*/api/request-password-reset`, async () =>
-    HttpResponse.json(
-        {
-            errorCode: "user.not.exists.with.login.or.email",
-            errorMessage: "User with this login or email does not exist.",
-        },
-        { status: 400 },
-    ),
-);
-
-const successRequestPasswordResetHandler = http.post(
-    `*/api/request-password-reset`,
-    async () => new HttpResponse(),
-);
+import {
+    failedRequestPasswordResetHandler,
+    successRequestPasswordResetHandler,
+} from "@/test/requestHandlers/requestPasswordResetPageHandlers.ts";
 
 const RequestPasswordResetFormDefault = () => {
     const router = createMemoryRouter([

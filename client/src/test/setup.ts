@@ -11,6 +11,15 @@ beforeAll(() => {
     if (server) {
         server.listen();
     }
+    
+    (global as any).google = {
+        accounts: {
+            id: {
+                initialize: vi.fn(),
+                renderButton: vi.fn(),
+            },
+        },
+    };
 });
 
 afterEach(() => {

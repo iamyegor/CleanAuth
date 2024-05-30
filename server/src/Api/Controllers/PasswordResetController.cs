@@ -5,7 +5,8 @@ using Application.Authentication.Commands.ResetPassword;
 using Application.Authentication.Queries.NeedToResetPassword;
 using Domain.DomainErrors;
 using Infrastructure.Authentication;
-using Infrastructure.Authentication.Extensions;
+using Infrastructure.Cookies;
+using Infrastructure.Cookies.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using XResults;
@@ -51,7 +52,7 @@ public class PasswordResetController : ApplicationController
         [FromQuery] string token
     )
     {
-        Request.Cookies.TryGetValue(Cookies.DeviceId.Name, out string? deviceId);
+        Request.Cookies.TryGetValue(CookiesInfo.DeviceId.Name, out string? deviceId);
 
         ResetPasswordCommand command = new ResetPasswordCommand(
             userId,

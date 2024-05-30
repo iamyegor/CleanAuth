@@ -1,12 +1,13 @@
-using System.Text;
 using Infrastructure.Authentication;
+using Infrastructure.Authorization;
+using Infrastructure.Cookies;
 using Infrastructure.Data;
 using Infrastructure.Emails;
 using Infrastructure.Sms;
+using Infrastructure.TokensValidators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IdentityModel.Tokens;
 
 namespace Infrastructure;
 
@@ -24,10 +25,11 @@ public static class DependencyInjection
                 isDevelopment
             ))
             .AddEmailMesssages(config)
-            .AddJwtAuthentication(config)
+            .AddAuthentication(config)
             .AddAuthorization()
             .AddDapper()
-            .AddSmsMessages();
+            .AddSmsMessages()
+            .AddUtils();
     }
 
     private static IServiceCollection AddEmailMesssages(
@@ -49,91 +51,36 @@ public static class DependencyInjection
 
     private static IServiceCollection AddAuthorization(this IServiceCollection services)
     {
-        services.AddAuthorization(config =>
-        {
-            config.AddPolicy(
-                PoliciyNames.EmailVerified,
-                p => p.RequireClaim(JwtClaims.IsEmailVerified, "true")
-            );
-
-            config.AddPolicy(
-                PoliciyNames.PhoneNumberNotVerified,
-                p =>
-                {
-                    p.RequireClaim(JwtClaims.IsPhoneNumberVerified, "false");
-                }
-            );
-
-            config.AddPolicy(
-                PoliciyNames.EmailNotVerified,
-                p =>
-                {
-                    p.RequireClaim(JwtClaims.IsEmailVerified, "false");
-                }
-            );
-
-            config.AddPolicy(
-                PoliciyNames.AccountAuthenticated,
-                p =>
-                {
-                    p.RequireClaim(JwtClaims.IsEmailVerified, "true");
-                    p.RequireClaim(JwtClaims.IsPhoneNumberVerified, "true");
-                }
-            );
-        });
+        services.AddAuthorization(AuthorizationPolicies.AddPolicies);
 
         return services;
     }
 
-    private static IServiceCollection AddJwtAuthentication(
+    private static IServiceCollection AddAuthentication(
         this IServiceCollection services,
         IConfiguration config
     )
     {
-        services.AddTransient<JwtService>();
+        services.AddTransient<TokensGenerator>();
         services.AddTransient<JwtClaims>();
-
+        services.AddTransient<JwtValidationParameters>();
         services.Configure<JwtSettings>(config.GetSection(nameof(JwtSettings)));
-
-        IConfigurationSection jwtSettingsSection = config.GetSection(nameof(JwtSettings));
-        JwtSettings jwtSettings = jwtSettingsSection.Get<JwtSettings>()!;
-
-        string secret = Environment.GetEnvironmentVariable("SECRET")!;
 
         services
             .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
             {
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
+                ServiceProvider serviceProvider = services.BuildServiceProvider();
+                var validationParameters =
+                    serviceProvider.GetRequiredService<JwtValidationParameters>();
 
-                    ValidIssuer = jwtSettings.Issuer,
-                    ValidAudience = jwtSettings.Audience,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret)),
-                    ClockSkew = TimeSpan.Zero
-                };
-
-                options.Events = new JwtBearerEvents()
-                {
-                    OnMessageReceived = context =>
-                    {
-                        bool containsCookie = context.Request.Cookies.TryGetValue(
-                            Cookies.AccessToken.Name,
-                            out var accesToken
-                        );
-
-                        if (containsCookie)
-                        {
-                            context.Token = accesToken;
-                        }
-
-                        return Task.CompletedTask;
-                    }
-                };
+                options.TokenValidationParameters = validationParameters.GetParameters();
+                options.Events = BearerEvents.ExtractTokenFromCookieEvent();
+            })
+            .AddGoogle(options =>
+            {
+                options.ClientId = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_ID")!;
+                options.ClientSecret = Environment.GetEnvironmentVariable("GOOGLE_CLIENT_SECRET")!;
             });
 
         return services;
@@ -150,6 +97,15 @@ public static class DependencyInjection
     {
         services.AddTransient<ISmsMessageBus, SmsMessageBus>();
         services.AddTransient<VerificationCodeSender>();
+        services.AddTransient<CookiesInfoExtractor>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddUtils(this IServiceCollection services)
+    {
+        services.AddTransient<UserTokensUpdater>();
+        services.AddTransient<IGoogleIdTokenValidator, GoogleIdTokenValidator>();
 
         return services;
     }

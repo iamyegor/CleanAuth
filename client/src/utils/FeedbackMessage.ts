@@ -1,11 +1,13 @@
 export default class FeedbackMessage {
     message: string;
     isSuccess: boolean;
+    isFailure: boolean;
     generatedAt: number;
 
     private constructor(message: string, isSuccess: boolean, generatedAt: number) {
         this.message = message;
         this.isSuccess = isSuccess;
+        this.isFailure = !isSuccess;
         this.generatedAt = generatedAt;
     }
 

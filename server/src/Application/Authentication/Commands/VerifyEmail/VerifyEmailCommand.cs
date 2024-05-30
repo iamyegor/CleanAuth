@@ -3,8 +3,8 @@ using Domain.User;
 using Domain.User.ValueObjects;
 using Infrastructure.Authentication;
 using Infrastructure.Data;
+using Infrastructure.Specifications.User;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using XResults;
 
 namespace Application.Authentication.Commands.VerifyEmail;
@@ -15,24 +15,20 @@ public record VerifyEmailCommand(UserId UserId, int Code, string? DeviceId)
 public class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, Result<Tokens, Error>>
 {
     private readonly ApplicationContext _context;
-    private readonly JwtService _jwtService;
+    private readonly TokensGenerator _tokensGenerator;
 
-    public VerifyEmailCommandHandler(ApplicationContext context, JwtService jwtService)
+    public VerifyEmailCommandHandler(ApplicationContext context, TokensGenerator tokensGenerator)
     {
         _context = context;
-        _jwtService = jwtService;
+        _tokensGenerator = tokensGenerator;
     }
 
     public async Task<Result<Tokens, Error>> Handle(
         VerifyEmailCommand command,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        User? user = await _context.Users.SingleOrDefaultAsync(
-            u => u.Id == command.UserId,
-            cancellationToken: cancellationToken
-        );
-
+        User? user = await _context.Query(new UserByIdSpec(command.UserId), ct);
         if (user == null || user.EmailVerificationCode?.Value != command.Code)
         {
             return Errors.EmailVerificationCode.IsInvalid(command.Code);
@@ -43,13 +39,12 @@ public class VerifyEmailCommandHandler : IRequestHandler<VerifyEmailCommand, Res
             return Errors.EmailVerificationCode.IsExpired();
         }
 
-        user.IsEmailVerified = true;
-        user.EmailVerificationCode = null;
+        user.VerifyEmail();
 
-        Tokens tokens = _jwtService.GenerateTokens(user);
+        Tokens tokens = _tokensGenerator.GenerateTokens(user);
         user.AddRefreshToken(new RefreshToken(tokens.RefreshToken, Guid.Parse(command.DeviceId!)));
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(ct);
 
         return tokens;
     }

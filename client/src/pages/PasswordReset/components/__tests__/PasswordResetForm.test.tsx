@@ -5,14 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, test } from "vitest";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { server } from "@/test/setup.ts";
-import { http, HttpResponse } from "msw";
-
-const failedPasswordResetHandler = http.post(`*/api/reset-password`, async () =>
-    HttpResponse.json(
-        { errorCode: "password.same.as.current", errorMessage: "Password same as current" },
-        { status: 400 },
-    ),
-);
+import { failedPasswordResetHandler } from "@/test/requestHandlers/passwordResetPageHandlers.ts";
 
 const PasswordResetFormDefault = () => {
     const router = createMemoryRouter([

@@ -7,7 +7,7 @@ import validateCode from "@/components/VerifyCodeForm/utils/validateCode.ts";
 import { Result } from "@/utils/result.ts";
 import CountdownDisplay from "@/components/VerifyCodeForm/components/CountdownDisplay.tsx";
 import getCodeFromForm from "@/components/VerifyCodeForm/utils/getCodeFromForm.ts";
-import BackToPrevPageButton from "@/components/VerifyCodeForm/components/GoBackButton.tsx";
+import GoBackButtonVariant2 from "@/components/VerifyCodeForm/components/GoBackButtonVariant2.tsx";
 import ResendCodeButton from "@/components/VerifyCodeForm/components/ResendCodeButton.tsx";
 import useSecondsLeft from "@/components/VerifyCodeForm/hooks/useSecondsLeft.tsx";
 import FeedbackMessage from "@/utils/FeedbackMessage.ts";
@@ -104,7 +104,7 @@ export default function VerifyCodeForm({
                     />
                 </div>
                 <div className="flex justify-center space-x-2">
-                    <BackToPrevPageButton route={goBackRoute} text={goBackButtonText} />
+                    <GoBackButtonVariant2 route={goBackRoute} text={goBackButtonText} />
                     <ResendCodeButton
                         resendCodeEndpoint={resendCodeEndpoint}
                         setMessage={setMessage}

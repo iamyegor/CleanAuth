@@ -5,6 +5,7 @@ import returnImage from "@/pages/RequestPasswordReset/images/return.png";
 import Image from "@/components/ui/Image.tsx";
 import BasePasswordReset from "@/components/ui/BasePasswordReset.tsx";
 import RequestPasswordResetForm from "@/pages/RequestPasswordReset/components/RequestPasswordResetForm.tsx";
+import GoBackButton from "@/components/ui/GoBackButton.tsx";
 
 export async function loader(): Promise<Response | null> {
     try {
@@ -27,16 +28,7 @@ export default function RequestPasswordResetPage() {
                 </p>
             </div>
             <RequestPasswordResetForm />
-            <div className="flex justify-center mt-8">
-                <NavLink
-                    to={"/login"}
-                    className="flex items-center space-x-1 
-                        hover:underline"
-                >
-                    <Image src={returnImage} alt="Return" className="w-5 h-5 mx-auto" />
-                    <span>Go back to login</span>
-                </NavLink>
-            </div>
+            <GoBackButton route="/login" text="Go back to login" />
         </BasePasswordReset>
     );
 }

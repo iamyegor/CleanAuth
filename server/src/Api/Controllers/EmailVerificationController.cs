@@ -6,7 +6,9 @@ using Application.Authentication.Queries.GetEmailForVerification;
 using Domain.DomainErrors;
 using Domain.User.ValueObjects;
 using Infrastructure.Authentication;
-using Infrastructure.Authentication.Extensions;
+using Infrastructure.Authorization;
+using Infrastructure.Cookies;
+using Infrastructure.Cookies.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -27,7 +29,7 @@ public class EmailVerificationController : ApplicationController
         _mediator = mediator;
     }
 
-    [HttpGet("email-for-verification"), Authorize(PoliciyNames.EmailNotVerified)]
+    [HttpGet("email-for-verification"), Authorize(AuthorizationPolicies.EmailNotVerified)]
     public async Task<IActionResult> GetEmailForVerification()
     {
         UserId userId = _jwtClaims.GetUserIdFromCookieJwt(Request.Cookies);
@@ -38,11 +40,11 @@ public class EmailVerificationController : ApplicationController
         return FromResult(emailOrError);
     }
 
-    [HttpPost("verify-email"), Authorize(PoliciyNames.EmailNotVerified)]
+    [HttpPost("verify-email"), Authorize(AuthorizationPolicies.EmailNotVerified)]
     public async Task<IActionResult> VerifyEmail(VerifyEmailDto dto)
     {
         UserId userId = _jwtClaims.GetUserIdFromCookieJwt(Request.Cookies);
-        Request.Cookies.TryGetValue(Cookies.DeviceId.Name, out string? deviceId);
+        Request.Cookies.TryGetValue(CookiesInfo.DeviceId.Name, out string? deviceId);
 
         VerifyEmailCommand command = new VerifyEmailCommand(userId, dto.Code, deviceId);
         Result<Tokens, Error> tokensOrError = await _mediator.Send(command);
@@ -56,7 +58,7 @@ public class EmailVerificationController : ApplicationController
         return Ok();
     }
 
-    [HttpPost("resend-email-code"), Authorize(PoliciyNames.EmailNotVerified)]
+    [HttpPost("resend-email-code"), Authorize(AuthorizationPolicies.EmailNotVerified)]
     public async Task<IActionResult> ResendEmail()
     {
         UserId userId = _jwtClaims.GetUserIdFromCookieJwt(Request.Cookies);

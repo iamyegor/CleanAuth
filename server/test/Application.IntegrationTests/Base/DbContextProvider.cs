@@ -15,6 +15,6 @@ public class DbContextProvider
             _connectionString = configuration.GetConnectionString("Default")!;
         }
 
-        return new ApplicationContext(_connectionString, false);
+        return new ApplicationContext(_connectionString, true);
     }
 }

@@ -7,7 +7,9 @@ using Application.Authentication.Queries.GetPhoneNumberForVerification;
 using Domain.DomainErrors;
 using Domain.User.ValueObjects;
 using Infrastructure.Authentication;
-using Infrastructure.Authentication.Extensions;
+using Infrastructure.Authorization;
+using Infrastructure.Cookies;
+using Infrastructure.Cookies.Extensions;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +17,8 @@ using XResults;
 
 namespace Api.Controllers;
 
+[Authorize(AuthorizationPolicies.PhoneNumberNotVerified)]
+[Authorize(AuthorizationPolicies.EmailVerified)]
 [ApiController]
 [Route("api/")]
 public class PhoneNumberVerificationController : ApplicationController
@@ -28,15 +32,13 @@ public class PhoneNumberVerificationController : ApplicationController
         _mediator = mediator;
     }
 
-    [Authorize(PoliciyNames.PhoneNumberNotVerified)]
-    [Authorize(PoliciyNames.EmailVerified)]
     [HttpGet("need-to-add-phone-number")]
     public IActionResult NeedToAddPhoneNumber()
     {
         return Ok();
     }
 
-    [HttpPost("add-phone-number"), Authorize(PoliciyNames.EmailVerified)]
+    [HttpPost("add-phone-number")]
     public async Task<IActionResult> AddPhoneNumber(AddPhoneNumberDto dto)
     {
         UserId userId = _jwtClaims.GetUserIdFromCookieJwt(Request.Cookies);
@@ -47,7 +49,7 @@ public class PhoneNumberVerificationController : ApplicationController
         return FromResult(result);
     }
 
-    [HttpGet("phone-number-for-verification"), Authorize(PoliciyNames.PhoneNumberNotVerified)]
+    [HttpGet("phone-number-for-verification")]
     public async Task<IActionResult> GetPhoneNumberForVerification()
     {
         UserId userId = _jwtClaims.GetUserIdFromCookieJwt(Request.Cookies);
@@ -58,11 +60,11 @@ public class PhoneNumberVerificationController : ApplicationController
         return FromResult(result);
     }
 
-    [HttpPost("verify-phone-number"), Authorize(PoliciyNames.EmailVerified)]
+    [HttpPost("verify-phone-number")]
     public async Task<IActionResult> VerifyPhoneNumber(VerifyPhoneNumberDto dto)
     {
         UserId userId = _jwtClaims.GetUserIdFromCookieJwt(Request.Cookies);
-        Request.Cookies.TryGetValue(Cookies.DeviceId.Name, out string? deviceId);
+        Request.Cookies.TryGetValue(CookiesInfo.DeviceId.Name, out string? deviceId);
 
         VerifyPhoneNumberCommand command = new VerifyPhoneNumberCommand(userId, dto.Code, deviceId);
         Result<Tokens, Error> tokensOrError = await _mediator.Send(command);
@@ -76,7 +78,7 @@ public class PhoneNumberVerificationController : ApplicationController
         return Ok();
     }
 
-    [HttpPost("resend-phone-number-code"), Authorize(PoliciyNames.PhoneNumberNotVerified)]
+    [HttpPost("resend-phone-number-code")]
     public async Task<IActionResult> ResendPhoneNumberVerificationCode()
     {
         UserId userId = _jwtClaims.GetUserIdFromCookieJwt(Request.Cookies);

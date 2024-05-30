@@ -1,6 +1,6 @@
 using Domain.DomainErrors;
 
-namespace Application.IntegrationTests.TestsData;
+namespace Application.IntegrationTests.MemberData;
 
 public class SignUpTestData
 {

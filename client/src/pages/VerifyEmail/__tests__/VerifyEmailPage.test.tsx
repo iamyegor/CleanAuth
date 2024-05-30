@@ -3,27 +3,14 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { server } from "@/test/setup.ts";
-import { http, HttpResponse } from "msw";
 import routes from "@/lib/routes.tsx";
 import userEvent from "@testing-library/user-event";
-
-const emailForVerificationEndpoint = "*/api/email-for-verification";
-
-const failEmailForVerificationHandler = http.get(emailForVerificationEndpoint, async () =>
-    HttpResponse.json({}, { status: 400 }),
-);
-
-const successEmailForVerificationHandler = http.get(emailForVerificationEndpoint, async () =>
-    HttpResponse.json("test@example.com", { status: 200 }),
-);
-
-const successVerifyEmailHandler = http.post("*/api/verify-email", async () =>
-    HttpResponse.json({}, { status: 200 }),
-);
-
-const successNeedToAddPhoneNumberHandler = http.get("*/api/need-to-add-phone-number", async () =>
-    HttpResponse.json({}, { status: 200 }),
-);
+import {
+    failEmailForVerificationHandler,
+    successEmailForVerificationHandler,
+    successVerifyEmailHandler,
+} from "@/test/requestHandlers/verifyEmailPageHandlers.ts";
+import { successNeedToAddPhoneNumberHandler } from "@/test/requestHandlers/addPhoneNumberPageHandlers.ts";
 
 const VerifyEmailPageDefault = () => {
     const router = createMemoryRouter(routes, {
@@ -88,7 +75,7 @@ describe("<VerifyEmailPage />", () => {
             expect(screen.getByTestId("AddPhoneNumberPage")).toBeInTheDocument();
         });
     });
-    
+
     test("4. Go back button redirects to signup page", async () => {
         // Arrange
         server.use(successEmailForVerificationHandler);

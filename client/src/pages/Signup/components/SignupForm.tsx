@@ -1,4 +1,4 @@
-import InputField from "@/components/ui/InputField.tsx";
+import Input from "@/components/ui/Input.tsx";
 import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx";
 import { Form, NavLink, redirect, useActionData, useNavigation } from "react-router-dom";
 import { validateSignupData } from "@/pages/Signup/utils/validateSignupData.ts";
@@ -12,6 +12,7 @@ import storeSignupData from "@/utils/initialSignupData/storeSignupData.ts";
 import PasswordInput from "@/components/ui/PasswordInput.tsx";
 import getErrorMessageForField from "@/utils/getErrorMessageForField.ts";
 import extractSignupError from "@/pages/Signup/utils/extractSignupError.ts";
+import ErrorMessageComponent from "@/components/ui/ErrorMessageComponent.tsx";
 
 export async function action({ request }: any): Promise<SignupError | Response> {
     const form = await request.formData();
@@ -52,19 +53,25 @@ export default function SignupForm() {
                 }
             >
                 <div className="space-y-4">
-                    <InputField
+                    <Input
                         type="text"
                         name="username"
                         placeholder="Username"
-                        errorMessage={getErrorMessageForField("username", signupError)}
+                        isInvalid={getErrorMessageForField("username", signupError) != null}
                         defaultValue={storedSignupData?.username}
                     />
-                    <InputField
+                    <ErrorMessageComponent
+                        errorMessage={getErrorMessageForField("username", signupError)}
+                    />
+                    <Input
                         type="email"
                         name="email"
                         placeholder="Email"
-                        errorMessage={getErrorMessageForField("email", signupError)}
+                        isInvalid={getErrorMessageForField("email", signupError) != null}
                         defaultValue={storedSignupData?.email}
+                    />
+                    <ErrorMessageComponent
+                        errorMessage={getErrorMessageForField("email", signupError)}
                     />
                     <PasswordInput
                         name="password"

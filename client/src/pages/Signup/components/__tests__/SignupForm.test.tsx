@@ -5,14 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, test } from "vitest";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { server } from "@/test/setup.ts";
-import { http, HttpResponse } from "msw";
-
-const failedSignupHandler = http.post(`*/api/signup`, async () =>
-    HttpResponse.json(
-        { errorCode: "email.already.taken", errorMessage: "Email already taken" },
-        { status: 400 },
-    ),
-);
+import {failedSignupHandler} from "@/test/requestHandlers/signupPageHandlers.ts";
 
 const SignupFormDefault = () => {
     const router = createMemoryRouter([{ path: "*", element: <SignupForm />, action: action }]);

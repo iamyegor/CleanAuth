@@ -1,6 +1,5 @@
 using Domain.User;
 using FluentAssertions;
-using Infrastructure.Authentication;
 
 namespace Application.IntegrationTests.CustomAssertions;
 
@@ -88,6 +87,26 @@ public static class UserAssertionsExtensions
     public static User ShouldNotHavePhoneNumberVerificationCode(this User user)
     {
         user.PhoneNumberVerificationCode.Should().BeNull();
+        return user;
+    }
+
+    public static User ShouldHaveLogin(this User user, string login)
+    {
+        user.Login.Should().NotBeNull();
+        user.Login!.Value.Should().Be(login);
+
+        return user;
+    }
+
+    public static User ShouldNotHaveLogin(this User user)
+    {
+        user.Login.Should().BeNull();
+        return user;
+    }
+
+    public static User ShouldNotHavePassword(this User user)
+    {
+        user.Password.Should().BeNull();
         return user;
     }
 }

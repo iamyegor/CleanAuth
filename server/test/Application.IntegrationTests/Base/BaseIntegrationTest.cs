@@ -1,10 +1,13 @@
 using Infrastructure.Data;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Application.IntegrationTests.Base;
 
-public class BaseIntegrationTest : IClassFixture<IntegrationTestWebApplicationFactory>
+public class BaseIntegrationTest
+    : IClassFixture<IntegrationTestWebApplicationFactory>,
+        IClassFixture<DatabaseBuilder>
 {
     protected readonly ISender Mediator;
     protected readonly IServiceProvider ServiceProvider;
@@ -27,7 +30,11 @@ public class BaseIntegrationTest : IClassFixture<IntegrationTestWebApplicationFa
     {
         using ApplicationContext context = DbContextProvider.Create();
 
-        context.Database.EnsureDeleted();
-        context.Database.EnsureCreated();
+        foreach (var entityType in context.Model.GetEntityTypes())
+        {
+            string? tableName = entityType.GetTableName();
+            string sql = $"DELETE FROM \"{tableName}\"";
+            context.Database.ExecuteSqlRaw(sql);
+        }
     }
 }

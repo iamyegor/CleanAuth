@@ -5,7 +5,9 @@ using Application.Authentication.Commands.RefreshAccessToken;
 using Application.Authentication.Commands.Signup;
 using Domain.DomainErrors;
 using Infrastructure.Authentication;
-using Infrastructure.Authentication.Extensions;
+using Infrastructure.Authorization;
+using Infrastructure.Cookies;
+using Infrastructure.Cookies.Extensions;
 using Mapster;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -27,14 +29,14 @@ public class AuthenticationController : ApplicationController
     [HttpPost("issue-device-id")]
     public IActionResult IssueDeviceId()
     {
-        Request.Cookies.TryGetValue(Cookies.DeviceId.Name, out string? currentDeviceId);
+        Request.Cookies.TryGetValue(CookiesInfo.DeviceId.Name, out string? currentDeviceId);
         if (currentDeviceId == null || !Guid.TryParse(currentDeviceId, out _))
         {
             Guid deviceId = Guid.NewGuid();
             Response.Cookies.Append(
-                Cookies.DeviceId.Name,
+                CookiesInfo.DeviceId.Name,
                 deviceId.ToString(),
-                Cookies.DeviceId.Options
+                CookiesInfo.DeviceId.Options
             );
         }
 
@@ -44,7 +46,7 @@ public class AuthenticationController : ApplicationController
     [HttpPost("signup")]
     public async Task<IActionResult> SignUp(SignupDto dto)
     {
-        Request.Cookies.TryGetValue(Cookies.DeviceId.Name, out string? deviceId);
+        Request.Cookies.TryGetValue(CookiesInfo.DeviceId.Name, out string? deviceId);
 
         SignUpCommand command = (dto, deviceId).Adapt<SignUpCommand>();
         Result<Tokens, Error> resultOrError = await _mediator.Send(command);
@@ -58,7 +60,7 @@ public class AuthenticationController : ApplicationController
         return Ok();
     }
 
-    [HttpGet("is-authenticated"), Authorize(PoliciyNames.AccountAuthenticated)]
+    [HttpGet("is-authenticated"), Authorize(AuthorizationPolicies.AccountAuthenticated)]
     public IActionResult IsAuthenticated()
     {
         return Ok();
@@ -67,7 +69,7 @@ public class AuthenticationController : ApplicationController
     [HttpPost("login")]
     public async Task<IActionResult> LogIn(LoginDto dto)
     {
-        Request.Cookies.TryGetValue(Cookies.DeviceId.Name, out var deviceId);
+        Request.Cookies.TryGetValue(CookiesInfo.DeviceId.Name, out var deviceId);
         
         LogInCommand command = (dto, deviceId).Adapt<LogInCommand>();
         
@@ -85,8 +87,8 @@ public class AuthenticationController : ApplicationController
     [HttpPost("logout"), Authorize]
     public IActionResult LogOut()
     {
-        Response.Cookies.Delete(Cookies.AccessToken.Name, Cookies.AccessToken.Options);
-        Response.Cookies.Delete(Cookies.RefreshToken.Name, Cookies.RefreshToken.Options);
+        Response.Cookies.Delete(CookiesInfo.AccessToken.Name, CookiesInfo.AccessToken.Options);
+        Response.Cookies.Delete(CookiesInfo.RefreshToken.Name, CookiesInfo.RefreshToken.Options);
 
         return Ok();
     }
@@ -94,8 +96,8 @@ public class AuthenticationController : ApplicationController
     [HttpPost("refresh-access-token")]
     public async Task<IActionResult> RefreshAccessToken()
     {
-        Request.Cookies.TryGetValue(Cookies.DeviceId.Name, out var deviceId);
-        Request.Cookies.TryGetValue(Cookies.RefreshToken.Name, out var refreshToken);
+        Request.Cookies.TryGetValue(CookiesInfo.DeviceId.Name, out var deviceId);
+        Request.Cookies.TryGetValue(CookiesInfo.RefreshToken.Name, out var refreshToken);
 
         RefreshAccessTokenCommand command = new RefreshAccessTokenCommand(refreshToken, deviceId);
         Result<Tokens, Error> tokensOrError = await _mediator.Send(command);

@@ -4,8 +4,8 @@ using Domain.User;
 using Domain.User.ValueObjects;
 using Infrastructure.Data;
 using Infrastructure.Emails;
+using Infrastructure.Specifications.User;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using XResults;
 
 namespace Application.Authentication.Commands.RequestPasswordReset;
@@ -29,17 +29,11 @@ public class RequestPasswordResetCommandHandler
 
     public async Task<SuccessOr<Error>> Handle(
         RequestPasswordResetCommand command,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        User? user = await _context.Users.SingleOrDefaultAsync(
-            u =>
-                (u.Email.Value == command.EmailOrLogin || u.Login.Value == command.EmailOrLogin)
-                && u.IsEmailVerified
-                && u.IsPhoneNumberVerified,
-            cancellationToken: cancellationToken
-        );
-
+        var spec = new VerifiedUserByEmailOrLoginSpec(command.EmailOrLogin);
+        User? user = await _context.Query(spec, ct);
         if (user == null)
         {
             return Errors.User.DoesNotExist(command.EmailOrLogin);
@@ -47,9 +41,9 @@ public class RequestPasswordResetCommandHandler
 
         PasswordResetToken token = new PasswordResetToken(new DateTimeProvider());
         user.PasswordResetToken = token;
-        await _emailSender.SendPasswordReset(user.Id.Value, token.Value, user.Email.Value);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(ct);
+        await _emailSender.SendPasswordReset(user.Id.Value, token.Value, user.Email.Value);
 
         return Result.Ok();
     }

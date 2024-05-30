@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, useActionData, useNavigation } from "react-router-dom";
-import InputField from "@/components/ui/InputField.tsx";
+import Input from "@/components/ui/Input.tsx";
 import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx";
 import FeedbackMessageComponent from "@/components/ui/FeedbackMessageComponent.tsx";
 import FeedbackMessage from "@/utils/FeedbackMessage.ts";
@@ -36,7 +36,7 @@ export default function RequestPasswordResetForm() {
             className={feedbackMessage ? "space-y-6" : "space-y-8"}
             data-testid="RequestPasswordResetForm"
         >
-            <InputField type="text" name="emailOrUsername" placeholder="Enter email or username" />
+            <Input type="text" name="emailOrUsername" placeholder="Enter email or username" />
             <FeedbackMessageComponent feedback={feedbackMessage} />
             <SubmittingButton
                 loading={state === "loading" || state === "submitting"}

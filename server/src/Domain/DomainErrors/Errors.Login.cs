@@ -38,5 +38,10 @@ public static partial class Errors
                 details
             );
         }
+
+        public static Error CanNotBeAdded()
+        {
+            return new Error("login.can.not.be.added", "Login can not be added");
+        }
     }
 }

@@ -1,47 +1,49 @@
 using Domain.DomainErrors;
 using Domain.User;
-using Domain.User.ValueObjects;
 using Infrastructure.Authentication;
 using Infrastructure.Data;
+using Infrastructure.Specifications.User;
 using MediatR;
 using XResults;
 
 namespace Application.Authentication.Commands.RefreshAccessToken;
 
-public record RefreshAccessTokenCommand(string? RefreshToken, string DeviceId)
+public record RefreshAccessTokenCommand(string? RefreshToken, string? DeviceId)
     : IRequest<Result<Tokens, Error>>;
 
 public class RefreshAccessTokenCommandHandler
     : IRequestHandler<RefreshAccessTokenCommand, Result<Tokens, Error>>
 {
     private readonly ApplicationContext _context;
-    private readonly JwtService _jwtService;
+    private readonly UserTokensUpdater _userTokensUpdater;
 
-    public RefreshAccessTokenCommandHandler(ApplicationContext context, JwtService jwtService)
+    public RefreshAccessTokenCommandHandler(
+        ApplicationContext context,
+        UserTokensUpdater userTokensUpdater
+    )
     {
         _context = context;
-        _jwtService = jwtService;
+        _userTokensUpdater = userTokensUpdater;
     }
 
     public async Task<Result<Tokens, Error>> Handle(
         RefreshAccessTokenCommand command,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        Guid deviceId = Guid.Parse(command.DeviceId);
-        User? user = _context.Users.FirstOrDefault(u =>
-            u.RefreshTokens.Any(t => t.Value == command.RefreshToken && t.DeviceId == deviceId)
-        );
+        Guid deviceId = Guid.Parse(command.DeviceId!);
+
+        var spec = new UserByRefreshTokenSpec(command.RefreshToken, deviceId);
+        User? user = await _context.Query(spec, ct);
 
         if (user == null || user.IsRefreshTokenExpired(deviceId))
         {
             return Errors.RefreshToken.IsInvalid(command.RefreshToken!);
         }
 
-        Tokens tokens = _jwtService.GenerateTokens(user);
-        user.AddRefreshToken(new RefreshToken(tokens.RefreshToken, deviceId));
+        Tokens tokens = _userTokensUpdater.UpdateTokens(user, deviceId);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(ct);
 
         return tokens;
     }

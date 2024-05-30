@@ -4,8 +4,8 @@ using Domain.User;
 using Domain.User.ValueObjects;
 using Infrastructure.Data;
 using Infrastructure.Sms;
+using Infrastructure.Specifications.User;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using XResults;
 
 namespace Application.Authentication.Commands.ResendPhoneNumberVerificationCodeCommand;
@@ -29,14 +29,10 @@ public class ResendPhoneNumberVerificationCodeCommandHandler
 
     public async Task<SuccessOr<Error>> Handle(
         ResendPhoneNumberVerificationCodeCommand command,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
-        User user = await _context.Users.SingleAsync(
-            u => u.Id == command.UserId,
-            cancellationToken: cancellationToken
-        );
-
+        User user = (await _context.Query(new UserByIdSpec(command.UserId), ct))!;
         if (user.PhoneNumber == null)
         {
             return Errors.User.HasNoPhoneNumber(command.UserId);
@@ -45,7 +41,7 @@ public class ResendPhoneNumberVerificationCodeCommandHandler
         PhoneNumberVerificationCode code = new PhoneNumberVerificationCode(new DateTimeProvider());
         user.PhoneNumberVerificationCode = code;
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(ct);
         await _verificationCodeSender.SendAsync(user.PhoneNumber.Value, code.Value);
 
         return Result.Ok();

@@ -37,16 +37,6 @@ namespace Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_phone_number_verified");
 
-                    b.ComplexProperty<Dictionary<string, object>>("Password", "Domain.User.User.Password#Password", b1 =>
-                        {
-                            b1.IsRequired();
-
-                            b1.Property<string>("HashedPassword")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("password");
-                        });
-
                     b.ComplexProperty<Dictionary<string, object>>("Role", "Domain.User.User.Role#Role", b1 =>
                         {
                             b1.IsRequired();
@@ -64,6 +54,24 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.User.User", b =>
                 {
+                    b.OwnsOne("Domain.User.ValueObjects.AuthType", "AuthType", b1 =>
+                        {
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("Value")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("auth_type");
+
+                            b1.HasKey("UserId");
+
+                            b1.ToTable("users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
                     b.OwnsOne("Domain.User.ValueObjects.Email", "Email", b1 =>
                         {
                             b1.Property<Guid>("UserId")
@@ -120,6 +128,24 @@ namespace Infrastructure.Migrations
 
                             b1.HasIndex("Value")
                                 .IsUnique();
+
+                            b1.ToTable("users");
+
+                            b1.WithOwner()
+                                .HasForeignKey("UserId");
+                        });
+
+                    b.OwnsOne("Domain.User.ValueObjects.Password", "Password", b1 =>
+                        {
+                            b1.Property<Guid>("UserId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<string>("HashedPassword")
+                                .IsRequired()
+                                .HasColumnType("text")
+                                .HasColumnName("password");
+
+                            b1.HasKey("UserId");
 
                             b1.ToTable("users");
 
@@ -212,7 +238,7 @@ namespace Infrastructure.Migrations
                                 .HasColumnType("text")
                                 .HasColumnName("refresh_token");
 
-                            b1.Property<Guid?>("user_id")
+                            b1.Property<Guid>("user_id")
                                 .HasColumnType("uuid");
 
                             b1.HasKey("id");
@@ -225,13 +251,17 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("user_id");
                         });
 
+                    b.Navigation("AuthType")
+                        .IsRequired();
+
                     b.Navigation("Email")
                         .IsRequired();
 
                     b.Navigation("EmailVerificationCode");
 
-                    b.Navigation("Login")
-                        .IsRequired();
+                    b.Navigation("Login");
+
+                    b.Navigation("Password");
 
                     b.Navigation("PasswordResetToken");
 

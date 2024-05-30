@@ -1,6 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using Domain.User.ValueObjects;
-using Infrastructure.Authentication.Extensions;
+using Infrastructure.Cookies.Extensions;
 using Microsoft.AspNetCore.Http;
 
 namespace Infrastructure.Authentication;
@@ -14,7 +14,7 @@ public class JwtClaims
 
     public UserId GetUserIdFromCookieJwt(IRequestCookieCollection cookies)
     {
-        string jwtString = cookies.Extract(Cookies.AccessToken.Name);
+        string jwtString = cookies.Extract(Cookies.CookiesInfo.AccessToken.Name);
         JwtSecurityToken jwt = new JwtSecurityTokenHandler().ReadJwtToken(jwtString);
         string claim = jwt.Claims.Single(c => c.Type == UserId).Value;
 

@@ -22,7 +22,6 @@ server/test/*/[Oo]bj/
 project.lock.json
 project.fragment.lock.json
 artifacts/
-**/Properties/launchSettings.json
 
 # Visual Studio 2015/2017/2019/2022
 .vs/
@@ -87,18 +86,10 @@ ScaffoldingReadMe.txt
 # React
 # Dependencies
 /node_modules
-/package-lock.json
-/yarn.lock
-/pnpm-lock.yaml
 
 # Production build files
 /dist
 /build
-
-# Vite files
-.vite/
-.vite_opt_cache/
-vite.config.ts
 
 # Environment files
 .env

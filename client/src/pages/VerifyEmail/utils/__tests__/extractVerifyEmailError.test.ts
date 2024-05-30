@@ -1,34 +1,17 @@
-import { AxiosError } from "axios";
 import { RouteError } from "@/types/RouteError";
 import ServerErrorResponse from "@/types/ServerErrorResponse";
 import extractVerifyEmailError from "@/pages/VerifyEmail/utils/extractVerifyEmailError.ts";
-
-// Utility function to mock an Axios error
-const mockError = (status: number, data: ServerErrorResponse): AxiosError<ServerErrorResponse> => {
-    return {
-        isAxiosError: true,
-        response: {
-            status,
-            data,
-            statusText: "",
-            headers: {},
-            config: {},
-        },
-        config: {},
-        name: "",
-        message: "",
-    } as AxiosError<ServerErrorResponse>;
-};
+import mockAxiosError from "@/test/mocks/mockAxiosError.ts";
 
 describe("extractVerifyEmailError", () => {
     test("1. Throws unexpected error for invalid response structure", () => {
-        const error = mockError(200, {} as ServerErrorResponse);
+        const error = mockAxiosError(200, {} as ServerErrorResponse);
 
         expect(() => extractVerifyEmailError(error)).toThrow(RouteError.unexpected());
     });
 
     test("2. Returns message for invalid email verification code length", () => {
-        const error = mockError(400, {
+        const error = mockAxiosError(400, {
             errorCode: "email.verification.code.invalid.length",
             errorMessage: "Invalid length",
         });
@@ -39,7 +22,7 @@ describe("extractVerifyEmailError", () => {
     });
 
     test("3. Returns message for invalid email verification code", () => {
-        const error = mockError(400, {
+        const error = mockAxiosError(400, {
             errorCode: "email.verification.code.invalid",
             errorMessage: "Invalid code",
         });
@@ -50,7 +33,7 @@ describe("extractVerifyEmailError", () => {
     });
 
     test("4. Returns message for expired email verification code", () => {
-        const error = mockError(400, {
+        const error = mockAxiosError(400, {
             errorCode: "email.verification.code.expired",
             errorMessage: "Code expired",
         });
@@ -61,7 +44,7 @@ describe("extractVerifyEmailError", () => {
     });
 
     test("5. Throws error for invalid response", () => {
-        const error = mockError(500, {
+        const error = mockAxiosError(500, {
             errorCode: "server.error",
             errorMessage: "Internal server error",
         });

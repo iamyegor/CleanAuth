@@ -3,31 +3,15 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { server } from "@/test/setup.ts";
-import { http, HttpResponse } from "msw";
 import routes from "@/lib/routes.tsx";
 import userEvent from "@testing-library/user-event";
-
-const isAuthenticatedEndpoint = "*/api/is-authenticated";
-
-const failIsAuthenticatedHandler = http.get(isAuthenticatedEndpoint, async () =>
-    HttpResponse.json({}, { status: 400 }),
-);
-
-const successGetUsernameHandler = http.get("*/api/username", async () =>
-    HttpResponse.json("yegor", { status: 200 }),
-);
-
-const successSignupHandler = http.post("*/api/signup", async () =>
-    HttpResponse.json({}, { status: 200 }),
-);
-
-const successIsAuthenticatedHandler = http.get(isAuthenticatedEndpoint, async () =>
-    HttpResponse.json({}, { status: 200 }),
-);
-
-const successEmailForVerificationHandler = http.get("*/api/email-for-verification", async () =>
-    HttpResponse.json("yyegor@outlook.com"),
-);
+import {
+    failIsAuthenticatedHandler,
+    successIsAuthenticatedHandler,
+} from "@/test/requestHandlers/isAuthenticatedHandlers.ts";
+import { successGetUsernameHandler } from "@/test/requestHandlers/loginPageHandlers.ts";
+import { successSignupHandler } from "@/test/requestHandlers/signupPageHandlers.ts";
+import { successEmailForVerificationHandler } from "@/test/requestHandlers/verifyEmailPageHandlers.ts";
 
 const SignupPageDefault = () => {
     const router = createMemoryRouter(routes, {
@@ -80,8 +64,8 @@ describe("<SignupPage />", async () => {
         server.use(failIsAuthenticatedHandler);
         server.use(successGetUsernameHandler);
         server.use(successSignupHandler);
-        server.use(successEmailForVerificationHandler)
-        
+        server.use(successEmailForVerificationHandler);
+
         render(<SignupPageDefault />);
 
         await waitFor(() => expect(signupPage.form).toBeInTheDocument());

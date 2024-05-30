@@ -3,20 +3,14 @@ import ServerErrorResponse from "@/types/ServerErrorResponse";
 import { RouteError } from "@/types/RouteError";
 import extractRequestPasswordResetError from "@/pages/RequestPasswordReset/utils/extractRequestPasswordResetError.ts";
 import { waitFor } from "@testing-library/react";
-
-const createAxiosError = (status: number, errorCode?: string): AxiosError<ServerErrorResponse> => {
-    return {
-        response: {
-            status,
-            data: { errorCode },
-        } as any,
-        isAxiosError: true,
-    } as AxiosError<ServerErrorResponse>;
-};
+import mockAxiosError from "@/test/mocks/mockAxiosError.ts";
 
 describe("extractRequestPasswordResetError", () => {
     test("1. Returns ErrorMessage for non-existent user error code", async () => {
-        const error = createAxiosError(400, "user.not.exists.with.login.or.email");
+        const error = mockAxiosError(400, {
+            errorCode: "user.not.exists.with.login.or.email",
+            errorMessage: "User with this login or email does not exist.",
+        });
 
         const result = extractRequestPasswordResetError(error);
 
@@ -27,13 +21,16 @@ describe("extractRequestPasswordResetError", () => {
     });
 
     test("2. Throws RouteError.unexpected for unexpected error code", () => {
-        const error = createAxiosError(400, "unexpected.error.code");
+        const error = mockAxiosError(400, {
+            errorCode: "unexpected.error.code",
+            errorMessage: "Unexpected error",
+        });
 
         expect(() => extractRequestPasswordResetError(error)).toThrow(RouteError.unexpected());
     });
 
     test("3. Throws RouteError.unexpected for invalid server response", () => {
-        const error = { response: {} } as AxiosError<ServerErrorResponse>;
+        const error = mockAxiosError(200, {} as ServerErrorResponse);
 
         expect(() => extractRequestPasswordResetError(error)).toThrow(RouteError.unexpected());
     });

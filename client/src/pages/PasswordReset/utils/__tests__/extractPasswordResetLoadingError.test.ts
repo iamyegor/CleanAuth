@@ -1,30 +1,15 @@
-import { describe, test, expect } from "vitest";
-import { AxiosError } from "axios";
+import { describe, expect, test } from "vitest";
 import ErrorMessage from "@/utils/ErrorMessage.ts";
 import extractPasswordResetLoadingError from "@/pages/PasswordReset/utils/extractPasswordResetLoadingError.ts";
 import { RouteError } from "@/types/RouteError.ts";
-import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
-
-// Mock error responses
-function createAxiosError(status: number, errorCode: string): AxiosError<ServerErrorResponse> {
-    return {
-        isAxiosError: true,
-        response: {
-            status,
-            data: { errorCode, errorMessage: "Server's error message that isn't used in the test" },
-            statusText: "",
-            headers: {},
-            config: {},
-        },
-        name: "AxiosError",
-        message: "Mock error",
-        config: {},
-    } as AxiosError<ServerErrorResponse>;
-}
+import mockAxiosError from "@/test/mocks/mockAxiosError.ts";
 
 describe("extractPasswordResetLoadingError", () => {
     test("1. Returns ErrorMessage for expired token", () => {
-        const error = createAxiosError(400, "password.reset.token.expired");
+        const error = mockAxiosError(400, {
+            errorCode: "password.reset.token.expired",
+            errorMessage: "The link has expired. Please request a new one.",
+        });
 
         const result = extractPasswordResetLoadingError(error);
 
@@ -34,7 +19,10 @@ describe("extractPasswordResetLoadingError", () => {
     });
 
     test("2. Returns ErrorMessage for invalid token", () => {
-        const error = createAxiosError(400, "password.reset.token.invalid");
+        const error = mockAxiosError(400, {
+            errorCode: "password.reset.token.invalid",
+            errorMessage: "Invalid link.",
+        });
 
         const result = extractPasswordResetLoadingError(error);
 
@@ -42,7 +30,10 @@ describe("extractPasswordResetLoadingError", () => {
     });
 
     test("3. Returns ErrorMessage for invalid user ID", () => {
-        const error = createAxiosError(400, "invalid.user.id");
+        const error = mockAxiosError(400, {
+            errorCode: "invalid.user.id",
+            errorMessage: "Invalid link.",
+        });
 
         const result = extractPasswordResetLoadingError(error);
 
@@ -50,13 +41,19 @@ describe("extractPasswordResetLoadingError", () => {
     });
 
     test("4. Throws unexpected RouteError for unexpected error code", () => {
-        const error = createAxiosError(400, "some.other.error.code");
+        const error = mockAxiosError(400, {
+            errorCode: "some.other.error.code",
+            errorMessage: "Some other error.",
+        });
 
         expect(() => extractPasswordResetLoadingError(error)).toThrow(RouteError.unexpected());
     });
 
-    test("6. Throws server RouteError for invalid error", () => {
-        const error = createAxiosError(500, "some.server.error");
+    test("5. Throws server RouteError for invalid error", () => {
+        const error = mockAxiosError(500, {
+            errorCode: "some.server.error",
+            errorMessage: "Some server error.",
+        });
 
         expect(() => extractPasswordResetLoadingError(error)).toThrow(RouteError.serverError());
     });

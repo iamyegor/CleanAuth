@@ -5,14 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, test } from "vitest";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { server } from "@/test/setup.ts";
-import { http, HttpResponse } from "msw";
-
-const failedLoginHandler = http.post(`*/api/login`, async () =>
-    HttpResponse.json(
-        { errorCode: "invalid.credentials", errorMessage: "Invalid login or password" },
-        { status: 400 },
-    ),
-);
+import { failedLoginHandler } from "@/test/requestHandlers/loginPageHandlers.ts";
 
 const LoginFormDefault = () => {
     const router = createMemoryRouter([{ path: "*", element: <LoginForm />, action: action }]);

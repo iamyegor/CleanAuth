@@ -26,7 +26,7 @@ public class EmailMessageBus
             var mailMessage = new MailMessage
             {
                 From = new MailAddress(_emailSettings.SenderEmail, _emailSettings.SenderName),
-                Subject = "Your verification code",
+                Subject = "Verification code for CleanAuth",
                 Body = html,
                 IsBodyHtml = true
             };

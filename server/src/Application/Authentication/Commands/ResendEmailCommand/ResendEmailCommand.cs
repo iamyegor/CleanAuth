@@ -1,11 +1,12 @@
+using Domain.Common.Preconditions;
 using Domain.DateTimeProviders;
 using Domain.DomainErrors;
 using Domain.User;
 using Domain.User.ValueObjects;
 using Infrastructure.Data;
 using Infrastructure.Emails;
+using Infrastructure.Specifications.User;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using XResults;
 
 namespace Application.Authentication.Commands.ResendEmailCommand;
@@ -23,20 +24,14 @@ public class ResendEmailCommandHandler : IRequestHandler<ResendEmailCommand, Suc
         _emailSender = emailSender;
     }
 
-    public async Task<SuccessOr<Error>> Handle(
-        ResendEmailCommand command,
-        CancellationToken cancellationToken
-    )
+    public async Task<SuccessOr<Error>> Handle(ResendEmailCommand command, CancellationToken ct)
     {
-        User user = await _context.Users.SingleAsync(
-            u => u.Id == command.UserId,
-            cancellationToken: cancellationToken
-        );
+        User user = (await _context.Query(new UserByIdSpec(command.UserId), ct))!;
 
         EmailVerificationCode code = new EmailVerificationCode(new DateTimeProvider());
         user.EmailVerificationCode = code;
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(ct);
         await _emailSender.SendEmailVerificationCode(user.Email.Value, code.Value);
 
         return Result.Ok();

@@ -3,37 +3,15 @@ import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { server } from "@/test/setup.ts";
-import { http, HttpResponse } from "msw";
 import routes from "@/lib/routes.tsx";
 import userEvent from "@testing-library/user-event";
-
-const needToResetPasswordEndpoint = "*/api/need-to-reset-password";
-
-const failNeedToResetPasswordHandler = http.get(needToResetPasswordEndpoint, async () =>
-    HttpResponse.json(
-        {
-            errorCode: "password.reset.token.invalid",
-            errorMessage: "Message from the server that will be overwritten",
-        },
-        { status: 400 },
-    ),
-);
-
-const successNeedToResetPasswordHandler = http.get(needToResetPasswordEndpoint, async () =>
-    HttpResponse.json({}, { status: 200 }),
-);
-
-const successResetPasswordHandler = http.post(`*/api/reset-password`, async () =>
-    HttpResponse.json(),
-);
-
-const failIsAuthenticatedHandler = http.get("*/api/is-authenticated", async () =>
-    HttpResponse.json({}, { status: 400 }),
-);
-
-const successGetUsernameHandler = http.get("*/api/username", async () =>
-    HttpResponse.json("yegor", { status: 200 }),
-);
+import { successGetUsernameHandler } from "@/test/requestHandlers/loginPageHandlers.ts";
+import { failIsAuthenticatedHandler } from "@/test/requestHandlers/isAuthenticatedHandlers.ts";
+import {
+    failNeedToResetPasswordHandler,
+    successNeedToResetPasswordHandler,
+    successResetPasswordHandler,
+} from "@/test/requestHandlers/passwordResetPageHandlers.ts";
 
 const PasswordResetPageDefault = ({
     uid = "testUid",

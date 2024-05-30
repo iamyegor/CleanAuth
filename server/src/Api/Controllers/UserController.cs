@@ -2,7 +2,8 @@ using Api.Controllers.Common;
 using Domain.DomainErrors;
 using Domain.User;
 using Domain.User.ValueObjects;
-using Infrastructure.Authentication;
+using Infrastructure.Authorization;
+using Infrastructure.Cookies;
 using Infrastructure.Data;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,38 +16,31 @@ namespace Api.Controllers;
 [Route("api")]
 public class UserController : ApplicationController
 {
-    private readonly JwtService _jwtService;
     private readonly ApplicationContext _context;
+    private readonly CookiesInfoExtractor _cookiesInfoExtractor;
 
-    public UserController(JwtService jwtService, ApplicationContext context)
+    public UserController(ApplicationContext context, CookiesInfoExtractor cookiesInfoExtractor)
     {
-        _jwtService = jwtService;
         _context = context;
+        _cookiesInfoExtractor = cookiesInfoExtractor;
     }
 
-    [HttpGet("username"), Authorize(PoliciyNames.AccountAuthenticated)]
+    [HttpGet("username"), Authorize(AuthorizationPolicies.AccountAuthenticated)]
     public async Task<IActionResult> GetUsername()
     {
-        if (HttpContext.Request.Cookies.TryGetValue("accessToken", out string? token))
+        Result<UserId, Error> userIdOrError = _cookiesInfoExtractor.ExtractUserId(Request.Cookies);
+        if (userIdOrError.IsFailure)
         {
-            Result<UserId, Error> userIdOrError = _jwtService.ExtractUserIdFromToken(token);
-            if (userIdOrError.IsFailure)
-            {
-                return Problem(userIdOrError.Error);
-            }
-
-            User? user = await _context.Users.SingleOrDefaultAsync(u =>
-                u.Id == userIdOrError.Value
-            );
-
-            if (user == null || !user.IsEmailVerified)
-            {
-                return Problem(Errors.User.DoesNotExist(userIdOrError.Value));
-            }
-
-            return Ok(user.Login.Value);
+            return Problem(userIdOrError.Error);
         }
 
-        return Problem(Errors.AccessToken.IsRequired());
+        User? user = await _context.Users.SingleOrDefaultAsync(u => u.Id == userIdOrError.Value);
+
+        if (user == null || !user.IsEmailVerified)
+        {
+            return Problem(Errors.User.DoesNotExist(userIdOrError.Value));
+        }
+
+        return Ok(user.Login!.Value);
     }
 }

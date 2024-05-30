@@ -17,7 +17,6 @@ api.interceptors.response.use(
 
     async (error: AxiosError<ServerErrorResponse>): Promise<any> => {
         const originalRequest = error.config as CustomAxiosRequestConfig;
-        console.log(error.response?.data);
 
         try {
             if (originalRequest._retry) {

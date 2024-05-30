@@ -3,8 +3,8 @@ using Domain.User;
 using Domain.User.ValueObjects;
 using Infrastructure.Authentication;
 using Infrastructure.Data;
+using Infrastructure.Specifications.User;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 using XResults;
 
 namespace Application.Authentication.Commands.ResetPassword;
@@ -20,27 +20,25 @@ public class ResetPasswordCommandHandler
     : IRequestHandler<ResetPasswordCommand, Result<Tokens, Error>>
 {
     private readonly ApplicationContext _context;
-    private readonly JwtService _jwtService;
+    private readonly UserTokensUpdater _userTokensUpdater;
 
-    public ResetPasswordCommandHandler(ApplicationContext context, JwtService jwtService)
+    public ResetPasswordCommandHandler(
+        ApplicationContext context,
+        UserTokensUpdater userTokensUpdater
+    )
     {
         _context = context;
-        _jwtService = jwtService;
+        _userTokensUpdater = userTokensUpdater;
     }
 
     public async Task<Result<Tokens, Error>> Handle(
         ResetPasswordCommand command,
-        CancellationToken cancellationToken
+        CancellationToken ct
     )
     {
         UserId userId = new UserId(Guid.Parse(command.UserId));
-        User? user = await _context.Users.FirstOrDefaultAsync(
-            u => u.Id == userId,
-            cancellationToken: cancellationToken
-        );
-
-        Guid token = Guid.Parse(command.TokenString);
-        if (user == null || user.PasswordResetToken?.Value != token)
+        User? user = await _context.Query(new VerifiedUserByIdSpec(userId), ct);
+        if (user == null || user.PasswordResetToken?.Value != Guid.Parse(command.TokenString))
         {
             return Errors.PasswordResetToken.IsInvalid(command.TokenString);
         }
@@ -50,7 +48,7 @@ public class ResetPasswordCommandHandler
             return Errors.PasswordResetToken.IsExpired();
         }
 
-        if (user.Password.Matches(command.Password))
+        if (user.Password!.Matches(command.Password))
         {
             return Errors.Password.IsSameAsCurrent();
         }
@@ -58,10 +56,9 @@ public class ResetPasswordCommandHandler
         user.Password = Password.Create(command.Password);
         user.PasswordResetToken = null;
 
-        Tokens tokens = _jwtService.GenerateTokens(user);
-        user.AddRefreshToken(new RefreshToken(tokens.RefreshToken, Guid.Parse(command.DeviceId!)));
+        Tokens tokens = _userTokensUpdater.UpdateTokens(user, command.DeviceId!);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(ct);
 
         return tokens;
     }

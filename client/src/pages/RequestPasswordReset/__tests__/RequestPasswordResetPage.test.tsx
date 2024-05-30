@@ -4,22 +4,12 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, test } from "vitest";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { server } from "@/test/setup.ts";
-import { http, HttpResponse } from "msw";
 import routes from "@/lib/routes.tsx";
-
-const isAuthenticatedEndpoint = "*/api/is-authenticated";
-
-const failIsAuthenticatedHandler = http.get(isAuthenticatedEndpoint, async () =>
-    HttpResponse.json({}, { status: 400 }),
-);
-
-const successIsAuthenticatedHandler = http.get(isAuthenticatedEndpoint, async () =>
-    HttpResponse.json({}, { status: 200 }),
-);
-
-const successGetUsernameHandler = http.get("*/api/username", async () =>
-    HttpResponse.json("yegor", { status: 200 }),
-);
+import {
+    failIsAuthenticatedHandler,
+    successIsAuthenticatedHandler,
+} from "@/test/requestHandlers/isAuthenticatedHandlers.ts";
+import { successGetUsernameHandler } from "@/test/requestHandlers/loginPageHandlers.ts";
 
 const RequestPasswordResetPageDefault = () => {
     const router = createMemoryRouter(routes, {

@@ -5,6 +5,7 @@ using Domain.User.ValueObjects;
 using Infrastructure.Authentication;
 using Infrastructure.Data;
 using Infrastructure.Emails;
+using Infrastructure.Specifications.User;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using XResults;
@@ -18,56 +19,45 @@ public class SignUpCommandHandler : IRequestHandler<SignUpCommand, Result<Tokens
 {
     private readonly ApplicationContext _context;
     private readonly IDomainEmailSender _emailSender;
-    private readonly JwtService _jwtService;
+    private readonly UserTokensUpdater _userTokensUpdater;
 
     public SignUpCommandHandler(
         ApplicationContext context,
         IDomainEmailSender emailSender,
-        JwtService jwtService
+        UserTokensUpdater userTokensUpdater
     )
     {
         _context = context;
         _emailSender = emailSender;
-        _jwtService = jwtService;
+        _userTokensUpdater = userTokensUpdater;
     }
 
-    public async Task<Result<Tokens, Error>> Handle(
-        SignUpCommand command,
-        CancellationToken cancellationToken
-    )
+    public async Task<Result<Tokens, Error>> Handle(SignUpCommand command, CancellationToken ct)
     {
         EmailVerificationCode verificationCode = new EmailVerificationCode(new DateTimeProvider());
         Password password = Password.Create(command.Password);
         Login login = Login.Create(command.Login);
         Email email = Email.Create(command.Email);
 
-        User? existingUser = await _context.Users.SingleOrDefaultAsync(
-            u => u.Login.Value == command.Login || u.Email.Value == command.Email,
-            cancellationToken: cancellationToken
-        );
+        var spec = new UserByEmailOrLoginSpec(command.Login, command.Email);
+        User? existingUser = await _context.Query(spec, ct);
 
-        User finalUser;
-        if (existingUser == null)
+        if (
+            existingUser != null
+            && existingUser is { IsEmailVerified: true, IsPhoneNumberVerified: true }
+        )
         {
-            finalUser = new User(login, email, password, verificationCode);
-            await _context.Users.AddAsync(finalUser, cancellationToken);
-        }
-        else
-        {
-            if (existingUser is { IsEmailVerified: true, IsPhoneNumberVerified: true })
-            {
-                return UserAlreadyExists(existingUser, command.Login, command.Email);
-            }
-
-            finalUser = UpdateExistingUser(existingUser, login, email, password, verificationCode);
+            return UserAlreadyExists(existingUser, command.Login, command.Email);
         }
 
-        Tokens tokens = _jwtService.GenerateTokens(finalUser);
+        User finalUser =
+            existingUser == null
+                ? await CreateNewUserAsync(login, email, password, verificationCode, ct)
+                : UpdateExistingUser(existingUser, login, email, password, verificationCode);
 
-        Guid deviceId = Guid.Parse(command.DeviceId);
-        finalUser.AddRefreshToken(new RefreshToken(tokens.RefreshToken, deviceId));
+        Tokens tokens = _userTokensUpdater.UpdateTokens(finalUser, command.DeviceId);
 
-        await _context.SaveChangesAsync(cancellationToken);
+        await _context.SaveChangesAsync(ct);
         await _emailSender.SendEmailVerificationCode(email.Value, verificationCode.Value);
 
         return tokens;
@@ -75,9 +65,22 @@ public class SignUpCommandHandler : IRequestHandler<SignUpCommand, Result<Tokens
 
     private Error UserAlreadyExists(User user, string login, string email)
     {
-        return user.Login.Value == login
+        return user.Login != null && user.Login.Value == login
             ? Errors.Login.IsAlreadyTaken(login)
             : Errors.Email.IsAlreadyTaken(email);
+    }
+
+    private async Task<User> CreateNewUserAsync(
+        Login login,
+        Email email,
+        Password password,
+        EmailVerificationCode verificationCode,
+        CancellationToken cancellationToken
+    )
+    {
+        var newUser = User.CreateStandardAuthUser(login, email, password, verificationCode);
+        await _context.Users.AddAsync(newUser, cancellationToken);
+        return newUser;
     }
 
     private User UpdateExistingUser(
@@ -90,7 +93,13 @@ public class SignUpCommandHandler : IRequestHandler<SignUpCommand, Result<Tokens
     {
         // To perform context.Update(), user with the same id must be detached.
         _context.Entry(existingUser).State = EntityState.Detached;
-        User user = new User(login, email, password, verificationCode, existingUser.Id);
+        User user = User.CreateStandardAuthUser(
+            login,
+            email,
+            password,
+            verificationCode,
+            existingUser.Id
+        );
         _context.Update(user);
 
         return user;

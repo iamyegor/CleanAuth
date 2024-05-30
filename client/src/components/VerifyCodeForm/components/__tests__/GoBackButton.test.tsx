@@ -2,11 +2,11 @@ import React, { ComponentProps } from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
 import { MemoryRouter } from "react-router-dom";
-import GoBackButton from "@/components/VerifyCodeForm/components/GoBackButton.tsx";
+import GoBackButtonVariant2 from "@/components/VerifyCodeForm/components/GoBackButtonVariant2.tsx";
 
-const GoBackButtonDefault = (props: Partial<ComponentProps<typeof GoBackButton>>) => (
+const GoBackButtonDefault = (props: Partial<ComponentProps<typeof GoBackButtonVariant2>>) => (
     <MemoryRouter>
-        <GoBackButton route="/signup" text="Back to Signup" {...props} />
+        <GoBackButtonVariant2 route="/signup" text="Back to Signup" {...props} />
     </MemoryRouter>
 );
 

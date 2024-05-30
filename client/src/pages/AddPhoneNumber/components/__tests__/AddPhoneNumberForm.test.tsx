@@ -7,28 +7,13 @@ import AddPhoneNumberForm, {
     action,
 } from "@/pages/AddPhoneNumber/components/AddPhoneNumberForm.tsx";
 import { server } from "@/test/setup.ts";
-import { http, HttpResponse } from "msw";
 import getStoredPhoneNumber from "@/utils/phoneNumberData/getStoredPhoneNumber.ts";
 import getStoredCountryCodeIndex from "@/utils/phoneNumberData/getStoredCountryCodeIndex.ts";
-import Country from "@/pages/AddPhoneNumber/types/Country.ts";
 import countries from "@/pages/AddPhoneNumber/data/countries.ts";
-
-const successAddPhoneNumberHandler = http.post("*/api/add-phone-number", async () => {
-    return HttpResponse.json({
-        errorCode: "invalid.phone.number",
-        errorMessage: "Phone number is invalid.",
-    });
-});
-
-const failAddPhoneNumberHandler = http.post("*/api/add-phone-number", async () => {
-    return HttpResponse.json(
-        {
-            errorCode: "phone.number.already.taken",
-            errorMessage: "Error message that isn't used anyway",
-        },
-        { status: 400 },
-    );
-});
+import {
+    failAddPhoneNumberHandler,
+    successAddPhoneNumberHandler,
+} from "@/test/requestHandlers/addPhoneNumberPageHandlers.ts";
 
 const AddPhoneNumberFormDefault = () => {
     const router = createMemoryRouter([

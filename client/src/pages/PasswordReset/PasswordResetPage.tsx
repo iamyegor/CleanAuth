@@ -17,7 +17,7 @@ export async function loader({ request }: any): Promise<ErrorMessage | ResetPass
     if (!token || !uid) {
         return ErrorMessage.create("Invalid link.");
     }
-    
+
     try {
         await api.get(`api/need-to-reset-password?userId=${uid}&token=${token}`);
         return { userId: uid, token };
@@ -28,7 +28,7 @@ export async function loader({ request }: any): Promise<ErrorMessage | ResetPass
 
 export default function PasswordResetPage() {
     const loaderData = useLoaderData() as ErrorMessage | ResetPasswordLoaderData;
-    
+
     return (
         <BasePasswordReset>
             {loaderData instanceof ErrorMessage ? (

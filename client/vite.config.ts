@@ -2,6 +2,7 @@
 /// <reference types="vite/client" />
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import * as fs from "node:fs";
 
 export default defineConfig({
     plugins: [react()],

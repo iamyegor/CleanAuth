@@ -4,6 +4,7 @@ using Domain.User.ValueObjects;
 using Google.Apis.Auth;
 using Infrastructure.Authentication;
 using Infrastructure.Data;
+using Infrastructure.SocialAuthentication;
 using Infrastructure.Specifications.User;
 using Infrastructure.TokensValidators;
 using MediatR;
@@ -12,30 +13,30 @@ using XResults;
 namespace Application.SocialAuthentication.Command.SingInWithGoogle;
 
 public record SignInWithGoogleCommand(string IdToken, string? DeviceId)
-    : IRequest<Result<(Tokens, SocialUserAuthenticationStatus), Error>>;
+    : IRequest<Result<SocialAuthResult, Error>>;
 
 public class SignInWithGoogleCommandHandler
-    : IRequestHandler<
-        SignInWithGoogleCommand,
-        Result<(Tokens, SocialUserAuthenticationStatus), Error>
-    >
+    : IRequestHandler<SignInWithGoogleCommand, Result<SocialAuthResult, Error>>
 {
     private readonly ApplicationContext _context;
     private readonly UserTokensUpdater _userTokensUpdater;
     private readonly IGoogleIdTokenValidator _googleIdTokenValidator;
+    private readonly SocialUserAuthStatusResolver _authStatusResolver;
 
     public SignInWithGoogleCommandHandler(
         UserTokensUpdater userTokensUpdater,
         ApplicationContext context,
-        IGoogleIdTokenValidator googleIdTokenValidator
+        IGoogleIdTokenValidator googleIdTokenValidator,
+        SocialUserAuthStatusResolver authStatusResolver
     )
     {
         _userTokensUpdater = userTokensUpdater;
         _context = context;
         _googleIdTokenValidator = googleIdTokenValidator;
+        _authStatusResolver = authStatusResolver;
     }
 
-    public async Task<Result<(Tokens, SocialUserAuthenticationStatus), Error>> Handle(
+    public async Task<Result<SocialAuthResult, Error>> Handle(
         SignInWithGoogleCommand command,
         CancellationToken ct
     )
@@ -58,9 +59,9 @@ public class SignInWithGoogleCommandHandler
         await _context.SaveChangesAsync(ct);
         await transaction.CommitAsync(ct);
 
-        SocialUserAuthenticationStatus authStatus = GetSocialUserAuthenticationStatus(user);
+        SocialUserAuthStatus authStatus = _authStatusResolver.GetBasedOnUser(user);
 
-        return Result.Ok((tokens, authStatus));
+        return Result.Ok(new SocialAuthResult(tokens, authStatus));
     }
 
     private async Task<User> CreateOrUpdateSocialAuthUser(
@@ -91,19 +92,5 @@ public class SignInWithGoogleCommandHandler
                 return user;
             }
         }
-    }
-
-    private SocialUserAuthenticationStatus GetSocialUserAuthenticationStatus(User user)
-    {
-        if (user is { IsEmailVerified: true, IsPhoneNumberVerified: true })
-        {
-            return SocialUserAuthenticationStatus.CompletelyVerified;
-        }
-        else if (user.Login == null)
-        {
-            return SocialUserAuthenticationStatus.NeedsUsername;
-        }
-
-        throw new Exception("Should never get there");
     }
 }

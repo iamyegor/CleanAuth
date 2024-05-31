@@ -5,10 +5,10 @@ using Application.SocialAuthentication.Command.SingInWithGoogle;
 using Application.SocialAuthentication.Queries.CanAddUsername;
 using Domain.DomainErrors;
 using Domain.User.ValueObjects;
-using Infrastructure.Authentication;
 using Infrastructure.Authorization;
 using Infrastructure.Cookies;
 using Infrastructure.Cookies.Extensions;
+using Infrastructure.SocialAuthentication;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -38,15 +38,13 @@ public class SocialAuthenticationController : ApplicationController
         Request.Cookies.TryGetValue(CookiesInfo.DeviceId.Name, out var deviceId);
         SignInWithGoogleCommand command = new SignInWithGoogleCommand(dto.IdToken, deviceId);
 
-        Result<(Tokens tokens, SocialUserAuthenticationStatus AuthStatus), Error> result =
-            await _mediator.Send(command);
-
+        Result<SocialAuthResult, Error> result = await _mediator.Send(command);
         if (result.IsFailure)
         {
             return Problem(result.Error);
         }
 
-        Response.Cookies.Append(result.Value.tokens);
+        Response.Cookies.Append(result.Value.Tokens);
 
         return Ok(new { result.Value.AuthStatus.Status });
     }

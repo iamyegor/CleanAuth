@@ -8,7 +8,7 @@ namespace Domain.User;
 public class User : AggregateRoot<UserId>
 {
     public Login? Login { get; set; }
-    public Email Email { get; private set; }
+    public Email? Email { get; set; }
     public Password? Password { get; set; }
     public Role Role { get; } = Role.User;
     public IReadOnlyList<RefreshToken> RefreshTokens => _refreshTokens;
@@ -29,16 +29,30 @@ public class User : AggregateRoot<UserId>
 
     public static User CreateSocialAuthUser(Email email, AuthType authType, UserId? id = null)
     {
-        Precondition.Requires(authType != AuthType.Standard);
-
-        User user = new User(id ?? new UserId())
-        {
-            Email = email,
-            AuthType = authType,
-            IsEmailVerified = true
-        };
+        User user = BaseCreateSocialUser(authType, id);
+        user.Email = email;
+        user.IsEmailVerified = true;
 
         return user;
+    }
+
+    public static User CreateSocialAuthUser(
+        PhoneNumber phoneNumber,
+        AuthType authType,
+        UserId? id = null
+    )
+    {
+        User user = BaseCreateSocialUser(authType, id);
+        user.PhoneNumber = phoneNumber;
+        user.IsPhoneNumberVerified = true;
+
+        return user;
+    }
+
+    private static User BaseCreateSocialUser(AuthType authType, UserId? id = null)
+    {
+        Precondition.Requires(authType != AuthType.Standard);
+        return new User(id ?? new UserId()) { AuthType = authType };
     }
 
     public static User CreateStandardAuthUser(

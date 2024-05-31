@@ -43,7 +43,7 @@ public class RequestPasswordResetCommandHandler
         user.PasswordResetToken = token;
 
         await _context.SaveChangesAsync(ct);
-        await _emailSender.SendPasswordReset(user.Id.Value, token.Value, user.Email.Value);
+        await _emailSender.SendPasswordReset(user.Id.Value, token.Value, user.Email!.Value);
 
         return Result.Ok();
     }

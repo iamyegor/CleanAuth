@@ -1,46 +1,29 @@
-import { ResultOf } from "@/utils/resultOfT.ts";
-import { Result } from "@/utils/result.ts";
+import { ResultOr } from "@/utils/resultOfT.ts";
 import isNullOrWhitespace from "@/utils/isNullOrWhitespace.ts";
 import validatePassword from "@/utils/validatePassword.ts";
+import FieldError from "@/utils/FieldError.ts";
+import {EMAIL_REGEX} from "@/data/regularExpressions.ts";
 
-const EMAIL_REGEX = new RegExp("^[^@]+@[^@]+.[^@]+$");
 
-export function validateSignupData(signupData: SignupData): ResultOf<SignupError> {
+export function validateSignupData(signupData: SignupData): ResultOr<FieldError> {
+    let fieldError: FieldError | null = null;
+    const passwordValidation = validatePassword(signupData.password);
+
     if (isNullOrWhitespace(signupData.username)) {
-        return ResultOf.Fail<SignupError>({
-            problematicField: "username",
-            errorMessage: "Username must not be empty",
-        });
+        fieldError = FieldError.create("username", "Username must not be empty");
+    } else if (!signupData.email) {
+        fieldError = FieldError.create("email", "Email must not be empty");
+    } else if (!EMAIL_REGEX.test(signupData.email)) {
+        fieldError = FieldError.create("email", "Invalid email format");
+    } else if (passwordValidation.isFailure) {
+        fieldError = FieldError.create("password", passwordValidation.errorMessage!);
+    } else if (signupData.password !== signupData.repeatedPassword) {
+        fieldError = FieldError.create("repeatedPassword", "Passwords do not match");
     }
 
-    if (!signupData.email) {
-        return ResultOf.Fail<SignupError>({
-            problematicField: "email",
-            errorMessage: "Email must not be empty",
-        });
+    if (fieldError) {
+        return ResultOr.Fail<FieldError>(fieldError);
     }
 
-    if (!EMAIL_REGEX.test(signupData.email)) {
-        return ResultOf.Fail<SignupError>({
-            problematicField: "email",
-            errorMessage: "Invalid email format",
-        });
-    }
-
-    const passwordValidation: Result = validatePassword(signupData.password);
-    if (passwordValidation.isFailure) {
-        return ResultOf.Fail<SignupError>({
-            problematicField: "password",
-            errorMessage: passwordValidation.errorMessage!,
-        });
-    }
-
-    if (signupData.password !== signupData.repeatedPassword) {
-        return ResultOf.Fail<SignupError>({
-            problematicField: "repeatedPassword",
-            errorMessage: "Passwords do not match",
-        });
-    }
-
-    return ResultOf.Ok<SignupError>();
+    return ResultOr.Ok();
 }

@@ -15,6 +15,8 @@ export default function extractAddUsernameError(
         return ErrorMessage.create(errorMessage);
     } else if (errorCode === "login.can.not.be.added") {
         return ErrorMessage.create("Username can not be added, try again later");
+    } else if (errorCode === "login.already.taken") {
+        return ErrorMessage.create("Username is already taken");
     } else {
         throw RouteError.unexpected();
     }

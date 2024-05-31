@@ -14,32 +14,31 @@ public record AddPhoneNumberCommand(UserId UserId, string PhoneNumber) : IReques
 public class AddPhoneNumberCommandHandler : IRequestHandler<AddPhoneNumberCommand, SuccessOr<Error>>
 {
     private readonly ApplicationContext _context;
-    private readonly VerificationCodeSender _verificationCodeSender;
+    private readonly DomainSmsSender _domainSmsSender;
 
-    public AddPhoneNumberCommandHandler(
-        ApplicationContext context,
-        VerificationCodeSender verificationCodeSender
-    )
+    public AddPhoneNumberCommandHandler(ApplicationContext context, DomainSmsSender domainSmsSender)
     {
         _context = context;
-        _verificationCodeSender = verificationCodeSender;
+        _domainSmsSender = domainSmsSender;
     }
 
     public async Task<SuccessOr<Error>> Handle(AddPhoneNumberCommand command, CancellationToken ct)
     {
+        using var transaction = await _context.Database.BeginTransactionAsync(ct);
+
         UserByPhoneNumberSpec spec = new UserByPhoneNumberSpec(command.PhoneNumber);
         User? userWithSamePhoneNumber = await _context.Query(spec, ct);
 
         if (userWithSamePhoneNumber != null)
         {
-            if (userWithSamePhoneNumber is { IsPhoneNumberVerified: true, IsEmailVerified: true })
+            if (userWithSamePhoneNumber.IsVerified)
             {
                 return Errors.PhoneNumber.IsAlreadyTaken(command.PhoneNumber);
             }
 
             if (userWithSamePhoneNumber.Id != command.UserId)
             {
-                userWithSamePhoneNumber.ClearPhoneNumber();
+                _context.Remove(userWithSamePhoneNumber);
                 await _context.SaveChangesAsync(ct);
             }
         }
@@ -47,6 +46,7 @@ public class AddPhoneNumberCommandHandler : IRequestHandler<AddPhoneNumberComman
         User user = (await _context.Query(new UserByIdSpec(command.UserId), ct))!;
         user.AddUnverifiedPhoneNumber(PhoneNumber.Create(command.PhoneNumber));
         await _context.SaveChangesAsync(ct);
+        await transaction.CommitAsync(ct);
 
         // await _verificationCodeSender.SendAsync(
         //     user.PhoneNumber!.Value,

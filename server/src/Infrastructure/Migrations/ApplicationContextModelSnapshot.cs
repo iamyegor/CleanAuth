@@ -37,6 +37,10 @@ namespace Infrastructure.Migrations
                         .HasColumnType("boolean")
                         .HasColumnName("is_phone_number_verified");
 
+                    b.Property<string>("VkUserId")
+                        .HasColumnType("text")
+                        .HasColumnName("vk_user_id");
+
                     b.ComplexProperty<Dictionary<string, object>>("Role", "Domain.User.User.Role#Role", b1 =>
                         {
                             b1.IsRequired();
@@ -54,24 +58,6 @@ namespace Infrastructure.Migrations
 
             modelBuilder.Entity("Domain.User.User", b =>
                 {
-                    b.OwnsOne("Domain.User.ValueObjects.AuthType", "AuthType", b1 =>
-                        {
-                            b1.Property<Guid>("UserId")
-                                .HasColumnType("uuid");
-
-                            b1.Property<string>("Value")
-                                .IsRequired()
-                                .HasColumnType("text")
-                                .HasColumnName("auth_type");
-
-                            b1.HasKey("UserId");
-
-                            b1.ToTable("users");
-
-                            b1.WithOwner()
-                                .HasForeignKey("UserId");
-                        });
-
                     b.OwnsOne("Domain.User.ValueObjects.Email", "Email", b1 =>
                         {
                             b1.Property<Guid>("UserId")
@@ -251,11 +237,7 @@ namespace Infrastructure.Migrations
                                 .HasForeignKey("user_id");
                         });
 
-                    b.Navigation("AuthType")
-                        .IsRequired();
-
-                    b.Navigation("Email")
-                        .IsRequired();
+                    b.Navigation("Email");
 
                     b.Navigation("EmailVerificationCode");
 

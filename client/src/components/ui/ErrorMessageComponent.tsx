@@ -4,7 +4,7 @@ import ErrorMessage from "@/utils/ErrorMessage.ts";
 import { useEffect } from "react";
 
 interface ErrorMessageComponentProps {
-    errorMessage: ErrorMessage | null;
+    errorMessage: ErrorMessage | null | undefined;
     handleErrorShown?: (isErrorShown: boolean) => void;
 }
 
@@ -19,7 +19,7 @@ export default function ErrorMessageComponent({
     }, [shouldShowErrorMessage()]);
 
     function shouldShowErrorMessage(): boolean {
-        return !!errorMessage?.errorMessage;
+        return !!errorMessage?.value;
     }
 
     return shouldShowErrorMessage() ? (
@@ -27,7 +27,7 @@ export default function ErrorMessageComponent({
             <div className="flex items-start space-x-2" data-testid="ErrorMessageComponent">
                 <Image src={exclamationMark} alt="exclamationMark" className="w-5 h-5 mt-0.5" />
                 <p data-testid="ErrorMessageComponent.Message" className="text-red-500 text-left">
-                    {errorMessage!.errorMessage}
+                    {errorMessage!.value}
                 </p>
             </div>
         </>

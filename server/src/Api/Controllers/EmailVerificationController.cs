@@ -1,6 +1,6 @@
 using Api.Controllers.Common;
 using Api.Dtos;
-using Application.Authentication.Commands.ResendEmailCommand;
+using Application.Authentication.Commands.RequestEmailVerification;
 using Application.Authentication.Commands.VerifyEmail;
 using Application.Authentication.Queries.GetEmailForVerification;
 using Domain.DomainErrors;
@@ -36,6 +36,21 @@ public class EmailVerificationController : ApplicationController
 
         GetEmailForVerificationQuery query = new GetEmailForVerificationQuery(userId);
         Result<string, Error> emailOrError = await _mediator.Send(query);
+        if (emailOrError.IsFailure)
+        {
+            return Problem(emailOrError.Error);
+        }
+
+        return Ok(new { Email = emailOrError.Value });
+    }
+
+    [HttpPost("request-email-verification-code"), Authorize(AuthorizationPolicies.EmailNotVerified)]
+    public async Task<IActionResult> RequestEmailVerificationCode()
+    {
+        UserId userId = _jwtClaims.GetUserIdFromCookieJwt(Request.Cookies);
+
+        var command = new RequestEmailVerificationCodeCommand(userId);
+        SuccessOr<Error> emailOrError = await _mediator.Send(command);
 
         return FromResult(emailOrError);
     }
@@ -56,16 +71,5 @@ public class EmailVerificationController : ApplicationController
         Response.Cookies.Append(tokensOrError.Value);
 
         return Ok();
-    }
-
-    [HttpPost("resend-email-code"), Authorize(AuthorizationPolicies.EmailNotVerified)]
-    public async Task<IActionResult> ResendEmail()
-    {
-        UserId userId = _jwtClaims.GetUserIdFromCookieJwt(Request.Cookies);
-
-        ResendEmailCommand command = new ResendEmailCommand(userId);
-        SuccessOr<Error> result = await _mediator.Send(command);
-
-        return FromResult(result);
     }
 }

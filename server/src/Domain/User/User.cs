@@ -1,5 +1,4 @@
 using Domain.Common;
-using Domain.Common.Preconditions;
 using Domain.DateTimeProviders;
 using Domain.User.ValueObjects;
 
@@ -13,13 +12,14 @@ public class User : AggregateRoot<UserId>
     public Role Role { get; } = Role.User;
     public IReadOnlyList<RefreshToken> RefreshTokens => _refreshTokens;
     private readonly List<RefreshToken> _refreshTokens = [];
-    public EmailVerificationCode? EmailVerificationCode { get; set; }
+    public EmailVerificationCode? EmailVerificationCode { get; private set; }
     public PhoneNumber? PhoneNumber { get; private set; }
     public PhoneNumberVerificationCode? PhoneNumberVerificationCode { get; set; }
     public bool IsEmailVerified { get; private set; }
     public bool IsPhoneNumberVerified { get; private set; }
     public PasswordResetToken? PasswordResetToken { get; set; }
-    public AuthType AuthType { get; private set; }
+    public string? VkUserId { get; private set; }
+    public bool IsVerified => IsEmailVerified && IsPhoneNumberVerified;
 
     private User() // Constructor required by ef core
         : base(new UserId()) { }
@@ -27,39 +27,31 @@ public class User : AggregateRoot<UserId>
     private User(UserId? id)
         : base(id ?? new UserId()) { }
 
-    public static User CreateSocialAuthUser(Email email, AuthType authType, UserId? id = null)
+    public static User CreateGoogleUser(Email email)
     {
-        User user = BaseCreateSocialUser(authType, id);
-        user.Email = email;
-        user.IsEmailVerified = true;
+        User user = new User(new UserId())
+        {
+            Email = email,
+            IsEmailVerified = true,
+        };
 
         return user;
     }
 
-    public static User CreateSocialAuthUser(
-        PhoneNumber phoneNumber,
-        AuthType authType,
-        UserId? id = null
-    )
+    public static User CreateVkUser(string socialProviderUserId, UserId? id = null)
     {
-        User user = BaseCreateSocialUser(authType, id);
-        user.PhoneNumber = phoneNumber;
-        user.IsPhoneNumberVerified = true;
+        User user = new User(id ?? new UserId())
+        {
+            VkUserId = socialProviderUserId
+        };
 
         return user;
-    }
-
-    private static User BaseCreateSocialUser(AuthType authType, UserId? id = null)
-    {
-        Precondition.Requires(authType != AuthType.Standard);
-        return new User(id ?? new UserId()) { AuthType = authType };
     }
 
     public static User CreateStandardAuthUser(
         Login login,
         Email email,
         Password password,
-        EmailVerificationCode emailVerificationCode,
         UserId? id = null
     )
     {
@@ -67,10 +59,10 @@ public class User : AggregateRoot<UserId>
         {
             Login = login,
             Password = password,
-            EmailVerificationCode = emailVerificationCode,
             Email = email,
-            AuthType = AuthType.Standard
         };
+
+        user.NewEmailVerificationCode();
 
         return user;
     }
@@ -107,5 +99,12 @@ public class User : AggregateRoot<UserId>
     public void ClearPhoneNumber()
     {
         PhoneNumber = null;
+    }
+
+    public void NewEmailVerificationCode(IDateTimeProvider? dateTimeProvider = null)
+    {
+        EmailVerificationCode = new EmailVerificationCode(
+            dateTimeProvider ?? new DateTimeProvider()
+        );
     }
 }

@@ -2,7 +2,7 @@ import Input from "@/components/ui/Input.tsx";
 import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx";
 import { Form, NavLink, redirect, useActionData, useNavigation } from "react-router-dom";
 import { validateSignupData } from "@/pages/Signup/utils/validateSignupData.ts";
-import { ResultOf } from "@/utils/resultOfT.ts";
+import { ResultOr } from "@/utils/resultOfT.ts";
 import api from "@/lib/api.ts";
 import { AxiosError } from "axios";
 import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
@@ -10,15 +10,16 @@ import { getSignupData } from "@/pages/Signup/utils/getSignupData.ts";
 import useStoredSignupData from "@/pages/Signup/hooks/useInitialSignupData.ts";
 import storeSignupData from "@/utils/initialSignupData/storeSignupData.ts";
 import PasswordInput from "@/components/ui/PasswordInput.tsx";
-import getErrorMessageForField from "@/utils/getErrorMessageForField.ts";
+import getFieldErrorMessage from "@/utils/getFieldErrorMessage.ts";
 import extractSignupError from "@/pages/Signup/utils/extractSignupError.ts";
 import ErrorMessageComponent from "@/components/ui/ErrorMessageComponent.tsx";
+import FieldError from "@/utils/FieldError.ts";
 
-export async function action({ request }: any): Promise<SignupError | Response> {
+export async function action({ request }: any): Promise<FieldError | Response> {
     const form = await request.formData();
     const data: SignupData = getSignupData(form);
 
-    const validationResult: ResultOf<SignupError> = validateSignupData(data);
+    const validationResult: ResultOr<FieldError> = validateSignupData(data);
     if (validationResult.isFailure) {
         return validationResult.error!;
     }
@@ -40,49 +41,43 @@ export async function action({ request }: any): Promise<SignupError | Response> 
 
 export default function SignupForm() {
     const storedSignupData: SignupData | null = useStoredSignupData();
-    const signupError = useActionData() as SignupError;
+    const signupError = useActionData() as FieldError | null;
     const { state } = useNavigation();
 
     return (
         <Form method="post" action={"/signup"} className={"space-y-8"} data-testid="SignupForm">
-            <div
-                className={
-                    getErrorMessageForField("repeatedPassword", signupError)
-                        ? "space-y-4"
-                        : "space-y-8"
-                }
-            >
+            <div className={signupError?.isField("repeatedPassword") ? "space-y-4" : "space-y-8"}>
                 <div className="space-y-4">
                     <Input
                         type="text"
                         name="username"
                         placeholder="Username"
-                        isInvalid={getErrorMessageForField("username", signupError) != null}
+                        isInvalid={signupError?.isField("username")}
                         defaultValue={storedSignupData?.username}
                     />
                     <ErrorMessageComponent
-                        errorMessage={getErrorMessageForField("username", signupError)}
+                        errorMessage={getFieldErrorMessage("username", signupError)}
                     />
                     <Input
                         type="email"
                         name="email"
                         placeholder="Email"
-                        isInvalid={getErrorMessageForField("email", signupError) != null}
+                        isInvalid={signupError?.isField("email")}
                         defaultValue={storedSignupData?.email}
                     />
                     <ErrorMessageComponent
-                        errorMessage={getErrorMessageForField("email", signupError)}
+                        errorMessage={getFieldErrorMessage("email", signupError)}
                     />
                     <PasswordInput
                         name="password"
                         placeholder="Password"
-                        errorMessage={getErrorMessageForField("password", signupError)}
+                        errorMessage={getFieldErrorMessage("password", signupError)}
                         defaultValue={storedSignupData?.password}
                     />
                     <PasswordInput
                         name="repeatedPassword"
                         placeholder="Repeat Password"
-                        errorMessage={getErrorMessageForField("repeatedPassword", signupError)}
+                        errorMessage={getFieldErrorMessage("repeatedPassword", signupError)}
                         defaultValue={storedSignupData?.repeatedPassword}
                     />
                 </div>

@@ -1,8 +1,11 @@
 using Api.Controllers.Common;
 using Api.Dtos;
 using Application.SocialAuthentication.Command.AddLogin;
+using Application.SocialAuthentication.Command.AddLoginAndEmail;
+using Application.SocialAuthentication.Command.SignInWithVk;
 using Application.SocialAuthentication.Command.SingInWithGoogle;
-using Application.SocialAuthentication.Queries.CanAddUsername;
+using Application.SocialAuthentication.Queries.CanAddLogin;
+using Application.SocialAuthentication.Queries.CanAddLoginAndEmailQuery;
 using Domain.DomainErrors;
 using Domain.User.ValueObjects;
 using Infrastructure.Authorization;
@@ -12,6 +15,7 @@ using Infrastructure.SocialAuthentication;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.OpenApi.Extensions;
 using XResults;
 
 namespace Api.Controllers;
@@ -46,11 +50,28 @@ public class SocialAuthenticationController : ApplicationController
 
         Response.Cookies.Append(result.Value.Tokens);
 
-        return Ok(new { result.Value.AuthStatus.Status });
+        return Ok(new { AuthStatus = result.Value.AuthStatus.GetDisplayName() });
+    }
+
+    [HttpPost("vk-signin")]
+    public async Task<IActionResult> SignInWithVk(VkSignInDto dto)
+    {
+        Request.Cookies.TryGetValue(CookiesInfo.DeviceId.Name, out var deviceId);
+        SignInWithVkCommand command = new SignInWithVkCommand(dto.SilentToken, dto.Uuid, deviceId);
+
+        Result<SocialAuthResult, Error> result = await _mediator.Send(command);
+        if (result.IsFailure)
+        {
+            return Problem(result.Error);
+        }
+
+        Response.Cookies.Append(result.Value.Tokens);
+
+        return Ok(new { AuthStatus = result.Value.AuthStatus.GetDisplayName() });
     }
 
     [HttpGet("can-add-login"), Authorize(AuthorizationPolicies.EmailVerified)]
-    public async Task<IActionResult> CanAddUsername()
+    public async Task<IActionResult> CanAddLogin()
     {
         Result<UserId, Error> userIdOrError = _cookiesInfoExtractor.ExtractUserId(Request.Cookies);
         if (userIdOrError.IsFailure)
@@ -58,7 +79,7 @@ public class SocialAuthenticationController : ApplicationController
             return Problem(userIdOrError.Error);
         }
 
-        CanAddUsernameQuery query = new CanAddUsernameQuery(userIdOrError.Value);
+        CanAddLoginQuery query = new CanAddLoginQuery(userIdOrError.Value);
 
         SuccessOr<Error> result = await _mediator.Send(query);
 
@@ -75,6 +96,32 @@ public class SocialAuthenticationController : ApplicationController
         }
 
         AddLoginCommand command = new AddLoginCommand(userIdOrError.Value, dto.Login);
+        SuccessOr<Error> result = await _mediator.Send(command);
+
+        return FromResult(result);
+    }
+
+    [HttpGet("can-add-login-and-email"), Authorize]
+    public async Task<IActionResult> CanAddLoginAndEmail()
+    {
+        UserId userId = _cookiesInfoExtractor.ExtractUserId(Request.Cookies).Value;
+
+        CanAddLoginAndEmailQuery query = new CanAddLoginAndEmailQuery(userId);
+        SuccessOr<Error> result = await _mediator.Send(query);
+
+        return FromResult(result);
+    }
+
+    [HttpPost("add-login-and-email"), Authorize]
+    public async Task<IActionResult> AddLoginAndEmail(AddLoginAndEmailDto dto)
+    {
+        Result<UserId, Error> userIdOrError = _cookiesInfoExtractor.ExtractUserId(Request.Cookies);
+        if (userIdOrError.IsFailure)
+        {
+            return Problem(userIdOrError.Error);
+        }
+
+        var command = new AddLoginAndEmailCommand(userIdOrError.Value, dto.Login, dto.Email);
         SuccessOr<Error> result = await _mediator.Send(command);
 
         return FromResult(result);

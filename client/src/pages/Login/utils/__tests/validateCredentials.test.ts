@@ -1,4 +1,4 @@
-import { ResultOf } from "@/utils/resultOfT";
+import { ResultOr } from "@/utils/resultOfT";
 import LoginError from "@/pages/Login/types/LoginError";
 import { validateCredentials } from "@/pages/Login/utils/validateCredentials.ts";
 
@@ -10,7 +10,7 @@ describe("validateCredentials", () => {
         const result = validateCredentials({ loginOrEmail, password });
 
         expect(result).toEqual(
-            ResultOf.Fail<LoginError>({
+            ResultOr.Fail<LoginError>({
                 problematicField: "loginOrEmail",
                 errorMessage: "Login or Email field must not be empty",
             }),
@@ -24,7 +24,7 @@ describe("validateCredentials", () => {
         const result = validateCredentials({ loginOrEmail, password });
 
         expect(result).toEqual(
-            ResultOf.Fail<LoginError>({
+            ResultOr.Fail<LoginError>({
                 problematicField: "password",
                 errorMessage: "Password length must be between 6 and 50 characters",
             }),
@@ -37,6 +37,6 @@ describe("validateCredentials", () => {
 
         const result = validateCredentials({ loginOrEmail, password });
 
-        expect(result).toEqual(ResultOf.Ok());
+        expect(result).toEqual(ResultOr.Ok());
     });
 });

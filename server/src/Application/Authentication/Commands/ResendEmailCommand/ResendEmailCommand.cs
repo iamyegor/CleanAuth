@@ -1,5 +1,3 @@
-using Domain.Common.Preconditions;
-using Domain.DateTimeProviders;
 using Domain.DomainErrors;
 using Domain.User;
 using Domain.User.ValueObjects;
@@ -28,11 +26,13 @@ public class ResendEmailCommandHandler : IRequestHandler<ResendEmailCommand, Suc
     {
         User user = (await _context.Query(new UserByIdSpec(command.UserId), ct))!;
 
-        EmailVerificationCode code = new EmailVerificationCode(new DateTimeProvider());
-        user.EmailVerificationCode = code;
-
+        user.NewEmailVerificationCode();
         await _context.SaveChangesAsync(ct);
-        await _emailSender.SendEmailVerificationCode(user.Email.Value, code.Value);
+
+        await _emailSender.SendEmailVerificationCode(
+            user.Email!.Value,
+            user.EmailVerificationCode!.Value
+        );
 
         return Result.Ok();
     }

@@ -4,6 +4,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, test, expect } from "vitest";
 import LoginError from "@/pages/Login/types/LoginError.ts";
 import LoginPagePasswordInput from "@/pages/Login/components/LoginPagePasswordInput.tsx";
+import FieldError from "@/utils/FieldError.ts";
 
 const LoginPagePasswordInputDefault = (
     props: Partial<ComponentProps<typeof LoginPagePasswordInput>>,
@@ -40,40 +41,28 @@ describe("<LoginPagePasswordInput />", () => {
     });
 
     test("3. Applies error class when error relates to the password field", () => {
-        const loginError: LoginError = {
-            problematicField: "password",
-            errorMessage: "Invalid password",
-        };
+        const loginError = FieldError.create("password", "Invalid password");
         render(<LoginPagePasswordInputDefault loginError={loginError} />);
 
         expect(loginPagePasswordInput.input).toHaveClass("login-input__error");
     });
 
     test("4. Applies error class when error relates to the both fields", () => {
-        const loginError: LoginError = {
-            problematicField: "both",
-            errorMessage: "Invalid credentials",
-        };
+        const loginError = FieldError.create("both", "Invalid credentials");
         render(<LoginPagePasswordInputDefault loginError={loginError} />);
 
         expect(loginPagePasswordInput.input).toHaveClass("login-input__error");
     });
 
     test("5. Displays error message when error relates to the password field", () => {
-        const loginError: LoginError = {
-            problematicField: "password",
-            errorMessage: "Invalid password",
-        };
+        const loginError = FieldError.create("password", "Invalid password");
         render(<LoginPagePasswordInputDefault loginError={loginError} />);
 
         expect(loginPagePasswordInput.errorMessage).toHaveTextContent("Invalid password");
     });
 
     test("6. Doesn't display error message when it relates to both fields", () => {
-        const loginError: LoginError = {
-            problematicField: "both",
-            errorMessage: "Invalid credentials",
-        };
+        const loginError = FieldError.create("both", "Invalid credentials");
         render(<LoginPagePasswordInputDefault loginError={loginError} />);
 
         expect(loginPagePasswordInput.errorMessage).not.toBeInTheDocument();

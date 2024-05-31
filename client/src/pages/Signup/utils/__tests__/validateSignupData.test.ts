@@ -1,5 +1,5 @@
 import { validateSignupData } from "@/pages/Signup/utils/validateSignupData";
-import { ResultOf } from "@/utils/resultOfT";
+import { ResultOr } from "@/utils/resultOfT";
 
 // Helper function to create signup data
 const createSignupData = (overrides = {}) => ({
@@ -17,7 +17,7 @@ describe("validateSignupData", () => {
         const result = validateSignupData(signupData);
 
         expect(result).toEqual(
-            ResultOf.Fail({
+            ResultOr.Fail({
                 problematicField: "username",
                 errorMessage: "Username must not be empty",
             }),
@@ -30,7 +30,7 @@ describe("validateSignupData", () => {
         const result = validateSignupData(signupData);
 
         expect(result).toEqual(
-            ResultOf.Fail({
+            ResultOr.Fail({
                 problematicField: "email",
                 errorMessage: "Email must not be empty",
             }),
@@ -43,7 +43,7 @@ describe("validateSignupData", () => {
         const result = validateSignupData(signupData);
 
         expect(result).toEqual(
-            ResultOf.Fail({
+            ResultOr.Fail({
                 problematicField: "email",
                 errorMessage: "Invalid email format",
             }),
@@ -56,7 +56,7 @@ describe("validateSignupData", () => {
         const result = validateSignupData(signupData);
 
         expect(result).toEqual(
-            ResultOf.Fail({
+            ResultOr.Fail({
                 problematicField: "password",
                 errorMessage: "Password length must be between 6 and 50 characters",
             }),
@@ -72,7 +72,7 @@ describe("validateSignupData", () => {
         const result = validateSignupData(signupData);
 
         expect(result).toEqual(
-            ResultOf.Fail({
+            ResultOr.Fail({
                 problematicField: "repeatedPassword",
                 errorMessage: "Passwords do not match",
             }),
@@ -84,6 +84,6 @@ describe("validateSignupData", () => {
 
         const result = validateSignupData(signupData);
 
-        expect(result).toEqual(ResultOf.Ok());
+        expect(result).toEqual(ResultOr.Ok());
     });
 });

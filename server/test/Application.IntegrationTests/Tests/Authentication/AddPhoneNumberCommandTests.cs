@@ -137,12 +137,12 @@ public class AddPhoneNumberCommandTests : BaseIntegrationTest
     )
     {
         ApplicationContext context = ServiceProvider.GetRequiredService<ApplicationContext>();
-        VerificationCodeSender verificationCodeSender = new VerificationCodeSender(
+        DomainSmsSender domainSmsSender = new DomainSmsSender(
             smsMessageBusMock.Object
         );
         AddPhoneNumberCommandHandler handler = new AddPhoneNumberCommandHandler(
             context,
-            verificationCodeSender
+            domainSmsSender
         );
 
         return handler;

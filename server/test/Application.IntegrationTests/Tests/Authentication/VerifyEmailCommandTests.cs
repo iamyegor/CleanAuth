@@ -55,12 +55,13 @@ public class VerifyEmailCommandTests : BaseIntegrationTest
     [Fact]
     public async Task Does_not_verify_email_with_invalid_code()
     {
-        EmailVerificationCode emailVerificationCode = new EmailVerificationCode(
-            new DateTimeProvider()
-        );
-        var user = await _userFactory.CreateAsync(emailVerificationCode: emailVerificationCode);
+        User user = await _userFactory.CreateAsync(isEmailVerified: false);
         string deviceId = _deviceIdFactory.Create();
-        var command = new VerifyEmailCommand(user.Id, emailVerificationCode.Value - 1, deviceId);
+        var command = new VerifyEmailCommand(
+            user.Id,
+            user.EmailVerificationCode!.Value - 1,
+            deviceId
+        );
 
         Result<Tokens, Error> result = await Mediator.Send(command);
 
@@ -71,17 +72,13 @@ public class VerifyEmailCommandTests : BaseIntegrationTest
     public async Task Does_not_verify_email_if_code_is_expired()
     {
         // Arrange
-        var emailVerificationCode = new EmailVerificationCode(
-            MockDateTimeProvider.CreateExpiredProvider
-        );
-
         var user = await _userFactory.CreateAsync(
             isEmailVerified: false,
-            emailVerificationCode: emailVerificationCode
+            emailVerificationCodeDateTimeProvider: MockDateTimeProvider.CreateExpiredProvider
         );
 
         string deviceId = _deviceIdFactory.Create();
-        var command = new VerifyEmailCommand(user.Id, emailVerificationCode.Value, deviceId);
+        var command = new VerifyEmailCommand(user.Id, user.EmailVerificationCode!.Value, deviceId);
 
         // Act
         Result<Tokens, Error> result = await Mediator.Send(command);
@@ -94,14 +91,10 @@ public class VerifyEmailCommandTests : BaseIntegrationTest
     public async Task Successfully_verifies_email_with_valid_code()
     {
         // Arrange
-        var emailVerificationCode = new EmailVerificationCode(new MockDateTimeProvider());
-        var user = await _userFactory.CreateAsync(
-            isEmailVerified: false,
-            emailVerificationCode: emailVerificationCode
-        );
+        var user = await _userFactory.CreateAsync(isEmailVerified: false);
 
         string deviceId = _deviceIdFactory.Create();
-        var command = new VerifyEmailCommand(user.Id, emailVerificationCode.Value, deviceId);
+        var command = new VerifyEmailCommand(user.Id, user.EmailVerificationCode!.Value, deviceId);
 
         // Act
         Result<Tokens, Error> result = await Mediator.Send(command);

@@ -5,7 +5,7 @@ import api from "@/lib/api.ts";
 import { AxiosError, AxiosResponse } from "axios";
 import { RouteError } from "@/types/RouteError.ts";
 import { useNavigate } from "react-router-dom";
-import GoogleSignInResponse from "@/pages/Login/types/GoogleSignInResponse.ts";
+import SocialSignInResponse from "@/types/SocialSignInResponse.ts";
 
 export default function GoogleLoginButton() {
     const navigate = useNavigate();
@@ -38,13 +38,12 @@ export default function GoogleLoginButton() {
         try {
             const serverResponse = (await api.post("api/google-signin", {
                 idToken: response.credential,
-            })) as AxiosResponse<GoogleSignInResponse>;
+            })) as AxiosResponse<SocialSignInResponse>;
 
-            const { status } = serverResponse.data;
-            if (status == "needs_username") {
+            const { authStatus } = serverResponse.data;
+            console.log(authStatus);
+            if (authStatus == "NewUser") {
                 navigate("/add-username");
-            } else if (status == "needs_phone_number_verification") {
-                navigate("/add-phone-number");
             } else {
                 navigate("/");
             }

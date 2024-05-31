@@ -1,5 +1,4 @@
 import RootLayout from "@/components/ui/RootLayout.tsx";
-import ErrorPage from "@/pages/ErrorPage/ErrorPage.tsx";
 import HomePage, { loader as homePageLoader } from "@/pages/Home/HomePage.tsx";
 import LoginPage, { loader as loginLoader } from "@/pages/Login/LoginPage.tsx";
 import { action as loginAction } from "@/pages/Login/components/LoginForm.tsx";
@@ -29,12 +28,18 @@ import AddUsernamePage, {
     loader as addUsernameLoader,
 } from "@/pages/AddUsername/AddUsernamePage.tsx";
 import { action as addUsernameAction } from "@/pages/AddUsername/components/AddUsernameForm.tsx";
+import VkAuthRedirectPage, {
+    loader as vkAuthRedirectLoader,
+} from "@/pages/VkAuthRedirect/VkAuthRedirectPage.tsx";
+import AddUsernameAndEmailPage, {
+    loader as addUsernameAndEmailLoader,
+} from "@/pages/AddUsernameAndEmail/AddUsernameAndEmailPage.tsx";
+import { action as addUsernameAndEmailAction } from "@/pages/AddUsernameAndEmail/components/AddUsernameAndEmailForm.tsx";
 
 const routes = [
     {
         path: "/",
         element: <RootLayout />,
-        errorElement: <ErrorPage />,
         children: [
             {
                 index: true,
@@ -88,6 +93,17 @@ const routes = [
                 element: <AddUsernamePage />,
                 loader: addUsernameLoader,
                 action: addUsernameAction,
+            },
+            {
+                path: "vk-auth-redirect",
+                element: <VkAuthRedirectPage />,
+                loader: vkAuthRedirectLoader,
+            },
+            {
+                path: "add-username-and-email",
+                element: <AddUsernameAndEmailPage />,
+                loader: addUsernameAndEmailLoader,
+                action: addUsernameAndEmailAction,
             },
         ],
     },

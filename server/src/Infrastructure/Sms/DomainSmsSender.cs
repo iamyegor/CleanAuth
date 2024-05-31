@@ -1,10 +1,10 @@
 namespace Infrastructure.Sms;
 
-public class VerificationCodeSender
+public class DomainSmsSender
 {
     private readonly ISmsMessageBus _smsSender;
 
-    public VerificationCodeSender(ISmsMessageBus smsSender)
+    public DomainSmsSender(ISmsMessageBus smsSender)
     {
         _smsSender = smsSender;
     }

@@ -15,8 +15,6 @@ export default function ErrorPage() {
             setTitle("500");
         } else if (error.code === "unexpected") {
             setTitle("Oops!");
-        } else {
-            throw new Error("Unexpected error code");
         }
     }, [error]);
 
@@ -29,8 +27,6 @@ export default function ErrorPage() {
             setMessage(
                 "An unexpected error has occurred. Please try again or contact support if the issue continues.",
             );
-        } else {
-            throw new Error("Unexpected error code");
         }
     }, [error]);
 

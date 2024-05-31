@@ -12,7 +12,7 @@ export default function VkLoginButton() {
 
         vk.Config.set({
             app: 51934884,
-            redirectUrl: "https://localhost",
+            redirectUrl: "http://localhost/vk-auth-redirect",
             state: "just_a_random_state_united_state",
         });
     }, []);

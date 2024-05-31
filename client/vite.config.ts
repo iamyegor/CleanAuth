@@ -1,8 +1,7 @@
 /// <reference types="vitest" />
 /// <reference types="vite/client" />
-import { defineConfig } from "vite";
+import {defineConfig} from "vite";
 import react from "@vitejs/plugin-react";
-import * as fs from "node:fs";
 
 export default defineConfig({
     plugins: [react()],
@@ -13,6 +12,9 @@ export default defineConfig({
         // you might want to disable it, if you don't have tests that rely on CSS
         // since parsing CSS is slow
         css: true,
+    },
+    server: {
+        port: 80,
     },
     resolve: {
         alias: {

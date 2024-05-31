@@ -1,20 +1,22 @@
-import LoginError from "@/pages/Login/types/LoginError.ts";
 import { useEffect, useState } from "react";
 import ErrorMessage from "@/utils/ErrorMessage.ts";
+import FieldError from "@/utils/FieldError.ts";
 
 export default function useLoginPageInputError(
-    loginError: LoginError | null,
+    loginError: FieldError | null,
     problematicField: string,
 ) {
     const [shouldApplyErrorClass, setShouldApplyErrorClass] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<ErrorMessage | null>(null);
 
     useEffect(() => {
-        const hasProblematicFieldError = loginError?.problematicField === problematicField;
-        const hasBothError = loginError?.problematicField === "both";
+        const hasProblematicFieldError: boolean = loginError?.isField(problematicField) ?? false;
+        const hasBothError: boolean = loginError?.isField("both") ?? false;
 
         setShouldApplyErrorClass(hasProblematicFieldError || hasBothError);
-        setErrorMessage(hasProblematicFieldError ? ErrorMessage.create(loginError.errorMessage) : null);
+        setErrorMessage(
+            hasProblematicFieldError ? ErrorMessage.create(loginError!.errorMessage) : null,
+        );
     }, [loginError, problematicField]);
 
     return { shouldApplyErrorClass, errorMessage };

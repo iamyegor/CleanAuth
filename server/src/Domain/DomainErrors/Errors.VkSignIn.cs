@@ -1,6 +1,4 @@
-﻿using System.Runtime.InteropServices.JavaScript;
-
-namespace Domain.DomainErrors;
+﻿namespace Domain.DomainErrors;
 
 public static partial class Errors
 {

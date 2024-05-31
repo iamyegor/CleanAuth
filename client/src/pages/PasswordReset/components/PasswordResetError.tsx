@@ -16,7 +16,7 @@ export default function PasswordResetError({ errorMessage }: PasswordResetErrorP
                 className="text-center text-lg text-red-500 mb-6"
                 data-testid="PasswordResetError.Message"
             >
-                {errorMessage.errorMessage}
+                {errorMessage.value}
             </p>
             <NavLink
                 to={"/request-password-reset"}

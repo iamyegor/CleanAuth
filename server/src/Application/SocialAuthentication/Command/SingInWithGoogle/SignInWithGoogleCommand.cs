@@ -4,6 +4,7 @@ using Domain.User.ValueObjects;
 using Google.Apis.Auth;
 using Infrastructure.Authentication;
 using Infrastructure.Data;
+using Infrastructure.SocialAuthentication;
 using Infrastructure.Specifications.User;
 using Infrastructure.TokensValidators;
 using MediatR;
@@ -12,13 +13,10 @@ using XResults;
 namespace Application.SocialAuthentication.Command.SingInWithGoogle;
 
 public record SignInWithGoogleCommand(string IdToken, string? DeviceId)
-    : IRequest<Result<(Tokens, SocialUserAuthenticationStatus), Error>>;
+    : IRequest<Result<SocialAuthResult, Error>>;
 
 public class SignInWithGoogleCommandHandler
-    : IRequestHandler<
-        SignInWithGoogleCommand,
-        Result<(Tokens, SocialUserAuthenticationStatus), Error>
-    >
+    : IRequestHandler<SignInWithGoogleCommand, Result<SocialAuthResult, Error>>
 {
     private readonly ApplicationContext _context;
     private readonly UserTokensUpdater _userTokensUpdater;
@@ -35,7 +33,7 @@ public class SignInWithGoogleCommandHandler
         _googleIdTokenValidator = googleIdTokenValidator;
     }
 
-    public async Task<Result<(Tokens, SocialUserAuthenticationStatus), Error>> Handle(
+    public async Task<Result<SocialAuthResult, Error>> Handle(
         SignInWithGoogleCommand command,
         CancellationToken ct
     )
@@ -53,57 +51,26 @@ public class SignInWithGoogleCommandHandler
 
         using var transaction = await _context.Database.BeginTransactionAsync(ct);
 
-        User user = await CreateOrUpdateSocialAuthUser(email, userWithSameEmail, ct);
+        SocialAuthStatus authStatus;
+        User user;
+        if (userWithSameEmail != null && userWithSameEmail.IsVerified)
+        {
+            user = userWithSameEmail;
+            authStatus = SocialAuthStatus.Verified;
+        }
+        else
+        {
+            await _context.DeleteUserIfExistsAsync(userWithSameEmail, ct);
+
+            user = User.CreateGoogleUser(email);
+            _context.Users.Add(user);
+            authStatus = SocialAuthStatus.NewUser;
+        }
+
         Tokens tokens = _userTokensUpdater.UpdateTokens(user, command.DeviceId!);
         await _context.SaveChangesAsync(ct);
         await transaction.CommitAsync(ct);
 
-        SocialUserAuthenticationStatus authStatus = GetSocialUserAuthenticationStatus(user);
-
-        return Result.Ok((tokens, authStatus));
-    }
-
-    private async Task<User> CreateOrUpdateSocialAuthUser(
-        Email email,
-        User? userWithSameEmail,
-        CancellationToken ct
-    )
-    {
-        if (userWithSameEmail == null)
-        {
-            User user = User.CreateSocialAuthUser(email, AuthType.Google);
-            _context.Users.Add(user);
-            return user;
-        }
-        else
-        {
-            if (userWithSameEmail is { IsEmailVerified: true, IsPhoneNumberVerified: true })
-            {
-                return userWithSameEmail;
-            }
-            else
-            {
-                _context.Remove(userWithSameEmail);
-                await _context.SaveChangesAsync(ct);
-
-                User user = User.CreateSocialAuthUser(email, AuthType.Google, userWithSameEmail.Id);
-                _context.Users.Add(user);
-                return user;
-            }
-        }
-    }
-
-    private SocialUserAuthenticationStatus GetSocialUserAuthenticationStatus(User user)
-    {
-        if (user is { IsEmailVerified: true, IsPhoneNumberVerified: true })
-        {
-            return SocialUserAuthenticationStatus.CompletelyVerified;
-        }
-        else if (user.Login == null)
-        {
-            return SocialUserAuthenticationStatus.NeedsUsername;
-        }
-
-        throw new Exception("Should never get there");
+        return Result.Ok(new SocialAuthResult(tokens, authStatus));
     }
 }

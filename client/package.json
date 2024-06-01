@@ -12,6 +12,7 @@
     },
     "dependencies": {
         "@types/validator": "^13.11.9",
+        "@vkid/sdk": "^1.1.0",
         "axios": "^1.6.7",
         "bootstrap": "^5.3.3",
         "classnames": "^2.5.1",

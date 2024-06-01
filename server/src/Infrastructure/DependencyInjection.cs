@@ -4,6 +4,7 @@ using Infrastructure.Cookies;
 using Infrastructure.Data;
 using Infrastructure.Emails;
 using Infrastructure.Sms;
+using Infrastructure.SocialAuthentication;
 using Infrastructure.TokensValidators;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.Extensions.Configuration;
@@ -96,8 +97,10 @@ public static class DependencyInjection
     private static IServiceCollection AddSmsMessages(this IServiceCollection services)
     {
         services.AddTransient<ISmsMessageBus, SmsMessageBus>();
-        services.AddTransient<VerificationCodeSender>();
+        services.AddTransient<DomainSmsSender>();
         services.AddTransient<CookiesInfoExtractor>();
+        services.AddTransient<VkTokenManager>();
+        services.AddTransient<HttpClient>();
 
         return services;
     }

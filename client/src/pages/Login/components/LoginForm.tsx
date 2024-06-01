@@ -8,15 +8,16 @@ import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx
 import { validateCredentials } from "@/pages/Login/utils/validateCredentials.ts";
 import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
 import LoginError from "@/pages/Login/types/LoginError.ts";
-import { ResultOf } from "@/utils/resultOfT.ts";
+import { ResultOr } from "@/utils/resultOfT.ts";
 import { extractLoginError } from "@/pages/Login/utils/extractLoginError.ts";
 import ErrorMessage from "@/utils/ErrorMessage.ts";
-import getErrorMessageForField from "@/utils/getErrorMessageForField.ts";
+import getFieldErrorMessage from "@/utils/getFieldErrorMessage.ts";
 import LoginPageLoginOrEmailInput from "@/pages/Login/components/LoginOrEmailInput.tsx";
 import ErrorMessageComponent from "@/components/ui/ErrorMessageComponent.tsx";
 import LoginPagePasswordInput from "@/pages/Login/components/LoginPagePasswordInput.tsx";
+import FieldError from "@/utils/FieldError.ts";
 
-export async function action({ request }: any): Promise<LoginError | Response> {
+export async function action({ request }: any): Promise<FieldError | Response> {
     const data = await request.formData();
 
     const credentials = {
@@ -24,7 +25,7 @@ export async function action({ request }: any): Promise<LoginError | Response> {
         password: data.get("password"),
     };
 
-    const validationResult: ResultOf<LoginError> = validateCredentials(credentials);
+    const validationResult: ResultOr<FieldError> = validateCredentials(credentials);
     if (validationResult.isFailure) {
         return validationResult.error!;
     }
@@ -38,7 +39,7 @@ export async function action({ request }: any): Promise<LoginError | Response> {
 }
 
 export default function LoginForm() {
-    const loginError = useActionData() as LoginError | null;
+    const loginError = useActionData() as FieldError | null;
     const { state } = useNavigation();
 
     function isPasswordError(): boolean {
@@ -50,7 +51,7 @@ export default function LoginForm() {
     }
 
     function getBothErrorMessage(): ErrorMessage | null {
-        return getErrorMessageForField("both", loginError);
+        return getFieldErrorMessage("both", loginError);
     }
 
     return (

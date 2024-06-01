@@ -21,14 +21,28 @@ public class AddLoginCommandHandler : IRequestHandler<AddLoginCommand, SuccessOr
 
     public async Task<SuccessOr<Error>> Handle(AddLoginCommand command, CancellationToken ct)
     {
+        using var transaction = await _context.Database.BeginTransactionAsync(ct);
+
+        User? userWithSameLogin = await _context.Query(new UserByLoginSpec(command.Login), ct);
+        if (userWithSameLogin != null)
+        {
+            if (userWithSameLogin.IsVerified)
+            {
+                return Errors.Login.IsAlreadyTaken(command.Login);
+            }
+
+            await _context.DeleteUserIfExistsAsync(userWithSameLogin, ct);
+        }
+
         User user = (await _context.Query(new UserByIdSpec(command.UserId), ct))!;
-        if (user.AuthType == AuthType.Standard || user.Login != null)
+        if (user.Login != null)
         {
             return Errors.Login.CanNotBeAdded();
         }
 
         user.Login = Login.Create(command.Login);
         await _context.SaveChangesAsync(ct);
+        await transaction.CommitAsync(ct);
 
         return Result.Ok();
     }

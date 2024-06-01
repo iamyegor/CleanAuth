@@ -1,5 +1,6 @@
 using Application.IntegrationTests.Base;
 using Application.IntegrationTests.Mocks;
+using Domain.DateTimeProviders;
 using Domain.User;
 using Domain.User.ValueObjects;
 
@@ -7,14 +8,13 @@ namespace Application.IntegrationTests.Factories;
 
 public class UserFactory
 {
-    public async Task<User> CreateSocialUserAsync(
-        AuthType authType,
+    public async Task<User> CreateGoogleUserAsync(
         string email = "yegor@google.com",
         string? login = null,
         bool isPhoneNumberVerified = false
     )
     {
-        User user = User.CreateSocialAuthUser(Email.Create(email), authType);
+        User user = User.CreateGoogleUser(Email.Create(email));
         if (login != null)
         {
             user.Login = Login.Create(login);
@@ -39,18 +39,17 @@ public class UserFactory
         PasswordResetToken? passwordResetToken = null,
         PhoneNumberVerificationCode? phoneNumberVerificationCode = null,
         string? phoneNumber = null,
-        EmailVerificationCode? emailVerificationCode = null,
-        RefreshToken? refreshToken = null
+        RefreshToken? refreshToken = null,
+        IDateTimeProvider? emailVerificationCodeDateTimeProvider = null
     )
     {
-        emailVerificationCode ??= new EmailVerificationCode(new MockDateTimeProvider());
-
         User user = User.CreateStandardAuthUser(
             Login.Create(login),
             Email.Create(email),
-            Password.Create(password),
-            emailVerificationCode
+            Password.Create(password)
         );
+        
+        user.NewEmailVerificationCode(emailVerificationCodeDateTimeProvider);
 
         user.PasswordResetToken = passwordResetToken;
         user.PhoneNumberVerificationCode = phoneNumberVerificationCode;

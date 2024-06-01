@@ -42,13 +42,13 @@ public class ResetPasswordCommandHandler
         {
             return Errors.PasswordResetToken.IsInvalid(command.TokenString);
         }
-
+        
         if (user.PasswordResetToken.IsExpired)
         {
             return Errors.PasswordResetToken.IsExpired();
         }
-
-        if (user.Password!.Matches(command.Password))
+        
+        if (user.Password != null && user.Password.Matches(command.Password))
         {
             return Errors.Password.IsSameAsCurrent();
         }

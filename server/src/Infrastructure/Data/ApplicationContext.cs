@@ -56,4 +56,13 @@ public class ApplicationContext : DbContext
         query = spec.Apply(query);
         return await query.ToListAsync(cancellationToken: ct);
     }
+
+    public async Task DeleteUserIfExistsAsync(User? user, CancellationToken cancellationToken)
+    {
+        if (user != null)
+        {
+            Remove(user);
+            await SaveChangesAsync(cancellationToken);
+        }
+    }
 }

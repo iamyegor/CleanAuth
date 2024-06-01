@@ -6,11 +6,13 @@ import VerifyCodeForm, { baseAction } from "@/components/VerifyCodeForm/VerifyCo
 import FeedbackMessage from "@/utils/FeedbackMessage.ts";
 import VerifyEmailLoaderData from "@/pages/VerifyEmail/types/VerifyEmailLoaderData.ts";
 import extractVerifyEmailError from "@/pages/VerifyEmail/utils/extractVerifyEmailError.ts";
+import EmailForVerificationResponse from "@/pages/VerifyEmail/types/RequestEmailVerificationCodeResponse.ts";
 
 export async function loader(): Promise<VerifyEmailLoaderData | Response> {
     try {
-        const response = await api.get<string>("api/email-for-verification");
-        return { email: response.data };
+        const response = await api.get<EmailForVerificationResponse>("api/email-for-verification");
+
+        return { email: response.data.email };
     } catch {
         return redirect("/signup");
     }
@@ -34,7 +36,7 @@ export default function VerifyEmailPage() {
             <VerifyCodeForm
                 goBackRoute="/signup"
                 goBackButtonText="Back to signup"
-                resendCodeEndpoint="api/resend-email-code"
+                resendCodeEndpoint="api/request-email-verification-code"
                 contactDetail="Email"
                 contactValue={email}
                 codeLength={5}

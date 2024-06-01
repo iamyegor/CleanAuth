@@ -32,7 +32,7 @@ public class DomainEmailSender : IDomainEmailSender
             Path.Combine(_htmlFolderPath, "password-reset.html")
         );
 
-        string emailBody = string.Format(htmlContent, "http://localhost:5173/", userId, token);
+        string emailBody = string.Format(htmlContent, "http://localhost:80/", userId, token);
         await _emailMessageBus.SendAsync(emailBody, email);
     }
 }

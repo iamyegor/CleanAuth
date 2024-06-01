@@ -3,14 +3,15 @@ using Application.IntegrationTests.CustomAssertions;
 using Application.IntegrationTests.Factories;
 using Application.IntegrationTests.MemberData;
 using Application.IntegrationTests.Repositories;
+using Application.SocialAuthentication.Command.SignInWithVk;
 using Application.SocialAuthentication.Command.SingInWithGoogle;
 using Domain.DomainErrors;
 using Domain.User;
-using Domain.User.ValueObjects;
 using FluentAssertions;
 using Google.Apis.Auth;
 using Infrastructure.Authentication;
 using Infrastructure.Data;
+using Infrastructure.SocialAuthentication;
 using Infrastructure.TokensValidators;
 using Microsoft.Extensions.DependencyInjection;
 using Moq;
@@ -38,8 +39,7 @@ public class SignInWithGoogleCommandTests : BaseIntegrationTest
         string deviceId = _deviceIdFactory.CreateInvalid();
         var command = new SignInWithGoogleCommand("invalid_token", deviceId);
 
-        Result<(Tokens tokens, SocialUserAuthenticationStatus AuthStatus), Error> result =
-            await Mediator.Send(command);
+        Result<SocialAuthResult, Error> result = await Mediator.Send(command);
 
         result.Error.Should().Be(Errors.DeviceId.IsInvalid(deviceId));
     }
@@ -49,8 +49,7 @@ public class SignInWithGoogleCommandTests : BaseIntegrationTest
     {
         var command = new SignInWithGoogleCommand("invalid_token", _deviceIdFactory.Create());
 
-        Result<(Tokens Tokens, SocialUserAuthenticationStatus AuthStatus), Error> result =
-            await Mediator.Send(command);
+        Result<SocialAuthResult, Error> result = await Mediator.Send(command);
 
         result.Error.Should().Be(Errors.IdToken.Invalid());
     }
@@ -73,8 +72,10 @@ public class SignInWithGoogleCommandTests : BaseIntegrationTest
         );
 
         // Act
-        Result<(Tokens Tokens, SocialUserAuthenticationStatus AuthStatus), Error> result =
-            await handler.Handle(command, new CancellationToken());
+        Result<SocialAuthResult, Error> result = await handler.Handle(
+            command,
+            new CancellationToken()
+        );
 
         // Assert
         result.Value.Tokens.AccessToken.Should().NotBeNullOrEmpty();
@@ -127,13 +128,15 @@ public class SignInWithGoogleCommandTests : BaseIntegrationTest
         );
 
         // Act
-        Result<(Tokens Tokens, SocialUserAuthenticationStatus AuthStatus), Error> result =
-            await handler.Handle(command, new CancellationToken());
+        Result<SocialAuthResult, Error> result = await handler.Handle(
+            command,
+            new CancellationToken()
+        );
 
         // Assert
         result.Value.Tokens.AccessToken.Should().NotBeNullOrEmpty();
         result.Value.Tokens.RefreshToken.Should().NotBeNullOrEmpty();
-        result.Value.AuthStatus.Should().Be(SocialUserAuthenticationStatus.NeedsUsername);
+        result.Value.AuthStatus.Should().Be(SocialAuthStatus.NewUser);
 
         User userFromDb = _userRepository.QueryUserByEmail("newuser@google.com");
         userFromDb.Should().NotBeNull();
@@ -160,11 +163,13 @@ public class SignInWithGoogleCommandTests : BaseIntegrationTest
         );
 
         // Act
-        Result<(Tokens Tokens, SocialUserAuthenticationStatus AuthStatus), Error> result =
-            await handler.Handle(command, new CancellationToken());
+        Result<SocialAuthResult, Error> result = await handler.Handle(
+            command,
+            new CancellationToken()
+        );
 
         // Assert
-        result.Value.AuthStatus.Should().Be(SocialUserAuthenticationStatus.CompletelyVerified);
+        result.Value.AuthStatus.Should().Be(SocialAuthStatus.Verified);
     }
 
     [Theory]
@@ -175,13 +180,12 @@ public class SignInWithGoogleCommandTests : BaseIntegrationTest
     public async Task Signs_in_with_correct_authentication_status(
         string? login,
         bool isPhoneNumberVerified,
-        SocialUserAuthenticationStatus expectedStatus
+        SocialAuthStatus expectedStatus
     )
     {
         // Arrange
         var email = "test@google.com";
-        await _userFactory.CreateSocialUserAsync(
-            AuthType.Google,
+        await _userFactory.CreateGoogleUserAsync(
             login: login,
             email: email,
             isPhoneNumberVerified: isPhoneNumberVerified
@@ -195,8 +199,10 @@ public class SignInWithGoogleCommandTests : BaseIntegrationTest
         var command = new SignInWithGoogleCommand("valid_token", _deviceIdFactory.Create());
 
         // Act
-        Result<(Tokens Tokens, SocialUserAuthenticationStatus AuthStatus), Error> result =
-            await handler.Handle(command, new CancellationToken());
+        Result<SocialAuthResult, Error> result = await handler.Handle(
+            command,
+            new CancellationToken()
+        );
 
         // Assert
         result.Value.AuthStatus.Should().Be(expectedStatus);
@@ -208,6 +214,7 @@ public class SignInWithGoogleCommandTests : BaseIntegrationTest
     {
         ApplicationContext context = ServiceProvider.GetRequiredService<ApplicationContext>();
         UserTokensUpdater tokensUpdater = ServiceProvider.GetRequiredService<UserTokensUpdater>();
+
         SignInWithGoogleCommandHandler handler = new SignInWithGoogleCommandHandler(
             tokensUpdater,
             context,

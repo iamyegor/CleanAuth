@@ -11,7 +11,7 @@ describe("ErrorMessage", () => {
 
         const errorMessage = createErrorMessage(message);
 
-        expect(errorMessage.errorMessage).toBe(message);
+        expect(errorMessage.value).toBe(message);
     });
 
     test("2. Converts ErrorMessage to string", () => {

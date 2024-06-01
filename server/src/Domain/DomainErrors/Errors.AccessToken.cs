@@ -14,4 +14,5 @@ public static partial class Errors
             return new Error("access.token.is.required", "Access token is required");
         }
     }
+
 }

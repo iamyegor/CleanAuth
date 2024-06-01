@@ -6,26 +6,26 @@ using MediatR;
 using Npgsql;
 using XResults;
 
-namespace Application.SocialAuthentication.Queries.CanAddUsername;
+namespace Application.SocialAuthentication.Queries.CanAddLogin;
 
-public record CanAddUsernameQuery(UserId UserId) : IRequest<SuccessOr<Error>>;
+public record CanAddLoginQuery(UserId UserId) : IRequest<SuccessOr<Error>>;
 
-public class CanAddUsernameQueryHandler : IRequestHandler<CanAddUsernameQuery, SuccessOr<Error>>
+public class CanAddLoginQueryHandler : IRequestHandler<CanAddLoginQuery, SuccessOr<Error>>
 {
     private readonly DapperConnectionFactory _connectionFactory;
 
-    public CanAddUsernameQueryHandler(DapperConnectionFactory connectionFactory)
+    public CanAddLoginQueryHandler(DapperConnectionFactory connectionFactory)
     {
         _connectionFactory = connectionFactory;
     }
 
-    public async Task<SuccessOr<Error>> Handle(CanAddUsernameQuery query, CancellationToken ct)
+    public async Task<SuccessOr<Error>> Handle(CanAddLoginQuery query, CancellationToken ct)
     {
         string sql =
             @"
             select count(*)
             from users 
-            where id = @UserId::uuid and login is null and auth_type != 'Standard'";
+            where id = @UserId::uuid and login is null";
 
         NpgsqlConnection connection = _connectionFactory.Create();
         int returnedRows = await connection.QuerySingleAsync<int>(
@@ -35,7 +35,7 @@ public class CanAddUsernameQueryHandler : IRequestHandler<CanAddUsernameQuery, S
 
         if (returnedRows == 0)
         {
-            return Errors.User.CanNotAddUsername(query.UserId);
+            return Errors.Login.CanNotBeAdded();
         }
 
         return Result.Ok();

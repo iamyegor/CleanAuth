@@ -26,7 +26,7 @@ public class GetEmailForVerificationQueryHandler
     )
     {
         string sql = "select email from users where id = @Id";
-
+        
         return await _connection.QuerySingleAsync<string>(sql, new { Id = query.UserId.Value });
     }
 }

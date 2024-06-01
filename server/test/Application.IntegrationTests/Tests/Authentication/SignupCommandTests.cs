@@ -175,11 +175,10 @@ public class SignupCommandTests : BaseIntegrationTest
         Mock<IDomainEmailSender> emailSenderMock
     )
     {
-        ApplicationContext context = ServiceProvider.GetRequiredService<ApplicationContext>();
         SignUpCommandHandler handler = new SignUpCommandHandler(
-            context,
-            emailSenderMock.Object,
-            ServiceProvider.GetRequiredService<UserTokensUpdater>()
+            ServiceProvider.GetRequiredService<ApplicationContext>(),
+            ServiceProvider.GetRequiredService<UserTokensUpdater>(),
+            emailSenderMock.Object
         );
 
         return handler;

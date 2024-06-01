@@ -1,10 +1,10 @@
 import ErrorMessageComponent from "@/components/ui/ErrorMessageComponent.tsx";
 import classNames from "classnames";
-import LoginError from "@/pages/Login/types/LoginError.ts";
 import useLoginPageInputError from "@/hooks/useLoginPageInputError.ts";
+import FieldError from "@/utils/FieldError.ts";
 
 interface LoginOrEmailInputProps {
-    loginError: LoginError | null;
+    loginError: FieldError | null;
 }
 
 export default function LoginOrEmailInput({ loginError }: LoginOrEmailInputProps) {

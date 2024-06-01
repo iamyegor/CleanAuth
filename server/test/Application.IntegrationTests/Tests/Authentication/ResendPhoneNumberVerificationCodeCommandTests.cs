@@ -71,10 +71,10 @@ public class ResendPhoneNumberVerificationCodeCommandTests : BaseIntegrationTest
     )
     {
         ApplicationContext context = ServiceProvider.GetRequiredService<ApplicationContext>();
-        VerificationCodeSender verificationCodeSender = new VerificationCodeSender(
+        DomainSmsSender domainSmsSender = new DomainSmsSender(
             smsMessageBusMock.Object
         );
 
-        return new ResendPhoneNumberVerificationCodeCommandHandler(context, verificationCodeSender);
+        return new ResendPhoneNumberVerificationCodeCommandHandler(context, domainSmsSender);
     }
 }

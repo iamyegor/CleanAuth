@@ -16,15 +16,15 @@ public class ResendPhoneNumberVerificationCodeCommandHandler
     : IRequestHandler<ResendPhoneNumberVerificationCodeCommand, SuccessOr<Error>>
 {
     private readonly ApplicationContext _context;
-    private readonly VerificationCodeSender _verificationCodeSender;
+    private readonly DomainSmsSender _domainSmsSender;
 
     public ResendPhoneNumberVerificationCodeCommandHandler(
         ApplicationContext context,
-        VerificationCodeSender verificationCodeSender
+        DomainSmsSender domainSmsSender
     )
     {
         _context = context;
-        _verificationCodeSender = verificationCodeSender;
+        _domainSmsSender = domainSmsSender;
     }
 
     public async Task<SuccessOr<Error>> Handle(
@@ -42,7 +42,7 @@ public class ResendPhoneNumberVerificationCodeCommandHandler
         user.PhoneNumberVerificationCode = code;
 
         await _context.SaveChangesAsync(ct);
-        await _verificationCodeSender.SendAsync(user.PhoneNumber.Value, code.Value);
+        await _domainSmsSender.SendAsync(user.PhoneNumber.Value, code.Value);
 
         return Result.Ok();
     }

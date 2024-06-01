@@ -1,3 +1,5 @@
+using XResults;
+
 namespace Domain.DomainErrors;
 
 public static partial class Errors
@@ -38,6 +40,16 @@ public static partial class Errors
                 "Email can't be longer than 150 characters",
                 details
             );
+        }
+
+        public static Error CanNotBeAdded()
+        {
+            return new Error("email.can.not.be.added", "Email can not be added");
+        }
+
+        public static Error CanNotBeVerified()
+        {
+            return new Error("email.can.not.be.verified", "Email can not be verified");
         }
     }
 }

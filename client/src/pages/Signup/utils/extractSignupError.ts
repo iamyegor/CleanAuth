@@ -5,21 +5,22 @@ import isInvalidPasswordErrorCode from "@/utils/isInvalidPasswordErrorCode.ts";
 import { RouteError } from "@/types/RouteError.ts";
 import isInvalidEmailErrorCode from "@/pages/Signup/utils/isInvalidEmailErrorCode.ts";
 import isInvalidLoginErrorCode from "@/pages/Signup/utils/isInvalidLoginErrorCode.ts";
+import FieldError from "@/utils/FieldError.ts";
 
-export default function extractSignupError(error: AxiosError<ServerErrorResponse>): SignupError {
+export default function extractSignupError(error: AxiosError<ServerErrorResponse>): FieldError {
     throwRouteErrorOnInvalidResponse(error);
 
     const { errorCode, errorMessage } = error.response!.data;
     if (isInvalidPasswordErrorCode(errorCode)) {
-        return { problematicField: "password", errorMessage };
+        return FieldError.create("password", errorMessage);
     } else if (isInvalidEmailErrorCode(errorCode)) {
-        return { problematicField: "email", errorMessage };
+        return FieldError.create("email", errorMessage);
     } else if (isInvalidLoginErrorCode(errorCode)) {
-        return { problematicField: "username", errorMessage };
+        return FieldError.create("username", errorMessage);
     } else if (errorCode === "login.already.taken") {
-        return { problematicField: "username", errorMessage };
+        return FieldError.create("username", errorMessage);
     } else if (errorCode === "email.already.taken") {
-        return { problematicField: "email", errorMessage };
+        return FieldError.create("email", errorMessage);
     } else {
         throw RouteError.unexpected();
     }

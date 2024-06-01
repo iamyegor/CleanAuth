@@ -15,7 +15,7 @@ public class VerifiedUserByEmailOrLoginSpec : ISingleSpecification<Domain.User.U
             user.IsEmailVerified
             && user.IsPhoneNumberVerified
             && user.Login != null
-            && (user.Email.Value == _emailOrLogin || user.Login.Value == _emailOrLogin)
+            && (user.Email!.Value == _emailOrLogin || user.Login.Value == _emailOrLogin)
         );
     }
 }

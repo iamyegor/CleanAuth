@@ -9,7 +9,7 @@ import extractPasswordResetError from "@/pages/PasswordReset/utils/extractPasswo
 import { AxiosError } from "axios";
 import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
 import PasswordResetError from "@/pages/PasswordReset/types/PasswordResetError.ts";
-import { ResultOf } from "@/utils/resultOfT.ts";
+import { ResultOr } from "@/utils/resultOfT.ts";
 import validatePasswordResetData from "@/pages/PasswordReset/utils/validateDataForPasswordReset.ts";
 
 export async function action({ request }: any): Promise<Response | PasswordResetError> {
@@ -17,7 +17,7 @@ export async function action({ request }: any): Promise<Response | PasswordReset
     const password = data.get("password");
     const confirmPassword = data.get("confirmPassword");
 
-    const validationResult: ResultOf<PasswordResetError> = validatePasswordResetData(
+    const validationResult: ResultOr<PasswordResetError> = validatePasswordResetData(
         password,
         confirmPassword,
     );

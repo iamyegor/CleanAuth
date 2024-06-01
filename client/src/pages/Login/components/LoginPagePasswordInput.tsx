@@ -6,9 +6,10 @@ import closedEyeImage from "@/assets/closed_eye.png";
 import ErrorMessageComponent from "@/components/ui/ErrorMessageComponent.tsx";
 import LoginError from "@/pages/Login/types/LoginError.ts";
 import useLoginPageInputError from "@/hooks/useLoginPageInputError.ts";
+import FieldError from "@/utils/FieldError.ts";
 
 interface LoginPasswordInputProps {
-    loginError: LoginError | null;
+    loginError: FieldError | null;
 }
 
 export default function LoginPagePasswordInput({ loginError }: LoginPasswordInputProps) {

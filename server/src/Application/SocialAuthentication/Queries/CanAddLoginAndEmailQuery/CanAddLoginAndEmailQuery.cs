@@ -22,11 +22,7 @@ public class CanAddLoginAndEmailQueryHandler
 
     public async Task<SuccessOr<Error>> Handle(CanAddLoginAndEmailQuery query, CancellationToken ct)
     {
-        string sql =
-            @"
-            select email, login
-            from users 
-            where id = @UserId::uuid";
+        string sql = "select email, login from users where id = @UserId::uuid";
 
         NpgsqlConnection connection = _connectionFactory.Create();
         UserFromDb userFromDb = await connection.QuerySingleAsync<UserFromDb>(
@@ -44,5 +40,11 @@ public class CanAddLoginAndEmailQueryHandler
         }
 
         return Result.Ok();
+    }
+
+    internal class UserFromDb
+    {
+        public string? Email { get; set; }
+        public string? Login { get; set; }
     }
 }

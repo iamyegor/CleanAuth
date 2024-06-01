@@ -12,6 +12,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.ToTable("users").HasKey(x => x.Id);
         builder.Property(x => x.IsEmailVerified).HasColumnName("is_email_verified");
         builder.Property(x => x.IsPhoneNumberVerified).HasColumnName("is_phone_number_verified");
+        builder.Property(x => x.VkUserId).HasColumnName("vk_user_id");
+        builder.Property(x => x.OdnoklassnikiUserId).HasColumnName("odnoklassniki_user_id");
 
         builder
             .Property(u => u.Id)
@@ -27,8 +29,6 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
                 loginBuilder.HasIndex(l => l.Value).IsUnique();
             }
         );
-
-        builder.Property(x => x.VkUserId).HasColumnName("vk_user_id");
 
         builder.OwnsOne(
             x => x.Email,

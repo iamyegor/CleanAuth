@@ -15,6 +15,7 @@ export default function BiggerSocialLoginButton({
         <button
             className="p-3 px-6 bg-white border rounded-md shadow-lg  hover:border-gray-400 
         hover:shadow-xl transition select-none group"
+            type="button"
             onClick={onClick}
         >
             <Image

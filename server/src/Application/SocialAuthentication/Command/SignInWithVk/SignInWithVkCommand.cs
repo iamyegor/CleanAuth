@@ -1,76 +1,57 @@
-﻿using Domain.DomainErrors;
+﻿using Application.SocialAuthentication.Command.SocialSignInCommand;
+using Domain.DomainErrors;
 using Domain.User;
 using Infrastructure.Authentication;
 using Infrastructure.Data;
 using Infrastructure.SocialAuthentication;
+using Infrastructure.Specifications;
 using Infrastructure.Specifications.User;
-using MediatR;
 using XResults;
 
 namespace Application.SocialAuthentication.Command.SignInWithVk;
 
-public record SignInWithVkCommand(string SilentToken, string Uuid, string? DeviceId)
-    : IRequest<Result<SocialAuthResult, Error>>;
-
-public class SignInWithVkCommandHandler
-    : IRequestHandler<SignInWithVkCommand, Result<SocialAuthResult, Error>>
+public class SignInWithVkCommand : SocialSignInCommand.SocialSignInCommand
 {
-    private readonly ApplicationContext _context;
-    private readonly UserTokensUpdater _userTokensUpdater;
+    public string SilentToken { get; }
+    public string Uuid { get; }
+
+    public SignInWithVkCommand(string silentToken, string uuid, string deviceId)
+        : base(deviceId)
+    {
+        SilentToken = silentToken;
+        Uuid = uuid;
+    }
+}
+
+public class SignInWithVkCommandHandler : SignInWithSocialCommandHandler<SignInWithVkCommand>
+{
     private readonly VkTokenManager _vkTokenManager;
 
     public SignInWithVkCommandHandler(
+        VkTokenManager vkTokenManager,
         ApplicationContext context,
-        UserTokensUpdater userTokensUpdater,
-        VkTokenManager vkTokenManager
+        UserTokensUpdater userTokensUpdater
     )
+        : base(context, userTokensUpdater)
     {
-        _context = context;
-        _userTokensUpdater = userTokensUpdater;
         _vkTokenManager = vkTokenManager;
     }
 
-    public async Task<Result<SocialAuthResult, Error>> Handle(
+    protected override async Task<Result<string, Error>> GetSocialId(
         SignInWithVkCommand command,
         CancellationToken ct
     )
     {
-        Result<string, Error> vkUserId = await _vkTokenManager.GetVkUserId(
-            command.SilentToken,
-            command.Uuid,
-            ct
-        );
+        return await _vkTokenManager.GetVkUserId(command.SilentToken, command.Uuid, ct);
+    }
 
-        if (vkUserId.IsFailure)
-        {
-            return vkUserId.Error;
-        }
+    protected override User CreateUser(string socialId)
+    {
+        return User.CreateVkUser(socialId);
+    }
 
-        UserByVkIdSpec spec = new UserByVkIdSpec(vkUserId);
-        User? userWithSameVkId = await _context.Query(spec, ct);
-
-        using var transaction = await _context.Database.BeginTransactionAsync(ct);
-
-        User? user;
-        SocialAuthStatus authStatus;
-        if (userWithSameVkId != null && userWithSameVkId.IsVerified)
-        {
-            user = userWithSameVkId;
-            authStatus = SocialAuthStatus.Verified;
-        }
-        else
-        {
-            await _context.DeleteUserIfExistsAsync(userWithSameVkId, ct);
-
-            user = User.CreateVkUser(vkUserId.Value);
-            _context.Users.Add(user);
-            authStatus = SocialAuthStatus.NewUser;
-        }
-
-        Tokens tokens = _userTokensUpdater.UpdateTokens(user, command.DeviceId!);
-        await _context.SaveChangesAsync(ct);
-        await transaction.CommitAsync(ct);
-
-        return Result.Ok(new SocialAuthResult(tokens, authStatus));
+    protected override ISingleSpecification<User> UserBySocialIdSpec(string socialId)
+    {
+        return new UserByVkIdSpec(socialId);
     }
 }

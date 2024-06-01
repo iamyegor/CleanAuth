@@ -29,6 +29,8 @@ api.interceptors.response.use(
                 await issueNewDeviceId();
             } else if (error.response?.status === 401) {
                 await refreshToken();
+            } else {
+                return Promise.reject(error);
             }
 
             return api(originalRequest);

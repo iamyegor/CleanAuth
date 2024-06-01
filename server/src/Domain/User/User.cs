@@ -19,6 +19,7 @@ public class User : AggregateRoot<UserId>
     public bool IsPhoneNumberVerified { get; private set; }
     public PasswordResetToken? PasswordResetToken { get; set; }
     public string? VkUserId { get; private set; }
+    public string? OdnoklassnikiUserId { get; private set; }
     public bool IsVerified => IsEmailVerified && IsPhoneNumberVerified;
 
     private User() // Constructor required by ef core
@@ -29,21 +30,21 @@ public class User : AggregateRoot<UserId>
 
     public static User CreateGoogleUser(Email email)
     {
-        User user = new User(new UserId())
-        {
-            Email = email,
-            IsEmailVerified = true,
-        };
+        User user = new User(new UserId()) { Email = email, IsEmailVerified = true, };
+
+        return user;
+    }
+
+    public static User CreateOdnoklassnikiUser(string socialProviderUserId, UserId? id = null)
+    {
+        User user = new User(id ?? new UserId()) { OdnoklassnikiUserId = socialProviderUserId };
 
         return user;
     }
 
     public static User CreateVkUser(string socialProviderUserId, UserId? id = null)
     {
-        User user = new User(id ?? new UserId())
-        {
-            VkUserId = socialProviderUserId
-        };
+        User user = new User(id ?? new UserId()) { VkUserId = socialProviderUserId };
 
         return user;
     }

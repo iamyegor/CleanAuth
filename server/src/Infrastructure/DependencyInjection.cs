@@ -30,6 +30,7 @@ public static class DependencyInjection
             .AddAuthorization()
             .AddDapper()
             .AddSmsMessages()
+            .AddSocialTokenManagers()
             .AddUtils();
     }
 
@@ -98,9 +99,14 @@ public static class DependencyInjection
     {
         services.AddTransient<ISmsMessageBus, SmsMessageBus>();
         services.AddTransient<DomainSmsSender>();
-        services.AddTransient<CookiesInfoExtractor>();
+
+        return services;
+    }
+
+    private static IServiceCollection AddSocialTokenManagers(this IServiceCollection services)
+    {
         services.AddTransient<VkTokenManager>();
-        services.AddTransient<HttpClient>();
+        services.AddTransient<OdnoklassnikiTokenManager>();
 
         return services;
     }
@@ -109,6 +115,8 @@ public static class DependencyInjection
     {
         services.AddTransient<UserTokensUpdater>();
         services.AddTransient<IGoogleIdTokenValidator, GoogleIdTokenValidator>();
+        services.AddTransient<CookiesInfoExtractor>();
+        services.AddTransient<HttpClient>();
 
         return services;
     }

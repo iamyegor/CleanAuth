@@ -2,6 +2,7 @@ using Api.Controllers.Common;
 using Api.Dtos;
 using Application.SocialAuthentication.Command.AddLogin;
 using Application.SocialAuthentication.Command.AddLoginAndEmail;
+using Application.SocialAuthentication.Command.SignInWithOdnoklassniki;
 using Application.SocialAuthentication.Command.SignInWithVk;
 using Application.SocialAuthentication.Command.SingInWithGoogle;
 using Application.SocialAuthentication.Queries.CanAddLogin;
@@ -36,13 +37,8 @@ public class SocialAuthenticationController : ApplicationController
         _cookiesInfoExtractor = cookiesInfoExtractor;
     }
 
-    [HttpPost("google-signin")]
-    public async Task<IActionResult> SignInWithGoogle(GoogleSignInDto dto)
+    public IActionResult FromSocialAuthResult(Result<SocialAuthResult, Error> result)
     {
-        Request.Cookies.TryGetValue(CookiesInfo.DeviceId.Name, out var deviceId);
-        SignInWithGoogleCommand command = new SignInWithGoogleCommand(dto.IdToken, deviceId);
-
-        Result<SocialAuthResult, Error> result = await _mediator.Send(command);
         if (result.IsFailure)
         {
             return Problem(result.Error);
@@ -53,6 +49,17 @@ public class SocialAuthenticationController : ApplicationController
         return Ok(new { AuthStatus = result.Value.AuthStatus.GetDisplayName() });
     }
 
+    [HttpPost("google-signin")]
+    public async Task<IActionResult> SignInWithGoogle(GoogleSignInDto dto)
+    {
+        Request.Cookies.TryGetValue(CookiesInfo.DeviceId.Name, out var deviceId);
+        SignInWithGoogleCommand command = new SignInWithGoogleCommand(dto.IdToken, deviceId);
+
+        Result<SocialAuthResult, Error> result = await _mediator.Send(command);
+
+        return FromSocialAuthResult(result);
+    }
+
     [HttpPost("vk-signin")]
     public async Task<IActionResult> SignInWithVk(VkSignInDto dto)
     {
@@ -60,14 +67,22 @@ public class SocialAuthenticationController : ApplicationController
         SignInWithVkCommand command = new SignInWithVkCommand(dto.SilentToken, dto.Uuid, deviceId);
 
         Result<SocialAuthResult, Error> result = await _mediator.Send(command);
-        if (result.IsFailure)
-        {
-            return Problem(result.Error);
-        }
 
-        Response.Cookies.Append(result.Value.Tokens);
+        return FromSocialAuthResult(result);
+    }
 
-        return Ok(new { AuthStatus = result.Value.AuthStatus.GetDisplayName() });
+    [HttpPost("odnoklassniki-signin")]
+    public async Task<IActionResult> SignInWithOdnoklassniki(OdnoklassnikiSignInDto dto)
+    {
+        Request.Cookies.TryGetValue(CookiesInfo.DeviceId.Name, out var deviceId);
+        var command = new SignInWithOdnoklassnikiCommand(
+            dto.AccessToken,
+            dto.SessionSecretKey,
+            deviceId
+        );
+        Result<SocialAuthResult, Error> result = await _mediator.Send(command);
+
+        return FromSocialAuthResult(result);
     }
 
     [HttpGet("can-add-login"), Authorize(AuthorizationPolicies.EmailVerified)]

@@ -42,7 +42,7 @@ public class ResendPhoneNumberVerificationCodeCommandHandler
         user.PhoneNumberVerificationCode = code;
 
         await _context.SaveChangesAsync(ct);
-        await _domainSmsSender.SendAsync(user.PhoneNumber.Value, code.Value);
+        // await _domainSmsSender.SendAsync(user.PhoneNumber.Value, code.Value);
 
         return Result.Ok();
     }

@@ -36,6 +36,9 @@ import AddUsernameAndEmailPage, {
 } from "@/pages/AddUsernameAndEmail/AddUsernameAndEmailPage.tsx";
 import { action as addUsernameAndEmailAction } from "@/pages/AddUsernameAndEmail/components/AddUsernameAndEmailForm.tsx";
 import ErrorPage from "@/pages/ErrorPage/ErrorPage.tsx";
+import OdnoklassnikiAuthRedirectPage, {
+    loader as odnoklassnikiAuthRedirectLoader,
+} from "@/pages/OdnoklassnikiAuthRedirect/OdnoklassnikiAuthRedirectPage.tsx";
 
 const routes = [
     {
@@ -106,6 +109,11 @@ const routes = [
                 element: <AddUsernameAndEmailPage />,
                 loader: addUsernameAndEmailLoader,
                 action: addUsernameAndEmailAction,
+            },
+            {
+                path: "odnoklassniki-auth-redirect",
+                element: <OdnoklassnikiAuthRedirectPage />,
+                loader: odnoklassnikiAuthRedirectLoader,
             },
         ],
     },

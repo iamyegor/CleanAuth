@@ -33,6 +33,10 @@ export default function ResendCodeButton({
     }, [unexpectedError]);
 
     async function resendCode() {
+        if (isDisabled()) {
+            return;
+        }
+
         setIsLoading(true);
 
         try {

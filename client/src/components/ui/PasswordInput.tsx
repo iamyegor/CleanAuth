@@ -1,25 +1,23 @@
 import React, { useState } from "react";
 import openedEyeImage from "@/assets/opened_eye.png";
 import closedEyeImage from "@/assets/closed_eye.png";
-import classNames from "classnames";
-import ErrorMessageComponent from "@/components/ui/ErrorMessageComponent.tsx";
 import Image from "@/components/ui/Image.tsx";
-import ErrorMessage from "@/utils/ErrorMessage.ts";
+import Input from "@/components/ui/Input.tsx";
 
 interface PasswordInputProps {
     name: string;
     placeholder: string;
-    errorMessage?: ErrorMessage | null;
     defaultValue?: string;
-    handleErrorShown?: (isErrorShown: boolean) => void;
+    isInvalid?: boolean;
+    "data-testid"?: string;
 }
 
 export default function PasswordInput({
     name,
     placeholder,
-    errorMessage,
     defaultValue,
-    handleErrorShown,
+    isInvalid,
+    "data-testid": dataTestId,
 }: PasswordInputProps) {
     const [isPasswordShown, setIsPasswordShown] = useState(false);
 
@@ -27,21 +25,16 @@ export default function PasswordInput({
         setIsPasswordShown(!isPasswordShown);
     };
 
-    const classes = classNames(
-        "login-input__default",
-        errorMessage ? "login-input__error" : "login-input__no-error",
-    );
-
     return (
         <div className="space-y-6" data-testid="PasswordInput">
             <div className="relative">
-                <input
+                <Input
                     type={isPasswordShown ? "text" : "password"}
                     name={name}
-                    data-testid="PasswordInput.Input"
                     placeholder={placeholder}
-                    className={classes}
+                    data-testid={dataTestId ?? "PasswordInput.Input"}
                     defaultValue={defaultValue ?? ""}
+                    isInvalid={isInvalid}
                 />
                 <button
                     type="button"
@@ -56,10 +49,6 @@ export default function PasswordInput({
                     )}
                 </button>
             </div>
-            <ErrorMessageComponent
-                errorMessage={errorMessage ?? null}
-                handleErrorShown={handleErrorShown}
-            />
         </div>
     );
 }

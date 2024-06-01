@@ -1,9 +1,9 @@
 import { describe, expect, test } from "vitest";
 import { RouteError } from "@/types/RouteError";
-import ErrorMessage from "@/utils/ErrorMessage";
 import extractPasswordResetError from "@/pages/PasswordReset/utils/extractPasswordResetError.ts";
 import mockAxiosError from "@/test/mocks/mockAxiosError.ts";
 import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
+import FieldError from "@/utils/FieldError.ts";
 
 describe("extractPasswordResetError", () => {
     test("1. Should throw RouteError for invalid error", () => {
@@ -20,7 +20,7 @@ describe("extractPasswordResetError", () => {
 
         const result = extractPasswordResetError(error);
 
-        expect(result).toEqual(ErrorMessage.create("Password length is invalid"));
+        expect(result).toEqual(FieldError.create("password", "Password length is invalid"));
     });
 
     test("3. Should return ErrorMessage for password.same.as.current error code", () => {
@@ -32,7 +32,10 @@ describe("extractPasswordResetError", () => {
         const result = extractPasswordResetError(error);
 
         expect(result).toEqual(
-            ErrorMessage.create("The new password cannot be the same as the current one."),
+            FieldError.create(
+                "password",
+                "The new password cannot be the same as the current one.",
+            ),
         );
     });
 

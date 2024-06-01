@@ -11,7 +11,7 @@ describe("storeSignupData", () => {
             username: "testuser",
             email: "test@example.com",
             password: "testPassword",
-            repeatedPassword: "testPassword",
+            confirmPassword: "testPassword",
         };
 
         storeSignupData(signupData);
@@ -25,14 +25,14 @@ describe("storeSignupData", () => {
             username: "initialUser",
             email: "initial@example.com",
             password: "initialPassword",
-            repeatedPassword: "initialPassword",
+            confirmPassword: "initialPassword",
         };
-        
+
         const newSignupData = {
             username: "newUser",
             email: "new@example.com",
             password: "newPassword",
-            repeatedPassword: "newPassword",
+            confirmPassword: "newPassword",
         };
 
         sessionStorage.setItem("signupData", JSON.stringify(initialSignupData));

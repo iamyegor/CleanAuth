@@ -1,6 +1,6 @@
 import PasswordResetForm, { action } from "@/pages/PasswordReset/components/PasswordResetForm.tsx";
 import React from "react";
-import { render, screen, within } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, test } from "vitest";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
@@ -24,8 +24,7 @@ const passwordResetForm = {
             return screen.getByPlaceholderText("New password");
         },
         get errorMessage() {
-            const passwordInput = screen.getAllByTestId("PasswordInput")[0];
-            return within(passwordInput).getByTestId("ErrorMessageComponent.Message");
+            return screen.getByTestId("ErrorMessageComponent.Message");
         },
     },
     confirmPassword: {
@@ -33,8 +32,7 @@ const passwordResetForm = {
             return screen.getByPlaceholderText("Repeat password");
         },
         get errorMessage() {
-            const passwordInput = screen.getAllByTestId("PasswordInput")[1];
-            return within(passwordInput).getByTestId("ErrorMessageComponent.Message");
+            return screen.getByTestId("ErrorMessageComponent.Message");
         },
     },
     get submittingButton() {

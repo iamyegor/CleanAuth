@@ -1,23 +1,23 @@
 import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
 import PasswordInput from "@/components/ui/PasswordInput.tsx";
 import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx";
-import ErrorMessage from "@/utils/ErrorMessage.ts";
 import api from "@/lib/api.ts";
-import { useState } from "react";
 import getQueryParam from "@/utils/getQueryParam.ts";
 import extractPasswordResetError from "@/pages/PasswordReset/utils/extractPasswordResetError.ts";
 import { AxiosError } from "axios";
 import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
-import PasswordResetError from "@/pages/PasswordReset/types/PasswordResetError.ts";
 import { ResultOr } from "@/utils/resultOfT.ts";
 import validatePasswordResetData from "@/pages/PasswordReset/utils/validateDataForPasswordReset.ts";
+import ErrorMessageComponent from "@/components/ui/ErrorMessageComponent.tsx";
+import getFieldErrorMessage from "@/utils/getFieldErrorMessage.ts";
+import FieldError from "@/utils/FieldError.ts";
 
-export async function action({ request }: any): Promise<Response | PasswordResetError> {
+export async function action({ request }: any): Promise<Response | FieldError> {
     const data = await request.formData();
     const password = data.get("password");
     const confirmPassword = data.get("confirmPassword");
 
-    const validationResult: ResultOr<PasswordResetError> = validatePasswordResetData(
+    const validationResult: ResultOr<FieldError> = validatePasswordResetData(
         password,
         confirmPassword,
     );
@@ -33,36 +33,35 @@ export async function action({ request }: any): Promise<Response | PasswordReset
         await api.post(`api/reset-password?userId=${uid}&token=${token}`, { password });
         return redirect("/");
     } catch (err) {
-        const errorMessage: ErrorMessage = extractPasswordResetError(
-            err as AxiosError<ServerErrorResponse>,
-        );
-
-        return { field: "password", errorMessage };
+        return extractPasswordResetError(err as AxiosError<ServerErrorResponse>);
     }
 }
 
 export default function PasswordResetForm() {
     const { state } = useNavigation();
-    const passwordResetError = useActionData() as PasswordResetError | null;
-    const [isConfirmPasswordError, setIsConfirmPasswordError] = useState(false);
+    const passwordResetError = useActionData() as FieldError | null;
 
-    function getErrorMessageForField(field: string): ErrorMessage | null {
-        return passwordResetError?.field == field ? passwordResetError.errorMessage : null;
-    }
+    const passwordError: boolean = passwordResetError?.isField("password") ?? false;
+    const confirmPasswordError: boolean = passwordResetError?.isField("confirmPassword") ?? false;
 
     return (
         <Form method="post" data-testid="PasswordResetForm">
-            <div className={`space-y-4 ${isConfirmPasswordError ? "mb-6" : "mb-8"}`}>
+            <div className={`space-y-4 ${confirmPasswordError ? "mb-6" : "mb-8"}`}>
                 <PasswordInput
                     name="password"
                     placeholder="New password"
-                    errorMessage={getErrorMessageForField("password")}
+                    isInvalid={passwordError}
+                />
+                <ErrorMessageComponent
+                    errorMessage={getFieldErrorMessage("password", passwordResetError)}
                 />
                 <PasswordInput
                     name="confirmPassword"
                     placeholder="Repeat password"
-                    errorMessage={getErrorMessageForField("confirmPassword")}
-                    handleErrorShown={setIsConfirmPasswordError}
+                    isInvalid={confirmPasswordError}
+                />
+                <ErrorMessageComponent
+                    errorMessage={getFieldErrorMessage("confirmPassword", passwordResetError)}
                 />
             </div>
             <SubmittingButton

@@ -2,8 +2,7 @@ import { ResultOr } from "@/utils/resultOfT.ts";
 import isNullOrWhitespace from "@/utils/isNullOrWhitespace.ts";
 import validatePassword from "@/utils/validatePassword.ts";
 import FieldError from "@/utils/FieldError.ts";
-import {EMAIL_REGEX} from "@/data/regularExpressions.ts";
-
+import { EMAIL_REGEX } from "@/data/regularExpressions.ts";
 
 export function validateSignupData(signupData: SignupData): ResultOr<FieldError> {
     let fieldError: FieldError | null = null;
@@ -17,8 +16,8 @@ export function validateSignupData(signupData: SignupData): ResultOr<FieldError>
         fieldError = FieldError.create("email", "Invalid email format");
     } else if (passwordValidation.isFailure) {
         fieldError = FieldError.create("password", passwordValidation.errorMessage!);
-    } else if (signupData.password !== signupData.repeatedPassword) {
-        fieldError = FieldError.create("repeatedPassword", "Passwords do not match");
+    } else if (signupData.password !== signupData.confirmPassword) {
+        fieldError = FieldError.create("confirmPassword", "Passwords do not match");
     }
 
     if (fieldError) {

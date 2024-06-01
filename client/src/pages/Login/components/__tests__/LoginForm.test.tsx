@@ -18,20 +18,18 @@ const loginForm = {
     },
     loginOrEmail: {
         get input() {
-            return screen.getByTestId("LoginOrEmailInput.Input");
+            return screen.getByTestId("LoginForm.LoginOrEmailInput");
         },
         get errorMessage() {
-            const input = screen.getByTestId("LoginOrEmailInput");
-            return within(input).getByTestId("ErrorMessageComponent.Message");
+            return screen.getByTestId("ErrorMessageComponent.Message");
         },
     },
     password: {
         get input() {
-            return screen.getByTestId("LoginPagePasswordInput.Input");
+            return screen.getByTestId("LoginForm.PasswordInput");
         },
         get errorMessage() {
-            const input = screen.getByTestId("LoginPagePasswordInput");
-            return within(input).getByTestId("ErrorMessageComponent.Message");
+            return screen.getByTestId("ErrorMessageComponent.Message");
         },
     },
     get errorMessage() {
@@ -75,8 +73,8 @@ describe("<LoginForm />", () => {
 
         await waitFor(() => {
             expect(loginForm.errorMessage).toHaveTextContent("Invalid login or password");
-            expect(loginForm.loginOrEmail.input.classList).toContain("login-input__error");
-            expect(loginForm.password.input.classList).toContain("login-input__error");
+            expect(loginForm.loginOrEmail.input.classList).toContain("input__error");
+            expect(loginForm.password.input.classList).toContain("input__error");
         });
     });
 

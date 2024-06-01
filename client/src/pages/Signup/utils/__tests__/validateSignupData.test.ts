@@ -1,12 +1,13 @@
 import { validateSignupData } from "@/pages/Signup/utils/validateSignupData";
 import { ResultOr } from "@/utils/resultOfT";
+import FieldError from "@/utils/FieldError.ts";
 
 // Helper function to create signup data
-const createSignupData = (overrides = {}) => ({
+const createSignupData = (overrides: Partial<SignupData> = {}) => ({
     username: "testuser",
     email: "test@example.com",
     password: "Test@1234",
-    repeatedPassword: "Test@1234",
+    confirmPassword: "Test@1234",
     ...overrides,
 });
 
@@ -17,10 +18,7 @@ describe("validateSignupData", () => {
         const result = validateSignupData(signupData);
 
         expect(result).toEqual(
-            ResultOr.Fail({
-                problematicField: "username",
-                errorMessage: "Username must not be empty",
-            }),
+            ResultOr.Fail(FieldError.create("username", "Username must not be empty")),
         );
     });
 
@@ -30,10 +28,7 @@ describe("validateSignupData", () => {
         const result = validateSignupData(signupData);
 
         expect(result).toEqual(
-            ResultOr.Fail({
-                problematicField: "email",
-                errorMessage: "Email must not be empty",
-            }),
+            ResultOr.Fail(FieldError.create("email", "Email must not be empty")),
         );
     });
 
@@ -42,40 +37,34 @@ describe("validateSignupData", () => {
 
         const result = validateSignupData(signupData);
 
-        expect(result).toEqual(
-            ResultOr.Fail({
-                problematicField: "email",
-                errorMessage: "Invalid email format",
-            }),
-        );
+        expect(result).toEqual(ResultOr.Fail(FieldError.create("email", "Invalid email format")));
     });
 
     test("4. Returns failure if password validation fails", () => {
-        const signupData = createSignupData({ password: "short", repeatedPassword: "short" });
+        const signupData = createSignupData({ password: "short", confirmPassword: "short" });
 
         const result = validateSignupData(signupData);
 
         expect(result).toEqual(
-            ResultOr.Fail({
-                problematicField: "password",
-                errorMessage: "Password length must be between 6 and 50 characters",
-            }),
+            ResultOr.Fail(
+                FieldError.create(
+                    "password",
+                    "Password length must be between 6 and 50 characters",
+                ),
+            ),
         );
     });
 
     test("5. Returns failure if passwords do not match", () => {
         const signupData = createSignupData({
             password: "Test@1234",
-            repeatedPassword: "Test@5678",
+            confirmPassword: "Test@5678",
         });
 
         const result = validateSignupData(signupData);
 
         expect(result).toEqual(
-            ResultOr.Fail({
-                problematicField: "repeatedPassword",
-                errorMessage: "Passwords do not match",
-            }),
+            ResultOr.Fail(FieldError.create("confirmPassword", "Passwords do not match")),
         );
     });
 

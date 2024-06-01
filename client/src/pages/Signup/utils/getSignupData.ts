@@ -3,6 +3,6 @@ export function getSignupData(form: any): SignupData {
         username: form.get("username"),
         email: form.get("email"),
         password: form.get("password"),
-        repeatedPassword: form.get("repeatedPassword"),
+        confirmPassword: form.get("confirmPassword"),
     };
 }

@@ -11,7 +11,7 @@ import {
 } from "@/test/requestHandlers/loginPageHandlers.ts";
 import {
     failIsAuthenticatedHandler,
-    successIsAuthenticatedHandler
+    successIsAuthenticatedHandler,
 } from "@/test/requestHandlers/isAuthenticatedHandlers.ts";
 
 const LoginPageDefault = () => {
@@ -27,10 +27,10 @@ const loginPage = {
     },
     formElements: {
         get emailInput() {
-            return screen.getByTestId("LoginOrEmailInput.Input");
+            return screen.getByTestId("LoginForm.LoginOrEmailInput");
         },
         get passwordInput() {
-            return screen.getByTestId("LoginPagePasswordInput.Input");
+            return screen.getByTestId("LoginForm.PasswordInput");
         },
         get submittingButton() {
             return screen.getByTestId("SubmittingButton");

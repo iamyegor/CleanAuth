@@ -10,7 +10,7 @@ describe("getSignupData", () => {
             username: "testuser",
             email: "test@example.com",
             password: "testPassword",
-            repeatedPassword: "testPassword",
+            confirmPassword: "testPassword",
         });
 
         const result = getSignupData(form);
@@ -19,7 +19,7 @@ describe("getSignupData", () => {
             username: "testuser",
             email: "test@example.com",
             password: "testPassword",
-            repeatedPassword: "testPassword",
+            confirmPassword: "testPassword",
         });
     });
 });

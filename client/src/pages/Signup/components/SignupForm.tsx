@@ -44,15 +44,20 @@ export default function SignupForm() {
     const signupError = useActionData() as FieldError | null;
     const { state } = useNavigation();
 
+    const usernameError: boolean = signupError?.isField("username") ?? false;
+    const emailError: boolean = signupError?.isField("email") ?? false;
+    const passwordError: boolean = signupError?.isField("password") ?? false;
+    const confirmPasswordError: boolean = signupError?.isField("confirmPassword") ?? false;
+
     return (
         <Form method="post" action={"/signup"} className={"space-y-8"} data-testid="SignupForm">
-            <div className={signupError?.isField("repeatedPassword") ? "space-y-4" : "space-y-8"}>
+            <div className={signupError?.isField("confirmPassword") ? "space-y-4" : "space-y-8"}>
                 <div className="space-y-4">
                     <Input
                         type="text"
                         name="username"
                         placeholder="Username"
-                        isInvalid={signupError?.isField("username")}
+                        isInvalid={usernameError}
                         defaultValue={storedSignupData?.username}
                     />
                     <ErrorMessageComponent
@@ -62,7 +67,7 @@ export default function SignupForm() {
                         type="email"
                         name="email"
                         placeholder="Email"
-                        isInvalid={signupError?.isField("email")}
+                        isInvalid={emailError}
                         defaultValue={storedSignupData?.email}
                     />
                     <ErrorMessageComponent
@@ -71,14 +76,20 @@ export default function SignupForm() {
                     <PasswordInput
                         name="password"
                         placeholder="Password"
-                        errorMessage={getFieldErrorMessage("password", signupError)}
+                        isInvalid={passwordError}
                         defaultValue={storedSignupData?.password}
                     />
+                    <ErrorMessageComponent
+                        errorMessage={getFieldErrorMessage("password", signupError)}
+                    />
                     <PasswordInput
-                        name="repeatedPassword"
+                        name="confirmPassword"
                         placeholder="Repeat Password"
-                        errorMessage={getFieldErrorMessage("repeatedPassword", signupError)}
-                        defaultValue={storedSignupData?.repeatedPassword}
+                        isInvalid={confirmPasswordError}
+                        defaultValue={storedSignupData?.confirmPassword}
+                    />
+                    <ErrorMessageComponent
+                        errorMessage={getFieldErrorMessage("confirmPassword", signupError)}
                     />
                 </div>
                 <div className="text-lef text-sm flex space-x-1 items-center">

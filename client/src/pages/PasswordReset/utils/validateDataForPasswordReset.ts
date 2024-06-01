@@ -1,23 +1,23 @@
-import PasswordResetError from "@/pages/PasswordReset/types/PasswordResetError.ts";
 import { ResultOr } from "@/utils/resultOfT.ts";
 import validatePassword from "@/utils/validatePassword.ts";
 import { Result } from "@/utils/result.ts";
-import ErrorMessage from "@/utils/ErrorMessage.ts";
+import FieldError from "@/utils/FieldError.ts";
 
 export default function validateDataForPasswordReset(
     password: string,
     confirmPassword: string,
-): ResultOr<PasswordResetError> {
+): ResultOr<FieldError> {
+    let fieldError: FieldError | null = null;
     const passwordValidation: Result = validatePassword(password);
 
     if (passwordValidation.isFailure) {
-        const errorMessage: ErrorMessage = ErrorMessage.create(passwordValidation.errorMessage!);
-        return ResultOr.Fail({ field: "password", errorMessage });
+        fieldError = FieldError.create("password", passwordValidation.errorMessage!);
+    } else if (password !== confirmPassword) {
+        fieldError = FieldError.create("confirmPassword", "Passwords do not match.");
     }
 
-    if (password !== confirmPassword) {
-        const errorMessage: ErrorMessage = ErrorMessage.create("Passwords do not match.");
-        return ResultOr.Fail({ field: "confirmPassword", errorMessage });
+    if (fieldError) {
+        return ResultOr.Fail(fieldError);
     }
 
     return ResultOr.Ok();

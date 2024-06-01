@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import "@/styles/login-input.css";
+import "@/styles/input.css";
 
 interface InputFieldProps {
     type: string;
@@ -7,6 +7,7 @@ interface InputFieldProps {
     placeholder: string;
     isInvalid?: boolean;
     defaultValue?: string;
+    "data-testid"?: string;
 }
 
 export default function Input({
@@ -15,11 +16,9 @@ export default function Input({
     placeholder,
     defaultValue,
     isInvalid,
+    "data-testid": dataTestId,
 }: InputFieldProps) {
-    const classes = classNames(
-        "login-input__default",
-        isInvalid ? "login-input__error" : "login-input__no-error",
-    );
+    const classes = classNames("input__default", isInvalid ? "input__error" : "input__no-error");
 
     return (
         <input
@@ -28,7 +27,7 @@ export default function Input({
             placeholder={placeholder}
             className={classes}
             defaultValue={defaultValue ?? ""}
-            data-testid="InputField.Input"
+            data-testid={dataTestId ?? "InputField.Input"}
         />
     );
 }

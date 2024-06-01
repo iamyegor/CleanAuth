@@ -1,12 +1,12 @@
-.login-input__default {
+.input__default {
     @apply w-full p-4 border rounded-md shadow-sm shadow-gray-200 outline-none ring-offset-1 
     transition-all focus:border-white;
 }
 
-.login-input__error {
+.input__error {
     @apply ring-red-400 ring-2 border-white;
 }
 
-.login-input__no-error {
+.input__no-error {
     @apply ring-blue-400 focus:ring-2;
 }

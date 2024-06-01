@@ -16,7 +16,7 @@ const inputField = {
     },
 };
 
-describe("<InputField />", () => {
+describe("<Input />", () => {
     test("1. Renders with correct type, name, and placeholder attributes", () => {
         render(<InputDefault />);
 
@@ -34,13 +34,13 @@ describe("<InputField />", () => {
     test("3. Applies error class when input is invalid", () => {
         render(<InputDefault isInvalid={true} />);
 
-        expect(inputField.input).toHaveClass("login-input__error");
+        expect(inputField.input).toHaveClass("input__error");
     });
 
     test("4. Applies no-error class when errorMessage is not provided", () => {
         render(<InputDefault />);
 
-        expect(inputField.input).toHaveClass("login-input__no-error");
+        expect(inputField.input).toHaveClass("input__no-error");
     });
 
     test("5. Does not display the error message when errorMessage is not provided", () => {

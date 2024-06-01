@@ -7,15 +7,13 @@ import { AxiosError } from "axios";
 import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx";
 import { validateCredentials } from "@/pages/Login/utils/validateCredentials.ts";
 import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
-import LoginError from "@/pages/Login/types/LoginError.ts";
 import { ResultOr } from "@/utils/resultOfT.ts";
 import { extractLoginError } from "@/pages/Login/utils/extractLoginError.ts";
-import ErrorMessage from "@/utils/ErrorMessage.ts";
 import getFieldErrorMessage from "@/utils/getFieldErrorMessage.ts";
-import LoginPageLoginOrEmailInput from "@/pages/Login/components/LoginOrEmailInput.tsx";
 import ErrorMessageComponent from "@/components/ui/ErrorMessageComponent.tsx";
-import LoginPagePasswordInput from "@/pages/Login/components/LoginPagePasswordInput.tsx";
 import FieldError from "@/utils/FieldError.ts";
+import Input from "@/components/ui/Input.tsx";
+import PasswordInput from "@/components/ui/PasswordInput.tsx";
 
 export async function action({ request }: any): Promise<FieldError | Response> {
     const data = await request.formData();
@@ -39,29 +37,42 @@ export async function action({ request }: any): Promise<FieldError | Response> {
 }
 
 export default function LoginForm() {
-    const loginError = useActionData() as FieldError | null;
+    const fieldError = useActionData() as FieldError | null;
     const { state } = useNavigation();
 
     function isPasswordError(): boolean {
-        return loginError?.problematicField === "password";
+        return fieldError?.problematicField === "password";
     }
 
-    function isBothError(): boolean {
-        return loginError?.problematicField === "both";
-    }
-
-    function getBothErrorMessage(): ErrorMessage | null {
-        return getFieldErrorMessage("both", loginError);
-    }
+    const bothError: boolean = fieldError?.isField("both") ?? false;
+    const loginOrEmailError: boolean = fieldError?.isField("loginOrEmail") ?? false;
+    const passwordError: boolean = fieldError?.isField("password") ?? false;
 
     return (
         <Form method="post" action={"/login"} replace data-testid="LoginForm">
-            <div className={isBothError() || isPasswordError() ? "mb-6" : "mb-8"}>
-                <div className={`space-y-4 ${isBothError() && "mb-6"}`}>
-                    <LoginPageLoginOrEmailInput loginError={loginError} />
-                    <LoginPagePasswordInput loginError={loginError} />
+            <div className={bothError || isPasswordError() ? "mb-6" : "mb-8"}>
+                <div className={`space-y-4 ${bothError && "mb-6"}`}>
+                    <Input
+                        type="text"
+                        name="loginOrEmail"
+                        placeholder="Login or Email"
+                        data-testid="LoginForm.LoginOrEmailInput"
+                        isInvalid={bothError || loginOrEmailError}
+                    />
+                    <ErrorMessageComponent
+                        errorMessage={getFieldErrorMessage("loginOrEmail", fieldError)}
+                    />
+                    <PasswordInput
+                        name="password"
+                        placeholder="Password"
+                        data-testid="LoginForm.PasswordInput"
+                        isInvalid={bothError || passwordError}
+                    />
+                    <ErrorMessageComponent
+                        errorMessage={getFieldErrorMessage("password", fieldError)}
+                    />
                 </div>
-                <ErrorMessageComponent errorMessage={getBothErrorMessage()} />
+                <ErrorMessageComponent errorMessage={getFieldErrorMessage("both", fieldError)} />
             </div>
             <RecoveryAndSignupLinks />
             <SubmittingButton loading={state == "submitting"} text="Sign in" />

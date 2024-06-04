@@ -34,7 +34,7 @@ describe("extractPasswordResetError", () => {
         expect(result).toEqual(
             FieldError.create(
                 "password",
-                "The new password cannot be the same as the current one.",
+                "The new password can not be the same as the current one.",
             ),
         );
     });

@@ -1,4 +1,4 @@
-import Input from "@/components/ui/Input.tsx";
+import Input from "@/components/ui/inputs/Input.tsx";
 import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
 import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx";
 import api from "@/lib/api.ts";

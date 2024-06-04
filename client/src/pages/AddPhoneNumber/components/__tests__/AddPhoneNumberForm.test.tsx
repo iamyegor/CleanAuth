@@ -6,7 +6,7 @@ import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import AddPhoneNumberForm, {
     action,
 } from "@/pages/AddPhoneNumber/components/AddPhoneNumberForm.tsx";
-import { server } from "@/test/setup.ts";
+import { server } from "@/test/setup.tsx";
 import getStoredPhoneNumber from "@/utils/phoneNumberData/getStoredPhoneNumber.ts";
 import getStoredCountryCodeIndex from "@/utils/phoneNumberData/getStoredCountryCodeIndex.ts";
 import countries from "@/pages/AddPhoneNumber/data/countries.ts";

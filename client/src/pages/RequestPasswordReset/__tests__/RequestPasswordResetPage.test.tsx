@@ -3,7 +3,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, test } from "vitest";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
-import { server } from "@/test/setup.ts";
+import { server } from "@/test/setup.tsx";
 import routes from "@/lib/routes.tsx";
 import {
     failIsAuthenticatedHandler,
@@ -52,10 +52,7 @@ describe("<RequestPasswordResetPage />", () => {
     test("3. Navigates back to login page when 'Go back to login' is clicked", async () => {
         server.use(failIsAuthenticatedHandler);
         render(<RequestPasswordResetPageDefault />);
-
-        await waitFor(() => {
-            expect(requestPasswordResetPage.self).toBeInTheDocument();
-        });
+        await waitFor(() => expect(requestPasswordResetPage.navLink).toBeInTheDocument());
 
         await userEvent.click(requestPasswordResetPage.navLink);
 

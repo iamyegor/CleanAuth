@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
-import { server } from "@/test/setup.ts";
+import { server } from "@/test/setup.tsx";
 import routes from "@/lib/routes.tsx";
 import userEvent from "@testing-library/user-event";
 import { successGetUsernameHandler } from "@/test/requestHandlers/loginPageHandlers.ts";
@@ -12,6 +12,10 @@ import {
     successPhoneNumberForVerificationHandler,
     successVerifyPhoneNumberHandler,
 } from "@/test/requestHandlers/verifyPhoneNumberPageHandlers.ts";
+import {
+    failIsAuthenticatedHandler,
+    successIsAuthenticatedHandler
+} from "@/test/requestHandlers/isAuthenticatedHandlers.ts";
 
 const VerifyPhoneNumberPageDefault = () => {
     const router = createMemoryRouter(routes, {
@@ -38,8 +42,9 @@ const verifyPhoneNumberPage = {
 };
 
 describe("<VerifyPhoneNumberPage />", () => {
-    test("1. Redirects to signup page if phone number verification fails", async () => {
+    test("1. Redirects to signup page if phone number doesn't need verification", async () => {
         server.use(failPhoneNumberForVerificationHandler);
+        server.use(failIsAuthenticatedHandler);
         render(<VerifyPhoneNumberPageDefault />);
 
         await waitFor(() => expect(screen.getByTestId("SignupPage")).toBeInTheDocument());

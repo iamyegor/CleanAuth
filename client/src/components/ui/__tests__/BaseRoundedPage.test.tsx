@@ -1,7 +1,7 @@
 import React, { ComponentProps } from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
-import BaseRoundedPage from "@/components/ui/BaseRoundedPage.tsx";
+import BaseRoundedPage from "@/components/ui/basePages/BaseRoundedPage.tsx";
 
 const BaseRoundedPageDefault = (props: Partial<ComponentProps<typeof BaseRoundedPage>>) => (
     <BaseRoundedPage {...props}>

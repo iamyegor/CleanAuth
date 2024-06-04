@@ -15,7 +15,7 @@ export default function CountryDropdownOption({
     return (
         <>
             <button
-                className="p-1 flex items-center cursor-pointer bg-white"
+                className="p-1 flex items-center cursor-pointer bg-white w-full"
                 onClick={handleClick}
                 data-testid="CountryDropdownOption"
             >
@@ -23,7 +23,7 @@ export default function CountryDropdownOption({
                     <span className="mr-2" data-testid="CountryDropdownOption.Flag">
                         {country.flag}
                     </span>
-                    <span data-testid="CountryDropdownOption.Details">
+                    <span data-testid="CountryDropdownOption.Details" className="text-left">
                         {`${country.name} (${country.dialCode})`}
                     </span>
                 </div>

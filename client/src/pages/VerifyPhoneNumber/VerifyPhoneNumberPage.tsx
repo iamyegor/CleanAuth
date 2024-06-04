@@ -1,12 +1,12 @@
-import BaseAuthentication from "@/components/ui/BaseAuthentication.tsx";
-
+import BaseAuthentication from "@/components/ui/basePages/BaseAuthentication.tsx";
 import primaryImage from "@/pages/Signup/images/signup_image.jpg";
 import VerifyCodeForm, { baseAction } from "@/components/VerifyCodeForm/VerifyCodeForm.tsx";
-import { redirect, useLoaderData } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import api from "@/lib/api.ts";
 import FeedbackMessage from "@/utils/FeedbackMessage.ts";
-import VerifyPhoneNumberLoaderData from "@/pages/VerifyPhoneNumber/types/VerifyPhoneNumberLoaderData.ts";
 import extractVerifyPhoneNumberError from "@/pages/VerifyPhoneNumber/utils/extractVerifyPhoneNumberError.ts";
+import { useEffect, useState } from "react";
+import VerifyCodePageSkeleton from "@/components/ui/skeletons/VerifyCodePageSkeleton.tsx";
 
 export async function action({ request }: any): Promise<FeedbackMessage | Response> {
     return await baseAction(
@@ -18,17 +18,30 @@ export async function action({ request }: any): Promise<FeedbackMessage | Respon
     );
 }
 
-export async function loader(): Promise<VerifyPhoneNumberLoaderData | Response> {
-    try {
-        const response = await api.get<string>("api/phone-number-for-verification");
-        return { phoneNumber: response.data };
-    } catch {
-        return redirect("/signup");
-    }
-}
-
 export default function VerifyPhoneNumberPage() {
-    const { phoneNumber } = useLoaderData() as VerifyPhoneNumberLoaderData;
+    const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        (async () => {
+            try {
+                const response = await api.get<string>("api/phone-number-for-verification");
+                setPhoneNumber(response.data);
+                setIsLoading(false);
+            } catch {
+                navigate("/signup");
+            }
+        })();
+    }, []);
+
+    if (isLoading) {
+        return (
+            <BaseAuthentication image={primaryImage} data-testid="VerifyPhoneNumberPage">
+                <VerifyCodePageSkeleton inputsNumber={4} />
+            </BaseAuthentication>
+        );
+    }
 
     return (
         <BaseAuthentication image={primaryImage} data-testid="VerifyPhoneNumberPage">

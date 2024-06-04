@@ -1,5 +1,6 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
+import throwRouteErrorOnInvalidResponse from "@/utils/throwRouteErrorOnInvalidResponse.ts";
 
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
     _retry?: boolean;
@@ -22,7 +23,6 @@ api.interceptors.response.use(
             if (originalRequest._retry) {
                 return Promise.reject(error);
             }
-
             originalRequest._retry = true;
 
             if (error.response?.data?.errorCode === "device.id.invalid") {

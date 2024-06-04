@@ -12,17 +12,6 @@ import ResendCodeButton from "@/components/VerifyCodeForm/components/ResendCodeB
 import useSecondsLeft from "@/components/VerifyCodeForm/hooks/useSecondsLeft.tsx";
 import FeedbackMessage from "@/utils/FeedbackMessage.ts";
 
-interface VerifyCodeFormProps {
-    contactDetail: string;
-    contactValue: string;
-    codeLength: number;
-    onSubmitActionRoute: string;
-    goBackRoute: string;
-    goBackButtonText: string;
-    resendCodeEndpoint: string;
-    maxSeconds: number;
-}
-
 export async function baseAction(
     request: any,
     maxCodeLength: number,
@@ -44,6 +33,17 @@ export async function baseAction(
         const errorMessage: string = errorExtractor(err);
         return FeedbackMessage.createError(errorMessage);
     }
+}
+
+interface VerifyCodeFormProps {
+    contactDetail: string;
+    contactValue: string | null;
+    codeLength: number;
+    onSubmitActionRoute: string;
+    goBackRoute: string;
+    goBackButtonText: string;
+    resendCodeEndpoint: string;
+    maxSeconds: number;
 }
 
 export default function VerifyCodeForm({
@@ -73,7 +73,7 @@ export default function VerifyCodeForm({
     }, [actionError?.generatedAt]);
 
     return (
-        <div className="w-full max-w-md text-center rounded-lg p-6 z-20">
+        <>
             <h2
                 className="mb-3 text-4xl font-bold text-gray-900"
                 data-testid="VerifyCodeForm.ContactDetailHeading"
@@ -115,6 +115,6 @@ export default function VerifyCodeForm({
                 </div>
                 <CountdownDisplay secondsLeft={secondsLeft} />
             </Form>
-        </div>
+        </>
     );
 }

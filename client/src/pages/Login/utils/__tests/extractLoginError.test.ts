@@ -4,14 +4,14 @@ import { extractLoginError } from "@/pages/Login/utils/extractLoginError.ts";
 import mockAxiosError from "@/test/mocks/mockAxiosError.ts";
 
 describe("extractLoginError", () => {
-    test("1. Returns correct problematic field and error message for invalid credentials error", () => {
+    test("1. Returns correct problematic field and error message for invalid password", () => {
         const result = extractLoginError(
-            mockAxiosError(400, { errorCode: "invalid.credentials", errorMessage: "msg" }),
+            mockAxiosError(400, { errorCode: "user.has.invalid.password", errorMessage: "msg" }),
         );
 
         expect(result).toEqual({
-            problematicField: "both",
-            errorMessage: "Invalid login or password",
+            problematicField: "password",
+            errorMessage: "Invalid password",
         });
     });
 

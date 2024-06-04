@@ -1,5 +1,5 @@
 import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
-import PasswordInput from "@/components/ui/PasswordInput.tsx";
+import PasswordInput from "@/components/ui/inputs/PasswordInput.tsx";
 import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx";
 import api from "@/lib/api.ts";
 import getQueryParam from "@/utils/getQueryParam.ts";

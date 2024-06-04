@@ -1,7 +1,7 @@
 import React, { ComponentProps } from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
-import Input from "@/components/ui/Input.tsx";
+import Input from "@/components/ui/inputs/Input.tsx";
 
 const InputDefault = (props: Partial<ComponentProps<typeof Input>>) => (
     <Input type="text" name="test-name" placeholder="test-placeholder" {...props} />

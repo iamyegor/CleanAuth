@@ -1,7 +1,7 @@
 import React, { ComponentProps } from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
-import BaseAuthentication from "@/components/ui/BaseAuthentication.tsx";
+import BaseAuthentication from "@/components/ui/basePages/BaseAuthentication.tsx";
 import abstractFormImage from "@/assets/abstract_3d_form.png";
 
 const BaseAuthenticationDefault = (props: Partial<ComponentProps<typeof BaseAuthentication>>) => (

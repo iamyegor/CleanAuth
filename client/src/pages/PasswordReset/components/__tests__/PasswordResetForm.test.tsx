@@ -4,7 +4,7 @@ import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, test } from "vitest";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
-import { server } from "@/test/setup.ts";
+import { server } from "@/test/setup.tsx";
 import { failedPasswordResetHandler } from "@/test/requestHandlers/passwordResetPageHandlers.ts";
 
 const PasswordResetFormDefault = () => {

@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
-import { server } from "@/test/setup.ts";
+import { server } from "@/test/setup.tsx";
 import routes from "@/lib/routes.tsx";
 import userEvent from "@testing-library/user-event";
 import {
@@ -21,7 +21,7 @@ const AddUsernamePageDefault = () => {
 
 const addUsernamePage = {
     get page() {
-        return screen.getByTestId("SignupPage");
+        return screen.getByTestId("AddUsernamePage");
     },
     get form() {
         return screen.getByTestId("AddUsernameForm");
@@ -79,18 +79,12 @@ describe("<AddUsernamePage />", () => {
     });
 
     test("4. Navigates back to login page when go back button is clicked", async () => {
-        // Arrange
         server.use(successCanAddLoginHandler);
         render(<AddUsernamePageDefault />);
+        await waitFor(() => expect(addUsernamePage.goBackButton).toBeInTheDocument());
 
-        await waitFor(() => {
-            expect(addUsernamePage.page).toBeInTheDocument();
-        });
-
-        // Act
         await userEvent.click(addUsernamePage.goBackButton);
 
-        // Assert
         await waitFor(() => expect(screen.getByTestId("LoginPage")).toBeInTheDocument());
     });
 });

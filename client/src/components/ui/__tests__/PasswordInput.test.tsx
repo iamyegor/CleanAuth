@@ -1,4 +1,4 @@
-import PasswordInput from "@/components/ui/PasswordInput.tsx";
+import PasswordInput from "@/components/ui/inputs/PasswordInput.tsx";
 import React, { ComponentProps } from "react";
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";

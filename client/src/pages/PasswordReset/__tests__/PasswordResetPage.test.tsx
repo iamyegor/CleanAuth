@@ -2,7 +2,7 @@ import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
-import { server } from "@/test/setup.ts";
+import { server } from "@/test/setup.tsx";
 import routes from "@/lib/routes.tsx";
 import userEvent from "@testing-library/user-event";
 import { successGetUsernameHandler } from "@/test/requestHandlers/loginPageHandlers.ts";
@@ -26,6 +26,14 @@ const PasswordResetPageDefault = ({
 
     return <RouterProvider router={router} />;
 };
+
+function mockHref(href: string) {
+    const originalLocation = window.location;
+
+    // @ts-ignore
+    delete window.location;
+    window.location = { ...originalLocation, href };
+}
 
 const passwordResetPage = {
     get errorMessage() {
@@ -83,14 +91,14 @@ describe("<PasswordResetPage />", async () => {
 
     test("4. Redirects to home page when successfully submitting the form", async () => {
         // Arrange
+        mockHref("http://localhost/reset-password?uid=testUid&token=testToken");
+        
         server.use(successNeedToResetPasswordHandler);
         server.use(successResetPasswordHandler);
         server.use(successGetUsernameHandler);
         render(<PasswordResetPageDefault />);
-
-        await waitFor(() => {
-            expect(passwordResetPage.form).toBeInTheDocument();
-        });
+        
+        await waitFor(() => expect(passwordResetPage.form).toBeInTheDocument());
 
         // Act
         await userEvent.type(passwordResetPage.formElements.passwordInput, "strongPass123");

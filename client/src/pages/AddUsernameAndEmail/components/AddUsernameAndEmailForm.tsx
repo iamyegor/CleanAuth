@@ -1,5 +1,5 @@
 import { Form, redirect, useActionData, useNavigation } from "react-router-dom";
-import Input from "@/components/ui/Input.tsx";
+import Input from "@/components/ui/inputs/Input.tsx";
 import ErrorMessageComponent from "@/components/ui/ErrorMessageComponent.tsx";
 import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx";
 import api from "@/lib/api.ts";

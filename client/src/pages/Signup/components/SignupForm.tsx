@@ -1,4 +1,4 @@
-import Input from "@/components/ui/Input.tsx";
+import Input from "@/components/ui/inputs/Input.tsx";
 import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx";
 import { Form, NavLink, redirect, useActionData, useNavigation } from "react-router-dom";
 import { validateSignupData } from "@/pages/Signup/utils/validateSignupData.ts";
@@ -9,7 +9,7 @@ import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
 import { getSignupData } from "@/pages/Signup/utils/getSignupData.ts";
 import useStoredSignupData from "@/pages/Signup/hooks/useInitialSignupData.ts";
 import storeSignupData from "@/utils/initialSignupData/storeSignupData.ts";
-import PasswordInput from "@/components/ui/PasswordInput.tsx";
+import PasswordInput from "@/components/ui/inputs/PasswordInput.tsx";
 import getFieldErrorMessage from "@/utils/getFieldErrorMessage.ts";
 import extractSignupError from "@/pages/Signup/utils/extractSignupError.ts";
 import ErrorMessageComponent from "@/components/ui/ErrorMessageComponent.tsx";

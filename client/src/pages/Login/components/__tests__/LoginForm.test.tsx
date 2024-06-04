@@ -1,10 +1,10 @@
 import LoginForm, { action } from "@/pages/Login/components/LoginForm.tsx";
 import React from "react";
-import { render, screen, waitFor, within } from "@testing-library/react";
+import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, test } from "vitest";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
-import { server } from "@/test/setup.ts";
+import { server } from "@/test/setup.tsx";
 import { failedLoginHandler } from "@/test/requestHandlers/loginPageHandlers.ts";
 
 const LoginFormDefault = () => {
@@ -63,7 +63,7 @@ describe("<LoginForm />", () => {
         );
     });
 
-    test("3. Displays error message for both inputs when server invalidates credentials", async () => {
+    test("3. Displays error message when server invalidates credentials", async () => {
         server.use(failedLoginHandler);
         render(<LoginFormDefault />);
 
@@ -72,9 +72,11 @@ describe("<LoginForm />", () => {
         await userEvent.click(loginForm.submittingButton);
 
         await waitFor(() => {
-            expect(loginForm.errorMessage).toHaveTextContent("Invalid login or password");
+            expect(loginForm.errorMessage).toHaveTextContent(
+                "User with this login or email does not exist",
+            );
+
             expect(loginForm.loginOrEmail.input.classList).toContain("input__error");
-            expect(loginForm.password.input.classList).toContain("input__error");
         });
     });
 

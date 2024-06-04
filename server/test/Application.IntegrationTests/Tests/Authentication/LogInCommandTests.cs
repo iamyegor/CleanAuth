@@ -32,17 +32,18 @@ public class LogInCommandTests : BaseIntegrationTest
 
         Result<Tokens, Error> result = await Mediator.Send(command);
 
-        result.Error.Should().Be(Errors.User.HasInvalidCredentials("", "PasswordA123"));
+        result.Error.Should().Be(Errors.User.DoesNotExist(""));
     }
 
     [Fact]
     public async Task Does_not_allow_invalid_password()
     {
+        await _userFactory.CreateAsync(email: "yegor@google.com");
         var command = new LogInCommand("yegor@google.com", "", _deviceIdFactory.Create());
 
         Result<Tokens, Error> result = await Mediator.Send(command);
 
-        result.Error.Should().Be(Errors.User.HasInvalidCredentials("yegor@google.com", ""));
+        result.Error.Should().Be(Errors.User.HasInvalidPassword(""));
     }
 
     [Fact]
@@ -74,22 +75,5 @@ public class LogInCommandTests : BaseIntegrationTest
 
         User userFromDb = _userRepository.QueryUserByEmail("yegor@google.com");
         userFromDb.ShouldHaveOneRefreshToken(result.Value.RefreshToken, deviceId);
-    }
-
-    [Theory]
-    [InlineData("wrong_login", "PasswordA123")]
-    [InlineData("yegor@google.com", "wrong_password")]
-    public async Task Does_not_allow_login_with_invalid_credentials(
-        string loginOrEmail,
-        string password
-    )
-    {
-        await _userFactory.CreateAsync(email: "yegor@google.com", password: "PasswordA123");
-        string deviceId = _deviceIdFactory.Create();
-        var command = new LogInCommand(loginOrEmail, password, deviceId);
-
-        Result<Tokens, Error> result = await Mediator.Send(command);
-
-        result.Error.Should().Be(Errors.User.HasInvalidCredentials(loginOrEmail, password));
     }
 }

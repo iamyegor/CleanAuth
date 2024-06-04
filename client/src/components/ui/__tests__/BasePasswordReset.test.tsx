@@ -1,7 +1,7 @@
 import React, { ComponentProps } from "react";
 import { render, screen } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
-import BasePasswordReset from "@/components/ui/BasePasswordReset.tsx";
+import BasePasswordReset from "@/components/ui/basePages/BasePasswordReset.tsx";
 
 const BasePasswordResetDefault = (props: Partial<ComponentProps<typeof BasePasswordReset>>) => (
     <BasePasswordReset {...props}>

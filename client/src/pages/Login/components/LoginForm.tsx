@@ -12,8 +12,8 @@ import { extractLoginError } from "@/pages/Login/utils/extractLoginError.ts";
 import getFieldErrorMessage from "@/utils/getFieldErrorMessage.ts";
 import ErrorMessageComponent from "@/components/ui/ErrorMessageComponent.tsx";
 import FieldError from "@/utils/FieldError.ts";
-import Input from "@/components/ui/Input.tsx";
-import PasswordInput from "@/components/ui/PasswordInput.tsx";
+import Input from "@/components/ui/inputs/Input.tsx";
+import PasswordInput from "@/components/ui/inputs/PasswordInput.tsx";
 
 export async function action({ request }: any): Promise<FieldError | Response> {
     const data = await request.formData();

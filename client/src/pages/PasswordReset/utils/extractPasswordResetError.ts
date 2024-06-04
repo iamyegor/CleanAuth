@@ -16,7 +16,7 @@ export default function extractPasswordResetError(
     } else if (errorCode === "password.same.as.current") {
         return FieldError.create(
             "password",
-            "The new password cannot be the same as the current one.",
+            "The new password can not be the same as the current one.",
         );
     } else {
         throw RouteError.unexpected();

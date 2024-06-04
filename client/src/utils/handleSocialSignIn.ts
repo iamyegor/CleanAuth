@@ -2,23 +2,24 @@ import ErrorMessage from "@/utils/ErrorMessage.ts";
 import api from "@/lib/api.ts";
 import { AxiosError, AxiosResponse } from "axios";
 import SocialSignInResponse from "@/types/SocialSignInResponse.ts";
-import { redirect } from "react-router-dom";
 import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
 import throwRouteErrorOnInvalidResponse from "@/utils/throwRouteErrorOnInvalidResponse.ts";
 import { RouteError } from "@/types/RouteError.ts";
+import { NavigateFunction } from "react-router-dom";
 
 export default async function handleSocialSignIn(
     endpoint: string,
     payload: any,
     specificErrorCode: string,
-): Promise<ErrorMessage | Response> {
+    navigate: NavigateFunction,
+): Promise<ErrorMessage | undefined> {
     try {
         const response = (await api.post(endpoint, payload)) as AxiosResponse<SocialSignInResponse>;
 
         if (response.data.authStatus === "NewUser") {
-            return redirect("/add-username-and-email");
+            navigate("/add-username-and-email");
         } else {
-            return redirect("/");
+            navigate("/");
         }
     } catch (err) {
         const error = err as AxiosError<ServerErrorResponse>;

@@ -4,7 +4,9 @@ import ErrorMessage from "@/utils/ErrorMessage.ts";
 import { RouteError } from "@/types/RouteError.ts";
 import throwRouteErrorOnInvalidResponse from "@/utils/throwRouteErrorOnInvalidResponse.ts";
 
-export default function extractPasswordResetLoadingError(error: AxiosError<ServerErrorResponse>): ErrorMessage {
+export default function extractPasswordResetLoadingError(
+    error: AxiosError<ServerErrorResponse>,
+): ErrorMessage {
     throwRouteErrorOnInvalidResponse(error);
 
     const { errorCode } = error.response!.data;

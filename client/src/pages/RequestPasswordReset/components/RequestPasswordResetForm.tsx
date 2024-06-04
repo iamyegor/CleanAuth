@@ -1,6 +1,6 @@
 import React from "react";
 import { Form, useActionData, useNavigation } from "react-router-dom";
-import Input from "@/components/ui/Input.tsx";
+import Input from "@/components/ui/inputs/Input.tsx";
 import SubmittingButton from "@/components/SubmittingButton/SubmittingButton.tsx";
 import FeedbackMessageComponent from "@/components/ui/FeedbackMessageComponent.tsx";
 import FeedbackMessage from "@/utils/FeedbackMessage.ts";

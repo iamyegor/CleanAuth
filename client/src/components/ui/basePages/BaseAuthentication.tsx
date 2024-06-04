@@ -30,7 +30,7 @@ export default function BaseAuthentication({
                     className="absolute h-1/2 w-1/2 bottom-40 opacity-10 z-10 blur-xl select-none"
                     data-testid="BaseAuthentication.DecorativeBackground"
                 />
-                {children}
+                <div className="w-full max-w-md text-center rounded-lg p-6 z-20">{children}</div>
             </div>
         </div>
     );

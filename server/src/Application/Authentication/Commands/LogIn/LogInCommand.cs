@@ -26,9 +26,14 @@ public class LogInCommandHandler : IRequestHandler<LogInCommand, Result<Tokens, 
     {
         var spec = new VerifiedUserByEmailOrLoginSpec(command.LoginOrEmail);
         User? user = await _context.Query(spec, ct);
-        if (user == null || user.Password == null || !user.Password.Matches(command.Password))
+        if (user == null)
         {
-            return Errors.User.HasInvalidCredentials(command.LoginOrEmail, command.Password);
+            return Errors.User.DoesNotExist(command.LoginOrEmail);
+        }
+
+        if (user.Password == null || !user.Password.Matches(command.Password))
+        {
+            return Errors.User.HasInvalidPassword(command.Password);
         }
 
         Tokens tokens = _userTokensUpdater.UpdateTokens(user, command.DeviceId);

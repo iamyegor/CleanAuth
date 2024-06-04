@@ -1,5 +1,3 @@
-using XResults;
-
 namespace Domain.DomainErrors;
 
 public static partial class Errors
@@ -35,20 +33,10 @@ public static partial class Errors
             return new Error("user.has.no.phone.number", "User has no phone number", details);
         }
 
-        public static Error AlreadyHasNumber(Domain.User.ValueObjects.UserId userId)
+        public static Error HasInvalidPassword(string password)
         {
-            var details = new Dictionary<string, object?>() { ["userId"] = userId.Value };
-            return new Error(
-                "user.already.has.phone.number",
-                "User already has phone number",
-                details
-            );
-        }
-
-        public static Error CanNotAddUsername(Domain.User.ValueObjects.UserId userId)
-        {
-            var details = new Dictionary<string, object?>() { ["userId"] = userId.Value };
-            return new Error("user.can.not.add.username", "User can not add username", details);
+            var details = new Dictionary<string, object?>() { ["password"] = password };
+            return new Error("user.has.invalid.password", "User has invalid password", details);
         }
     }
 }

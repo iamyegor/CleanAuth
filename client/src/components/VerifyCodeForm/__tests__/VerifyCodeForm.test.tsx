@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { describe, expect, test } from "vitest";
 import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { http, HttpResponse } from "msw";
-import { server } from "@/test/setup.ts";
+import { server } from "@/test/setup.tsx";
 
 const failedVerificationHandler = http.post("*/verify-code", async () =>
     HttpResponse.json({ errorMessage: "Invalid verification code" }, { status: 400 }),

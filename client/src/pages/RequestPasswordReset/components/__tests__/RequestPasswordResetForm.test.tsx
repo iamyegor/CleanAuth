@@ -6,7 +6,7 @@ import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import RequestPasswordResetForm, {
     action,
 } from "@/pages/RequestPasswordReset/components/RequestPasswordResetForm.tsx";
-import { server } from "@/test/setup.ts";
+import { server } from "@/test/setup.tsx";
 import {
     failedRequestPasswordResetHandler,
     successRequestPasswordResetHandler,

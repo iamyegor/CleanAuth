@@ -1,5 +1,5 @@
 import React from "react";
-import BaseRoundedPage from "@/components/ui/BaseRoundedPage.tsx";
+import BaseRoundedPage from "@/components/ui/basePages/BaseRoundedPage.tsx";
 
 interface BaseResetPasswordPageProps {
     children: React.ReactNode;
@@ -12,7 +12,12 @@ export default function BasePasswordReset({
 }: BaseResetPasswordPageProps) {
     return (
         <BaseRoundedPage data-testid={dataTestId}>
-            <div className="h-full max-w-[410px] px-4 flex flex-col justify-center">{children}</div>
+            <div
+                className="h-full w-full max-w-[410px] px-4 flex flex-col justify-center 
+            items-center"
+            >
+                <div className="w-full text-center">{children}</div>
+            </div>
         </BaseRoundedPage>
     );
 }

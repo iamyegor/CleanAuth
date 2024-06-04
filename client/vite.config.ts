@@ -1,6 +1,6 @@
 /// <reference types="vitest" />
 /// <reference types="vite/client" />
-import {defineConfig} from "vite";
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
 export default defineConfig({
@@ -8,7 +8,7 @@ export default defineConfig({
     test: {
         globals: true,
         environment: "jsdom",
-        setupFiles: "./src/test/setup.ts",
+        setupFiles: "./src/test/setup.tsx",
         // you might want to disable it, if you don't have tests that rely on CSS
         // since parsing CSS is slow
         css: true,

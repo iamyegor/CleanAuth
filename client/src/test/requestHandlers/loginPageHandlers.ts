@@ -12,7 +12,10 @@ export const successLoginHandler = http.post(loginEndpoint, async () =>
 
 export const failedLoginHandler = http.post(loginEndpoint, async () =>
     HttpResponse.json(
-        { errorCode: "invalid.credentials", errorMessage: "Invalid login or password" },
+        {
+            errorCode: "user.not.exists.with.login.or.email",
+            errorMessage: "User with this login or email does not exist",
+        },
         { status: 400 },
     ),
 );

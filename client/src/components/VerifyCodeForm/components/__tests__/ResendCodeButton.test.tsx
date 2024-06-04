@@ -4,7 +4,7 @@ import { describe, expect, test } from "vitest";
 import userEvent from "@testing-library/user-event";
 import ResendCodeButton from "@/components/VerifyCodeForm/components/ResendCodeButton.tsx";
 import { http, HttpResponse } from "msw";
-import { server } from "@/test/setup.ts";
+import { server } from "@/test/setup.tsx";
 import wait from "@/utils/wait.ts";
 
 const successResendCodeHandler = http.post("*/resend-code", async () => {

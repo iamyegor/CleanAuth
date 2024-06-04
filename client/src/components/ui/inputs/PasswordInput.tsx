@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import openedEyeImage from "@/assets/opened_eye.png";
 import closedEyeImage from "@/assets/closed_eye.png";
 import Image from "@/components/ui/Image.tsx";
-import Input from "@/components/ui/Input.tsx";
+import Input from "@/components/ui/inputs/Input.tsx";
 
 interface PasswordInputProps {
     name: string;

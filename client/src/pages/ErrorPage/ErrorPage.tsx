@@ -1,9 +1,9 @@
-import { useRouteError } from "react-router-dom";
+import { NavLink, useRouteError } from "react-router-dom";
 import { RouteError } from "@/types/RouteError.ts";
 import sadRobotImage from "@/pages/ErrorPage/images/sad_robot.png";
 import Image from "@/components/ui/Image.tsx";
 import { useEffect, useState } from "react";
-import BaseRoundedPage from "@/components/ui/BaseRoundedPage.tsx";
+import BaseRoundedPage from "@/components/ui/basePages/BaseRoundedPage.tsx";
 
 export default function ErrorPage() {
     const error = useRouteError() as RouteError;
@@ -34,6 +34,9 @@ export default function ErrorPage() {
         window.location.reload();
     }
 
+    const buttonClasses =
+        "bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-2 sm:px-6 rounded";
+
     return (
         <BaseRoundedPage>
             <div className="h-full flex flex-col md:flex-row items-center justify-center">
@@ -53,17 +56,17 @@ export default function ErrorPage() {
                     >
                         {message}
                     </div>
-                    <div className="flex space-x-4">
+                    <div className="flex justify-center items-center space-x-4">
+                        <NavLink to="/" className={buttonClasses}>
+                            Go home
+                        </NavLink>
+                        <p>or</p>
                         <button
-                            className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 px-2 
-                            sm:px-6 rounded mr-5"
                             onClick={reloadPage}
                             data-testid="ErrorPage.ReloadButton"
+                            className={buttonClasses}
                         >
                             Reload Page
-                        </button>
-                        <button className="text-gray-700 font-bold underline">
-                            Contact Support
                         </button>
                     </div>
                 </div>

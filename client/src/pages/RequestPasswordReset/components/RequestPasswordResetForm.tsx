@@ -18,7 +18,7 @@ export async function action({ request }: any): Promise<FeedbackMessage> {
     }
 
     try {
-        await api.post("api/request-password-reset", { emailOrUsername });
+        await api.post("request-password-reset", { emailOrUsername });
         return FeedbackMessage.createSuccess("Password reset link sent successfully.");
     } catch (err) {
         return extractRequestPasswordResetError(err as AxiosError<ServerErrorResponse>);

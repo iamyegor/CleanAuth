@@ -1,7 +1,7 @@
 import { http, HttpResponse } from "msw";
 
 export const failedRequestPasswordResetHandler = http.post(
-    `*/api/request-password-reset`,
+    `*/request-password-reset`,
     async () =>
         HttpResponse.json(
             {
@@ -13,6 +13,6 @@ export const failedRequestPasswordResetHandler = http.post(
 );
 
 export const successRequestPasswordResetHandler = http.post(
-    `*/api/request-password-reset`,
+    `*/request-password-reset`,
     async () => new HttpResponse(),
 );

@@ -13,7 +13,7 @@ export async function action({ request }: any): Promise<FeedbackMessage | Respon
     return await baseAction(
         request,
         5,
-        "api/verify-email",
+        "verify-email",
         "/add-phone-number",
         extractVerifyEmailError,
     );
@@ -27,9 +27,8 @@ export default function VerifyEmailPage() {
     useEffect(() => {
         (async () => {
             try {
-                const response = await api.get<EmailForVerificationResponse>(
-                    "api/email-for-verification",
-                );
+                const response =
+                    await api.get<EmailForVerificationResponse>("email-for-verification");
 
                 setEmail(response.data.email);
                 setIsLoading(false);
@@ -47,7 +46,7 @@ export default function VerifyEmailPage() {
                 <VerifyCodeForm
                     goBackRoute="/signup"
                     goBackButtonText="Back to signup"
-                    resendCodeEndpoint="api/request-email-verification-code"
+                    resendCodeEndpoint="request-email-verification-code"
                     contactDetail="Email"
                     contactValue={email}
                     codeLength={5}

@@ -1,13 +1,12 @@
 import axios, { AxiosError, AxiosRequestConfig, AxiosResponse } from "axios";
 import ServerErrorResponse from "@/types/ServerErrorResponse.ts";
-import throwRouteErrorOnInvalidResponse from "@/utils/throwRouteErrorOnInvalidResponse.ts";
 
 interface CustomAxiosRequestConfig extends AxiosRequestConfig {
     _retry?: boolean;
 }
 
 const api = axios.create({
-    baseURL: "https://localhost:7071",
+    baseURL: "https://localhost:7071/api/",
     withCredentials: true,
 });
 
@@ -41,11 +40,11 @@ api.interceptors.response.use(
 );
 
 async function refreshToken(): Promise<any> {
-    await api.post("api/refresh-access-token");
+    await api.post("refresh-access-token");
 }
 
 async function issueNewDeviceId(): Promise<any> {
-    await api.post("api/issue-device-id");
+    await api.post("issue-device-id");
 }
 
 export default api;

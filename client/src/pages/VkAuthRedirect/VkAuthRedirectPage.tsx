@@ -35,7 +35,7 @@ export default function VkAuthRedirectPage() {
             const returnedPayload = JSON.parse(returnedPayloadString) as VkAuthData;
             const payload = { silentToken: returnedPayload.token, uuid: returnedPayload.uuid };
             return handleSocialSignIn(
-                "api/vk-signin",
+                "vk-signin",
                 payload,
                 "vk.signin.failed.to.exchange.silent.token.for.access.token",
                 navigate,

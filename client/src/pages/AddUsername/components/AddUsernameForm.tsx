@@ -20,7 +20,7 @@ export async function action({ request }: any): Promise<ErrorMessage | Response>
     }
 
     try {
-        await api.post("api/add-login", { login: data.get("username") });
+        await api.post("add-login", { login: data.get("username") });
         return redirect("/add-phone-number");
     } catch (err) {
         return extractAddUsernameError(err as AxiosError<ServerErrorResponse>);

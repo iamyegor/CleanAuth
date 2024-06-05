@@ -23,7 +23,7 @@ export async function action({ request }: any): Promise<FieldError | Response> {
     }
 
     try {
-        await api.post("api/add-login-and-email", {
+        await api.post("add-login-and-email", {
             login: data.get("username"),
             email: data.get("email"),
         });

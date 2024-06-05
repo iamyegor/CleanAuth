@@ -13,7 +13,7 @@ export default function RequestPasswordResetPage() {
     useEffect(() => {
         (async () => {
             try {
-                await api.get("api/is-authenticated");
+                await api.get("is-authenticated");
                 navigate("/");
             } catch {
                 setIsLoading(false);

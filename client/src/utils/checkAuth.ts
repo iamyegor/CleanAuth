@@ -6,7 +6,7 @@ export default async function checkAuth(
     setLoading: (loading: boolean) => void,
 ) {
     try {
-        await api.get("api/is-authenticated");
+        await api.get("is-authenticated");
         navigate("/");
     } catch {
         setLoading(false);

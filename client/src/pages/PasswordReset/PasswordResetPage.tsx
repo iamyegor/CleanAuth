@@ -35,7 +35,7 @@ export default function PasswordResetPage() {
             }
 
             try {
-                await api.get(`api/need-to-reset-password?userId=${uid}&token=${token}`);
+                await api.get(`need-to-reset-password?userId=${uid}&token=${token}`);
             } catch (err) {
                 return extractPasswordResetLoadingError(err as AxiosError<ServerErrorResponse>);
             }

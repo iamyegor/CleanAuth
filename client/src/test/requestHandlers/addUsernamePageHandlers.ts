@@ -1,7 +1,7 @@
 import {http, HttpResponse} from "msw";
 
-const canAddLoginEndpoint = "*/api/can-add-login";
-const addLoginEndpoint = "*/api/add-login";
+const canAddLoginEndpoint = "*/can-add-login";
+const addLoginEndpoint = "*/add-login";
 
 export const failCanAddLoginHandler = http.get(canAddLoginEndpoint, async () =>
     HttpResponse.json({}, { status: 400 }),

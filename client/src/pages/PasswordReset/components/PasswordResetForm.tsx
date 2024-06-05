@@ -30,7 +30,7 @@ export async function action({ request }: any): Promise<Response | FieldError> {
     const uid: string | null = getQueryParam(request.url, "uid");
 
     try {
-        await api.post(`api/reset-password?userId=${uid}&token=${token}`, { password });
+        await api.post(`reset-password?userId=${uid}&token=${token}`, { password });
         return redirect("/");
     } catch (err) {
         return extractPasswordResetError(err as AxiosError<ServerErrorResponse>);

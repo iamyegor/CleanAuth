@@ -25,7 +25,7 @@ export async function action({ request }: any): Promise<FieldError | Response> {
     }
 
     try {
-        await api.post("api/signup", {
+        await api.post("signup", {
             login: data.username,
             email: data.email,
             password: data.password,

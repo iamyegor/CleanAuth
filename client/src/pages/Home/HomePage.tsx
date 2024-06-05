@@ -3,7 +3,7 @@ import { redirect, useLoaderData, useNavigate } from "react-router-dom";
 
 export async function loader() {
     try {
-        const response = await api.get<string>("api/username");
+        const response = await api.get<string>("username");
         return response.data;
     } catch (error) {
         return redirect("/login");
@@ -16,7 +16,7 @@ export default function HomePage() {
 
     async function handleLogout() {
         try {
-            await api.post("api/logout");
+            await api.post("logout");
         } catch (e) {
             console.log(e);
         }

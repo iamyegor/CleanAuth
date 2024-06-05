@@ -29,7 +29,7 @@ export async function action({ request }: any): Promise<FieldError | Response> {
     }
 
     try {
-        await api.post("api/login", credentials);
+        await api.post("login", credentials);
         return redirect("/");
     } catch (err) {
         return extractLoginError(err as AxiosError<ServerErrorResponse>);

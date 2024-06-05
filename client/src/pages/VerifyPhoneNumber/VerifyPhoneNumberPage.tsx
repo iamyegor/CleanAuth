@@ -9,13 +9,7 @@ import { useEffect, useState } from "react";
 import VerifyCodePageSkeleton from "@/components/ui/skeletons/VerifyCodePageSkeleton.tsx";
 
 export async function action({ request }: any): Promise<FeedbackMessage | Response> {
-    return await baseAction(
-        request,
-        4,
-        "api/verify-phone-number",
-        "/",
-        extractVerifyPhoneNumberError,
-    );
+    return await baseAction(request, 4, "verify-phone-number", "/", extractVerifyPhoneNumberError);
 }
 
 export default function VerifyPhoneNumberPage() {
@@ -26,7 +20,7 @@ export default function VerifyPhoneNumberPage() {
     useEffect(() => {
         (async () => {
             try {
-                const response = await api.get<string>("api/phone-number-for-verification");
+                const response = await api.get<string>("phone-number-for-verification");
                 setPhoneNumber(response.data);
                 setIsLoading(false);
             } catch {
@@ -48,7 +42,7 @@ export default function VerifyPhoneNumberPage() {
             <VerifyCodeForm
                 goBackRoute="/add-phone-number"
                 goBackButtonText="Change number"
-                resendCodeEndpoint="api/resend-phone-number-code"
+                resendCodeEndpoint="resend-phone-number-code"
                 contactDetail="Phone Number"
                 contactValue={phoneNumber}
                 codeLength={4}

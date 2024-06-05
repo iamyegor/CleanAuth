@@ -15,7 +15,7 @@ export default function AddUsernameAndEmailPage() {
         canAddLoginAndEmail().catch((error) => setThrownError(error));
 
         async function canAddLoginAndEmail() {
-            await api.get("api/can-add-login-and-email");
+            await api.get("can-add-login-and-email");
             setIsLoading(false);
         }
     }, []);

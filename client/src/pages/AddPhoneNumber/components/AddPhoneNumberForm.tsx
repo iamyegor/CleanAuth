@@ -25,7 +25,7 @@ export async function action({ request }: any): Promise<ErrorMessage | Response>
     const phoneNumberWithoutCode: string = keepOnlyDigits(data.get("phoneNumber"));
 
     try {
-        await api.post("api/add-phone-number", {
+        await api.post("add-phone-number", {
             phoneNumber: countryCode + phoneNumberWithoutCode,
         });
 

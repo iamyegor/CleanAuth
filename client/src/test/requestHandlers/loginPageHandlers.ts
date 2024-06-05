@@ -1,8 +1,8 @@
 import { http, HttpResponse } from "msw";
 
-const loginEndpoint = "*/api/login";
+const loginEndpoint = "*/login";
 
-export const successGetUsernameHandler = http.get("*/api/username", async () =>
+export const successGetUsernameHandler = http.get("*/username", async () =>
     HttpResponse.json("yegor", { status: 200 }),
 );
 

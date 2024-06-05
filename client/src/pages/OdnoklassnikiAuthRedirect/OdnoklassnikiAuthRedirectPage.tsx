@@ -38,7 +38,7 @@ export default function OdnoklassnikiAuthRedirectPage() {
 
             const payload = { accessToken, sessionSecretKey };
             return handleSocialSignIn(
-                "api/odnoklassniki-signin",
+                "odnoklassniki-signin",
                 payload,
                 "odnoklassniki.signin.failed.to.get.user.data",
                 navigate,

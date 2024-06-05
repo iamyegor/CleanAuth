@@ -7,7 +7,7 @@ import { createMemoryRouter, RouterProvider } from "react-router-dom";
 import { server } from "@/test/setup.tsx";
 import { http, HttpResponse } from "msw";
 
-const failedUsernameAddHandler = http.post(`*/api/add-login`, async () =>
+const failedUsernameAddHandler = http.post(`*/add-login`, async () =>
     HttpResponse.json(
         {
             errorCode: "login.can.not.be.added",

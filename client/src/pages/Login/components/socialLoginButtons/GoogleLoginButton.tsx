@@ -36,7 +36,7 @@ export default function GoogleLoginButton() {
 
     async function handleResponse(response: any) {
         try {
-            const serverResponse = (await api.post("api/google-signin", {
+            const serverResponse = (await api.post("google-signin", {
                 idToken: response.credential,
             })) as AxiosResponse<SocialSignInResponse>;
 

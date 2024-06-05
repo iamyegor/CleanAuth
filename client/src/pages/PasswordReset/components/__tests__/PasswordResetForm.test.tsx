@@ -62,7 +62,7 @@ describe("<PasswordResetForm />", () => {
         await userEvent.click(passwordResetForm.submittingButton);
 
         expect(passwordResetForm.password.errorMessage).toHaveTextContent(
-            "The new password cannot be the same as the current one.",
+            "The new password can not be the same as the current one.",
         );
     });
 

@@ -1,6 +1,6 @@
 import { http, HttpResponse } from "msw";
 
-const phoneNumberForVerificationEndpoint = "*/api/phone-number-for-verification";
+const phoneNumberForVerificationEndpoint = "*/phone-number-for-verification";
 
 export const failPhoneNumberForVerificationHandler = http.get(
     phoneNumberForVerificationEndpoint,
@@ -12,6 +12,6 @@ export const successPhoneNumberForVerificationHandler = http.get(
     async () => HttpResponse.json("123-456-7890", { status: 200 }),
 );
 
-export const successVerifyPhoneNumberHandler = http.post("*/api/verify-phone-number", async () =>
+export const successVerifyPhoneNumberHandler = http.post("*/verify-phone-number", async () =>
     HttpResponse.json({}, { status: 200 }),
 );

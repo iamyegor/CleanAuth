@@ -14,7 +14,7 @@ export default function AddPhoneNumberPage() {
     useEffect(() => {
         (async () => {
             try {
-                await api.get("api/need-to-add-phone-number");
+                await api.get("need-to-add-phone-number");
                 setIsLoading(false);
             } catch (err) {
                 navigate("/signup");

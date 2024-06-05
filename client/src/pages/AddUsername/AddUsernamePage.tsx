@@ -14,7 +14,7 @@ export default function AddUsernamePage() {
     useEffect(() => {
         (async () => {
             try {
-                await api.get("api/can-add-login");
+                await api.get("can-add-login");
                 setIsLoading(false);
             } catch {
                 navigate("/signup");

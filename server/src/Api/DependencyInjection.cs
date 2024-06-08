@@ -1,4 +1,6 @@
+using Api.Infrastructure;
 using Api.Mappings;
+using Infrastructure.Data;
 using Serilog;
 
 namespace Api;

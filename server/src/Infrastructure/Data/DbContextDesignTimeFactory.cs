@@ -8,7 +8,7 @@ public class DbContextDesignTimeFactory : IDesignTimeDbContextFactory<Applicatio
     public ApplicationContext CreateDbContext(string[] args)
     {
         ConfigurationBuilder configBuilder = new ConfigurationBuilder();
-        configBuilder.AddJsonFile("efcore_config.json");
+        configBuilder.AddJsonFile("appsettings.Development.json");
         IConfigurationRoot config = configBuilder.Build();
 
         return new ApplicationContext(config.GetConnectionString("Default")!, false);
